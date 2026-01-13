@@ -3,7 +3,7 @@
 #### 5. Main translation flow
 
 - [x] Create TranslateInput component with autofocus
-- [ ] Implement debounce hook (500ms)
+- [x] Implement debounce hook (500ms)
 - [ ] Create useCompletionCheck hook (calls Haiku)
 - [ ] Create useTranslation hook (calls Opus)
 - [ ] Wire up: input → debounce → detection → translation

@@ -197,3 +197,29 @@ Also:
 **Why:** This is the first component of the main translation flow. Users type text into this input, which will later be wired up to debounce → completion detection → translation.
 
 **Notes:** The component is a controlled input, receiving value and onChange from parent. This allows the App to manage translation state.
+
+---
+
+## 2026-01-13: Implement debounce hook
+
+**What changed:** Created `src/hooks/useDebounce.ts`:
+
+- Generic `useDebounce<T>(value, delay?)` hook that returns a debounced version of the value
+- Default delay is 500ms (matches the task requirement)
+- Timer resets when value changes before delay completes
+- Properly cleans up timeout on unmount
+
+Also:
+
+- Added `src/hooks/useDebounce.test.ts` with 7 unit tests covering:
+  - Initial value return
+  - Value not updating before delay
+  - Value updating after delay
+  - Timer reset on rapid changes
+  - Default delay behavior
+  - Generic type support
+  - Cleanup on unmount
+
+**Why:** This hook is needed to debounce user input before triggering the completion check. Prevents excessive API calls while user is still typing.
+
+**Notes:** Will be used in the main translation flow: input → debounce → completion detection → translation.
