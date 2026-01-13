@@ -7,6 +7,7 @@ import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
 import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
+import { SettingsDialog } from "@/components/SettingsDialog"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
@@ -86,7 +87,10 @@ export function App() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-6">
-      <h1 className="text-2xl font-semibold">Translate</h1>
+      <header className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Translate</h1>
+        <SettingsDialog />
+      </header>
       <TranslateInput value={inputText} onChange={setInputText} />
 
       {/* Show skeleton while translating, results when done */}

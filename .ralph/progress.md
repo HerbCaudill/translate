@@ -393,3 +393,29 @@ Also:
 **Why:** Some inputs (like single words or fragments) may not be detected as "complete" by the completion check. The fallback ensures users can always get a translation after a reasonable wait, even if the AI doesn't consider their input to be a complete thought.
 
 **Notes:** The fallback timer starts from when `debouncedText` stabilizes (500ms after typing stops), so the actual delay is ~2.5s from the last keystroke.
+
+---
+
+## 2026-01-13: Create SettingsDialog component
+
+**What changed:** Created `src/components/SettingsDialog.tsx`:
+
+- Modal dialog for settings using shadcn Dialog component
+- Settings gear icon button trigger (uses Tabler Icons)
+- Dialog with header showing "Settings" title and description
+- Accepts optional children prop to customize the trigger button
+- Added gear icon to App header for easy access
+
+Also:
+
+- Installed shadcn `dialog` component (using Radix UI primitives)
+- Added `src/components/SettingsDialog.test.tsx` with 4 unit tests:
+  - Renders settings button
+  - Opens dialog on click
+  - Closes dialog via close button
+  - Supports custom trigger children
+- Updated `src/App.tsx` with header containing settings button
+
+**Why:** First step in Settings section (8). The SettingsDialog provides the container for all settings controls. Currently shows placeholder content; future tasks will add language management and prompt editing.
+
+**Notes:** The dialog uses controlled state (`open`, `onOpenChange`) to manage visibility. Next tasks: languages list (add/remove/reorder), prompt editor, reset button.
