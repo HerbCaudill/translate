@@ -1,8 +1,4 @@
 ### To do
-
-- [ ] Install sonner for toast notifications
-- [ ] Show toast on API errors
-- [ ] Add retry button to error toasts
 - [ ] Handle rate limiting gracefully
 - [ ] Loading states for all async operations
 - [ ] Escape key clears input and results
@@ -14,6 +10,9 @@
 
 ### Done
 
+- [x] Install sonner for toast notifications
+- [x] Show toast on API errors
+- [x] Add retry button to error toasts
 - [x] Create folder structure (components, hooks, lib, types)
 - [x] Add IBM Plex fonts
 - [x] Set up PWA with vite-plugin-pwa

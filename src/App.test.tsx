@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest"
 import { render, screen, waitFor, act, fireEvent } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { toast } from "sonner"
 import { App } from "./App"
 import { STORAGE_KEYS } from "@/lib/storage"
 import * as anthropic from "@/lib/anthropic"
@@ -12,6 +13,12 @@ vi.mock("@/lib/validateApiKey", () => ({
 vi.mock("@/lib/anthropic", () => ({
   checkCompletion: vi.fn(),
   translate: vi.fn(),
+}))
+
+vi.mock("sonner", () => ({
+  toast: {
+    error: vi.fn(),
+  },
 }))
 
 describe("App", () => {
@@ -294,5 +301,116 @@ describe("App history saving", () => {
     // Should only have the successful translation
     expect(history[0].translation.results).toHaveLength(1)
     expect(history[0].translation.results[0].language.code).toBe("es")
+  })
+})
+
+describe("App error toasts", () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("shows toast when translation fails", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+        translationPrompt: "",
+        completionPrompt: "",
+      }),
+    )
+
+    vi.mocked(anthropic.checkCompletion).mockResolvedValue({ status: "complete" })
+    vi.mocked(anthropic.translate).mockResolvedValue({
+      success: false,
+      error: "API rate limit exceeded",
+    })
+
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    fireEvent.change(input, { target: { value: "hello" } })
+
+    // Advance past debounces
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+
+    // Allow promises to resolve
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Verify toast was called with error
+    expect(toast.error).toHaveBeenCalledWith(
+      "Translation failed",
+      expect.objectContaining({
+        description: "API rate limit exceeded",
+        action: expect.objectContaining({
+          label: "Retry",
+        }),
+      }),
+    )
+  })
+
+  it("shows toast when partial translation fails", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [
+          { code: "es", name: "Spanish" },
+          { code: "fr", name: "French" },
+        ],
+        translationPrompt: "",
+        completionPrompt: "",
+      }),
+    )
+
+    vi.mocked(anthropic.checkCompletion).mockResolvedValue({ status: "complete" })
+    vi.mocked(anthropic.translate)
+      .mockResolvedValueOnce({
+        success: true,
+        options: [{ text: "hola", explanation: "greeting" }],
+      })
+      .mockResolvedValueOnce({
+        success: false,
+        error: "French translation failed",
+      })
+
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    fireEvent.change(input, { target: { value: "hello" } })
+
+    // Advance past debounces
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+
+    // Allow promises to resolve
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Verify toast was called with error for partial failure
+    expect(toast.error).toHaveBeenCalledWith(
+      "Translation failed",
+      expect.objectContaining({
+        description: "French translation failed",
+      }),
+    )
   })
 })

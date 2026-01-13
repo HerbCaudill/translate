@@ -541,9 +541,33 @@ Updated `src/App.test.tsx`:
   - `src/components/HistoryDialog.test.tsx` with 4 tests
 
 **Why:** Completes section 9 (History). Users can now:
+
 - View their translation history
 - Search/filter past translations by input text
 - Click to restore a previous translation (displays stored results without re-translating)
 - Clear all history
 
 **Notes:** The history feature is now fully functional. Next section is 10 (Error handling) with toast notifications.
+
+---
+
+## 2026-01-13: Add toast notifications for API errors
+
+**What changed:** Added toast notifications using sonner:
+
+- Updated `src/main.tsx`:
+  - Added `Toaster` component from sonner (positioned at bottom-center)
+
+- Updated `src/App.tsx`:
+  - Added `toast` import from sonner
+  - Added `translationError` from useTranslation hook
+  - Added `useEffect` that shows toast when translation errors occur
+  - Toast includes error description and a "Retry" action button
+
+- Added `src/App.test.tsx` tests:
+  - "shows toast when translation fails" - verifies toast.error is called with error message
+  - "shows toast when partial translation fails" - verifies toast for partial failures
+
+**Why:** Users now receive visual feedback when API calls fail. The toast notification shows the error message and provides a retry button for easy recovery.
+
+**Notes:** Sonner was already installed as a dependency. The toast includes a retry action that re-triggers translation with the same text.

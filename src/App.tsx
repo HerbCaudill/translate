@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { toast } from "sonner"
 import { useSettings } from "@/hooks/useSettings"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useCompletionCheck } from "@/hooks/useCompletionCheck"
@@ -29,6 +30,7 @@ export function App() {
   const {
     status: translationStatus,
     results,
+    error: translationError,
     translate,
     reset: resetTranslation,
   } = useTranslation({
@@ -108,6 +110,23 @@ export function App() {
       })
     }
   }, [translationStatus, results, addEntry])
+
+  // Show toast on translation error
+  useEffect(() => {
+    if (translationError) {
+      toast.error("Translation failed", {
+        description: translationError,
+        action: {
+          label: "Retry",
+          onClick: () => {
+            if (translatedTextRef.current) {
+              translate(translatedTextRef.current)
+            }
+          },
+        },
+      })
+    }
+  }, [translationError, translate])
 
   const handleApiKeySubmit = async (apiKey: string) => {
     updateSettings({ apiKey })
