@@ -2,7 +2,7 @@
 
 - [ ] Loading states for all async operations
 - [ ] Responsive layout for mobile
-- [ ] Configure manifest (name, icons, theme color)
+- [x] Configure manifest (name, icons, theme color)
 - [ ] Add service worker for offline shell
 - [ ] Test install prompt on desktop and mobile
 

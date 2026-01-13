@@ -647,3 +647,31 @@ Updated `src/App.test.tsx`:
 **Why:** Rate limiting can occur during normal use, especially with concurrent translations to multiple languages. Automatic retry with exponential backoff handles transient rate limits gracefully without user intervention. Only after 4 attempts (1 initial + 3 retries) does the user see an error, at which point the manual retry button in the toast can be used.
 
 **Notes:** The retry logic respects the `retry-after` header when provided by the API, which gives better guidance on when to retry. The exponential backoff (1s, 2s, 4s) provides reasonable delays when no header is present.
+
+---
+
+## 2026-01-13: Configure manifest (name, icons, theme color)
+
+**What changed:** Configured the PWA manifest with proper branding:
+
+- Created `public/icon.svg` - app icon with blue gradient background and speech bubbles showing "A" and "あ" to represent translation
+- Generated `public/icon-192.png` and `public/icon-512.png` using rsvg-convert
+- Generated `public/apple-touch-icon.png` (180x180) for iOS home screen
+
+- Updated `vite.config.ts` manifest configuration:
+  - Changed `short_name` from "translate" to "Translate"
+  - Added `description`: "A fast, intelligent translation app powered by Claude AI"
+  - Changed `theme_color` from black to blue (#3b82f6)
+  - Added `orientation: "portrait-primary"`
+  - Added `categories: ["productivity", "utilities"]`
+  - Added icons array with 192px and 512px sizes (with maskable variant)
+
+- Updated `index.html` with PWA meta tags:
+  - Added `<meta name="description">` for SEO
+  - Added `<meta name="theme-color">` for browser chrome
+  - Updated favicon to use the new SVG icon
+  - Added `<link rel="apple-touch-icon">` for iOS
+
+**Why:** A properly configured manifest is essential for the PWA to install correctly on desktop and mobile. Icons and theme colors create a professional, branded appearance when the app is installed.
+
+**Notes:** The theme color (#3b82f6) matches the blue gradient in the icon. The icon design uses overlapping speech bubbles with "A" (Latin) and "あ" (Japanese hiragana) to visually represent translation between languages.
