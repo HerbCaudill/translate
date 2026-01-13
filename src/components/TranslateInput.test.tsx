@@ -43,4 +43,21 @@ describe("TranslateInput", () => {
     render(<TranslateInput value="" onChange={() => {}} placeholder="Custom placeholder" />)
     expect(screen.getByPlaceholderText("Custom placeholder")).toBeInTheDocument()
   })
+
+  it("calls onEscape when Escape key is pressed", async () => {
+    const user = userEvent.setup()
+    const onEscape = vi.fn()
+    render(<TranslateInput value="Some text" onChange={() => {}} onEscape={onEscape} />)
+
+    await user.keyboard("{Escape}")
+    expect(onEscape).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not crash when Escape is pressed without onEscape handler", async () => {
+    const user = userEvent.setup()
+    render(<TranslateInput value="Some text" onChange={() => {}} />)
+
+    // Should not throw
+    await user.keyboard("{Escape}")
+  })
 })

@@ -1,7 +1,7 @@
 ### To do
+
 - [ ] Handle rate limiting gracefully
 - [ ] Loading states for all async operations
-- [ ] Escape key clears input and results
 - [ ] Empty state when no translations yet
 - [ ] Responsive layout for mobile
 - [ ] Configure manifest (name, icons, theme color)
@@ -52,3 +52,4 @@
 - [x] Search/filter history by input text
 - [x] Create HistoryView component
 - [x] Save each translation to localStorage
+- [x] Escape key clears input and results

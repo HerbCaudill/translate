@@ -168,7 +168,7 @@ export function App() {
           />
         </div>
       </header>
-      <TranslateInput value={inputText} onChange={setInputText} />
+      <TranslateInput value={inputText} onChange={setInputText} onEscape={() => setInputText("")} />
 
       {/* Show skeleton while translating, results when done */}
       {translationStatus === "translating" ?

@@ -571,3 +571,25 @@ Updated `src/App.test.tsx`:
 **Why:** Users now receive visual feedback when API calls fail. The toast notification shows the error message and provides a retry button for easy recovery.
 
 **Notes:** Sonner was already installed as a dependency. The toast includes a retry action that re-triggers translation with the same text.
+
+---
+
+## 2026-01-13: Add escape key to clear input and results
+
+**What changed:** Added keyboard shortcut to clear input:
+
+- Updated `src/components/TranslateInput.tsx`:
+  - Added `onEscape` optional callback prop
+  - Added `handleKeyDown` handler that calls `onEscape` when Escape key is pressed
+
+- Updated `src/App.tsx`:
+  - Passed `onEscape={() => setInputText("")}` to TranslateInput
+  - Clearing input triggers existing useEffect that resets translation state
+
+- Added `src/components/TranslateInput.test.tsx` tests:
+  - "calls onEscape when Escape key is pressed"
+  - "does not crash when Escape is pressed without onEscape handler"
+
+**Why:** Quick UX improvement that users expect. Pressing Escape provides a fast way to clear the input and start fresh without needing to select and delete text.
+
+**Notes:** The existing reset logic in App.tsx already handles clearing translation results when input becomes empty, so no additional changes were needed there.
