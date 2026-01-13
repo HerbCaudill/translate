@@ -2,8 +2,10 @@ import { useState, useCallback } from "react"
 import { Settings } from "@/types"
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
 
+const getDefaultApiKey = () => import.meta.env.VITE_ANTHROPIC_API_KEY ?? ""
+
 export const DEFAULT_SETTINGS: Settings = {
-  apiKey: "",
+  apiKey: getDefaultApiKey(),
   languages: [
     { code: "es", name: "Spanish" },
     { code: "fr", name: "French" },
@@ -19,7 +21,13 @@ Respond with only "complete" or "incomplete".`,
 export const useSettings = () => {
   const [settings, setSettings] = useState<Settings>(() => {
     const stored = getItem<Settings>(STORAGE_KEYS.SETTINGS)
-    return stored ?? DEFAULT_SETTINGS
+    const envApiKey = getDefaultApiKey()
+
+    if (stored) {
+      // Env var takes precedence over stored key
+      return envApiKey ? { ...stored, apiKey: envApiKey } : stored
+    }
+    return DEFAULT_SETTINGS
   })
 
   const updateSettings = useCallback((updates: Partial<Settings>) => {
