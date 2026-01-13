@@ -1,13 +1,5 @@
 ### To do
 
-#### 5. Main translation flow
-
-- [x] Create TranslateInput component with autofocus
-- [x] Implement debounce hook (500ms)
-- [x] Create useCompletionCheck hook (calls Haiku)
-- [x] Create useTranslation hook (calls Opus)
-- [ ] Wire up: input → debounce → detection → translation
-
 #### 6. Fallback translate button
 
 - [ ] Show button after 2s if auto-detection hasn't triggered
@@ -58,6 +50,14 @@
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+#### 5. Main translation flow
+
+- [x] Create TranslateInput component with autofocus
+- [x] Implement debounce hook (500ms)
+- [x] Create useCompletionCheck hook (calls Haiku)
+- [x] Create useTranslation hook (calls Opus)
+- [x] Wire up: input → debounce → detection → translation
 
 #### 4. Anthropic client
 

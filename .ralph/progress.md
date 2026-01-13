@@ -282,3 +282,21 @@ Also:
 **Why:** This hook provides the translation functionality for the main flow. It wraps the `translate` API call with state management and handles translating to multiple languages concurrently.
 
 **Notes:** Next step is to wire up: input → debounce → detection → translation.
+
+---
+
+## 2026-01-13: Wire up main translation flow
+
+**What changed:** Updated `src/App.tsx` to connect all the pieces:
+
+- Input text is debounced with `useDebounce` (500ms)
+- Debounced text is passed to `useCompletionCheck` for completion detection
+- When completion status becomes "complete", automatically triggers `useTranslation.translate()`
+- Uses a ref to track already-translated text to avoid re-translating
+- Resets translation results when input is cleared
+- Added basic status indicators showing "Checking if complete..." and "Translating..."
+- Added inline translation results display showing each language with its translation options
+
+**Why:** This completes section 5 of the todo list - the main translation flow is now fully functional. Users can type text, the app detects when they've completed a thought, and automatically translates to configured languages.
+
+**Notes:** The results display is basic inline rendering. Section 7 will add proper TranslationCard and TranslationResults components. Section 6 will add a fallback translate button for when auto-detection doesn't trigger.
