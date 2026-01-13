@@ -2,10 +2,7 @@
 
 #### 3. API key flow
 
-- [x] Create ApiKeyPrompt component
 - [ ] Add API key validation (test call to Anthropic)
-- [ ] Store API key in localStorage
-- [ ] Show prompt on first run or when key is missing
 
 #### 4. Anthropic client
 
@@ -73,6 +70,12 @@
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+#### 3. API key flow
+
+- [x] Create ApiKeyPrompt component
+- [x] Store API key in localStorage
+- [x] Show prompt on first run or when key is missing
 
 #### 2. Core types and storage
 

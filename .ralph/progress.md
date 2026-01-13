@@ -110,3 +110,25 @@ Also added:
 **Why:** This component is the first step in the API key flow. Users need to provide their API key before they can use the translation service.
 
 **Notes:** The component handles UI only; validation logic will be wired up when the Anthropic client is implemented.
+
+---
+
+## 2026-01-13: Wire up API key storage and prompt flow
+
+**What changed:** Updated `src/App.tsx` to:
+
+- Use `useSettings` hook to check for stored API key
+- Show `ApiKeyPrompt` component when no API key is stored
+- Store API key in localStorage via `updateSettings` when user submits
+- Show main content ("Hello, world") when API key is present
+
+Also added:
+
+- `src/App.test.tsx` with 3 unit tests:
+  - Shows ApiKeyPrompt when no API key is stored
+  - Shows main content when API key is already stored
+  - Stores API key and shows main content after submission
+
+**Why:** Completes the basic API key flow - the app now prompts for an API key on first run, stores it persistently, and remembers it across sessions.
+
+**Notes:** API key validation (test call to Anthropic) is still pending and will be added when the Anthropic client is implemented.
