@@ -744,3 +744,34 @@ Updated `src/App.test.tsx`:
 **Why:** Enables the app to work offline as a PWA. The service worker precaches all app assets (JS, CSS, HTML, fonts, images) and serves them from cache when offline. Navigation fallback ensures SPA routing works correctly. Font caching improves load times on repeat visits.
 
 **Notes:** The build now generates `sw.js` and `workbox-*.js` in the dist folder. The app shell (HTML, CSS, JS) is cached for offline use; however, translations still require network access since the Anthropic API cannot be cached.
+
+---
+
+## 2026-01-13: Add install prompt for PWA
+
+**What changed:** Implemented install prompt functionality:
+
+- Created `src/hooks/useInstallPrompt.ts`:
+  - Captures and stores `beforeinstallprompt` event
+  - Returns `{ canInstall, promptInstall }` interface
+  - `canInstall` is true when browser supports installation and app isn't already installed
+  - `promptInstall()` triggers the native install dialog
+  - Cleans up after user accepts or dismisses the prompt
+  - Handles `appinstalled` event to clear install state
+
+- Created `src/components/InstallPrompt.tsx`:
+  - Download icon button that appears when installation is available
+  - Returns null when `canInstall` is false (button not shown)
+  - Uses IconDownload from Tabler icons
+
+- Updated `src/App.tsx`:
+  - Added InstallPrompt button to header (before history and settings buttons)
+  - Button only appears when the browser fires `beforeinstallprompt` event
+
+- Added tests:
+  - `src/hooks/useInstallPrompt.test.ts` with 8 tests covering event handling, prompt triggering, cleanup
+  - `src/components/InstallPrompt.test.tsx` with 4 tests covering visibility and click behavior
+
+**Why:** Users can now install the PWA directly from the app interface. The install button appears automatically when the browser determines the app is installable (served over HTTPS, has valid manifest, meets PWA criteria). This provides a better experience than relying solely on browser UI chrome.
+
+**Notes:** The `beforeinstallprompt` event only fires on supported browsers (Chrome, Edge, Samsung Internet). Safari/iOS uses a different flow (Add to Home Screen via share menu) and doesn't fire this event, so the button won't appear there.

@@ -5,6 +5,7 @@ import { useDebounce } from "@/hooks/useDebounce"
 import { useCompletionCheck } from "@/hooks/useCompletionCheck"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useHistory } from "@/hooks/useHistory"
+import { useInstallPrompt } from "@/hooks/useInstallPrompt"
 import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
@@ -12,11 +13,13 @@ import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkele
 import { SettingsDialog } from "@/components/SettingsDialog"
 import { HistoryDialog } from "@/components/HistoryDialog"
 import { EmptyState } from "@/components/EmptyState"
+import { InstallPrompt } from "@/components/InstallPrompt"
 import { HistoryEntry } from "@/types"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
   const { history, addEntry, clearHistory } = useHistory()
+  const { canInstall, promptInstall } = useInstallPrompt()
   const [inputText, setInputText] = useState("")
   const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(null)
 
@@ -156,6 +159,7 @@ export function App() {
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Translate</h1>
         <div className="flex items-center gap-1">
+          <InstallPrompt canInstall={canInstall} onInstall={promptInstall} />
           <HistoryDialog
             history={history}
             onSelectEntry={handleSelectHistoryEntry}

@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Test install prompt on desktop and mobile
-
 ### Done
+
+- [x] Add install prompt for PWA
 
 - [x] Add service worker for offline shell
 
