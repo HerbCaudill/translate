@@ -1,9 +1,5 @@
 ### To do
 
-#### 6. Fallback
-
-- [ ] Try to translate after 2s if auto-detection hasn't triggered
-
 #### 7. Results UI
 
 - [x] Create TranslationCard component (single language)
@@ -48,6 +44,10 @@
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+#### 6. Fallback
+
+- [x] Try to translate after 2s if auto-detection hasn't triggered
 
 #### 5. Main translation flow
 

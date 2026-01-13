@@ -370,3 +370,26 @@ Also:
 **Why:** Provides visual feedback during translation, improving perceived performance and user experience. Users see cards for each language they're translating to, with animated skeleton placeholders.
 
 **Notes:** The skeleton shows the actual language names, giving users context about what's being translated.
+
+---
+
+## 2026-01-13: Add fallback translation timer
+
+**What changed:** Added a 2-second fallback timer in `src/App.tsx`:
+
+- Added a new `useEffect` that starts a 2-second timer when debounced text is present
+- Timer triggers translation if:
+  - There's non-empty debounced text
+  - The text hasn't already been translated
+  - Completion check didn't return "complete" (meaning auto-detection didn't trigger)
+- Timer is cleared if text changes or completion succeeds before 2 seconds
+
+Also:
+
+- Added `src/App.test.tsx` tests for fallback behavior:
+  - "triggers translation after 2s fallback when completion check returns incomplete"
+  - "does not trigger fallback if completion check returns complete"
+
+**Why:** Some inputs (like single words or fragments) may not be detected as "complete" by the completion check. The fallback ensures users can always get a translation after a reasonable wait, even if the AI doesn't consider their input to be a complete thought.
+
+**Notes:** The fallback timer starts from when `debouncedText` stabilizes (500ms after typing stops), so the actual delay is ~2.5s from the last keystroke.

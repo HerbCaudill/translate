@@ -46,6 +46,28 @@ export function App() {
     }
   }, [completionStatus, debouncedText, translate])
 
+  // Fallback: translate after 2s if auto-detection hasn't triggered
+  useEffect(() => {
+    // Skip if no text, already translated this text, or completion check succeeded
+    if (
+      !debouncedText.trim() ||
+      debouncedText === translatedTextRef.current ||
+      completionStatus === "complete"
+    ) {
+      return
+    }
+
+    const fallbackTimer = setTimeout(() => {
+      // Double-check we still haven't translated this text
+      if (debouncedText.trim() && debouncedText !== translatedTextRef.current) {
+        translatedTextRef.current = debouncedText
+        translate(debouncedText)
+      }
+    }, 2000)
+
+    return () => clearTimeout(fallbackTimer)
+  }, [debouncedText, completionStatus, translate])
+
   // Reset translation when input is cleared
   useEffect(() => {
     if (!inputText.trim()) {
