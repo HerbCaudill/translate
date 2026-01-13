@@ -18,10 +18,10 @@
 #### 9. History
 
 - [x] Save each translation to localStorage
-- [ ] Create HistoryView component
-- [ ] Search/filter history by input text
-- [ ] Click history item to show translation again
-- [ ] Clear history option
+- [x] Create HistoryView component
+- [x] Search/filter history by input text
+- [x] Click history item to show translation again
+- [x] Clear history option
 
 #### 10. Error handling
 

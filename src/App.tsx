@@ -9,11 +9,14 @@ import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
 import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
 import { SettingsDialog } from "@/components/SettingsDialog"
+import { HistoryDialog } from "@/components/HistoryDialog"
+import { HistoryEntry } from "@/types"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
-  const { addEntry } = useHistory()
+  const { history, addEntry, clearHistory } = useHistory()
   const [inputText, setInputText] = useState("")
+  const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(null)
 
   const debouncedText = useDebounce(inputText, 500)
 
@@ -76,8 +79,16 @@ export function App() {
     if (!inputText.trim()) {
       translatedTextRef.current = ""
       resetTranslation()
+      setSelectedHistoryEntry(null)
     }
   }, [inputText, resetTranslation])
+
+  // Clear selected history entry when user types something different
+  useEffect(() => {
+    if (selectedHistoryEntry && inputText !== selectedHistoryEntry.input) {
+      setSelectedHistoryEntry(null)
+    }
+  }, [inputText, selectedHistoryEntry])
 
   // Track which translation we've saved to avoid duplicates
   const savedTranslationRef = useRef<string>("")
@@ -102,27 +113,48 @@ export function App() {
     updateSettings({ apiKey })
   }
 
+  const handleSelectHistoryEntry = (entry: HistoryEntry) => {
+    // Set the input text to show what was translated
+    setInputText(entry.input)
+    // Store the selected entry to display its results
+    setSelectedHistoryEntry(entry)
+    // Mark as already translated so we don't re-translate
+    translatedTextRef.current = entry.input
+    // Mark as saved so we don't save it again
+    savedTranslationRef.current = entry.input
+  }
+
   if (!settings.apiKey) {
     return <ApiKeyPrompt onSubmit={handleApiKeySubmit} />
   }
+
+  // Show history results if selected, otherwise show translation results
+  const displayResults = selectedHistoryEntry?.translation.results ?? results
 
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-6">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Translate</h1>
-        <SettingsDialog
-          languages={settings.languages}
-          onLanguagesChange={languages => updateSettings({ languages })}
-          translationPrompt={settings.translationPrompt}
-          onTranslationPromptChange={translationPrompt => updateSettings({ translationPrompt })}
-        />
+        <div className="flex items-center gap-1">
+          <HistoryDialog
+            history={history}
+            onSelectEntry={handleSelectHistoryEntry}
+            onClearHistory={clearHistory}
+          />
+          <SettingsDialog
+            languages={settings.languages}
+            onLanguagesChange={languages => updateSettings({ languages })}
+            translationPrompt={settings.translationPrompt}
+            onTranslationPromptChange={translationPrompt => updateSettings({ translationPrompt })}
+          />
+        </div>
       </header>
       <TranslateInput value={inputText} onChange={setInputText} />
 
       {/* Show skeleton while translating, results when done */}
       {translationStatus === "translating" ?
         <TranslationResultsSkeleton languages={settings.languages} />
-      : <TranslationResults results={results} />}
+      : <TranslationResults results={displayResults} />}
     </div>
   )
 }

@@ -507,3 +507,43 @@ Updated `src/App.test.tsx`:
 **Why:** This is the first task in section 9 (History). Translations are now automatically persisted to localStorage, enabling future features like viewing history, searching past translations, and restoring previous translations.
 
 **Notes:** The `useHistory` hook was already implemented with full functionality. This change just wires it up to the translation flow. Next tasks: create HistoryView component, search/filter, click to restore, clear history option.
+
+---
+
+## 2026-01-13: Create HistoryView component and complete history feature
+
+**What changed:** Created full history viewing functionality:
+
+- `src/components/HistoryView.tsx`:
+  - Displays list of history entries sorted by most recent
+  - Search input filters entries by input text (case-insensitive)
+  - Each entry shows the input text and relative timestamp ("just now", "5 minutes ago", etc.)
+  - Empty state when no history ("No history yet")
+  - No results state when search yields no matches ("No matching entries")
+  - Clear history button (trash icon) when history exists
+  - Clicking an entry calls `onSelectEntry` callback
+
+- `src/components/HistoryDialog.tsx`:
+  - Modal dialog wrapper for HistoryView
+  - History icon button trigger (IconHistory from Tabler)
+  - Dialog closes after selecting an entry
+  - Shows "History" title and "View your past translations" description
+
+- Updated `src/App.tsx`:
+  - Added HistoryDialog to header alongside settings button
+  - Added `selectedHistoryEntry` state to track when viewing from history
+  - `handleSelectHistoryEntry` sets input text and displays stored results
+  - Clears selected entry when user types something different
+  - Uses `displayResults` which prioritizes selected history entry results
+
+- Added tests:
+  - `src/components/HistoryView.test.tsx` with 10 tests
+  - `src/components/HistoryDialog.test.tsx` with 4 tests
+
+**Why:** Completes section 9 (History). Users can now:
+- View their translation history
+- Search/filter past translations by input text
+- Click to restore a previous translation (displays stored results without re-translating)
+- Clear all history
+
+**Notes:** The history feature is now fully functional. Next section is 10 (Error handling) with toast notifications.
