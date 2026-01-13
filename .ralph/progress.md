@@ -131,4 +131,26 @@ Also added:
 
 **Why:** Completes the basic API key flow - the app now prompts for an API key on first run, stores it persistently, and remembers it across sessions.
 
-**Notes:** API key validation (test call to Anthropic) is still pending and will be added when the Anthropic client is implemented.
+**Notes:** API key validation has now been implemented.
+
+---
+
+## 2026-01-13: Add API key validation
+
+**What changed:** Added API key validation using the Anthropic SDK:
+
+- Created `src/lib/validateApiKey.ts`:
+  - Makes a minimal test call to Anthropic (using claude-3-5-haiku-latest with max_tokens=1)
+  - Returns `{ valid: true }` on success or rate limit (key is valid but rate limited)
+  - Returns `{ valid: false, error: string }` for authentication errors or other failures
+  - Handles empty/whitespace-only keys as invalid
+- Updated `src/components/ApiKeyPrompt.tsx`:
+  - Validates API key before storing
+  - Displays error message when validation fails
+  - Clears error on new submission attempt
+- Added `src/lib/validateApiKey.test.ts` with 7 unit tests
+- Updated `ApiKeyPrompt.test.tsx` with 2 new tests for error display
+
+**Why:** Validates API keys before storing them, so users get immediate feedback if their key is invalid. This prevents frustration from entering an invalid key and only discovering it later during translation.
+
+**Notes:** The Anthropic SDK was already installed. The validation treats rate limit errors as valid (the key works, just temporarily limited).

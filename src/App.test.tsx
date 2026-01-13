@@ -1,12 +1,17 @@
-import { describe, it, expect, beforeEach } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { describe, it, expect, beforeEach, vi } from "vitest"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { App } from "./App"
 import { STORAGE_KEYS } from "@/lib/storage"
 
+vi.mock("@/lib/validateApiKey", () => ({
+  validateApiKey: vi.fn().mockResolvedValue({ valid: true }),
+}))
+
 describe("App", () => {
   beforeEach(() => {
     localStorage.clear()
+    vi.clearAllMocks()
   })
 
   it("shows ApiKeyPrompt when no API key is stored", () => {
@@ -39,7 +44,9 @@ describe("App", () => {
     await user.type(screen.getByLabelText("API key"), "sk-ant-test123")
     await user.click(screen.getByRole("button", { name: /save api key/i }))
 
-    expect(screen.getByText("Hello, world")).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText("Hello, world")).toBeInTheDocument()
+    })
     expect(screen.queryByText("API key required")).not.toBeInTheDocument()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || "{}")

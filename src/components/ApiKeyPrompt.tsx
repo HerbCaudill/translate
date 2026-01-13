@@ -11,21 +11,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { validateApiKey } from "@/lib/validateApiKey"
 
 export const ApiKeyPrompt = ({ onSubmit }: Props) => {
   const [apiKey, setApiKey] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!apiKey.trim()) return
 
     setIsSubmitting(true)
-    try {
-      await onSubmit(apiKey.trim())
-    } finally {
+    setError(null)
+
+    const result = await validateApiKey(apiKey.trim())
+
+    if (!result.valid) {
+      setError(result.error)
       setIsSubmitting(false)
+      return
     }
+
+    await onSubmit(apiKey.trim())
+    setIsSubmitting(false)
   }
 
   return (
@@ -65,6 +74,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
                   <IconExternalLink className="size-3" />
                 </a>
               </p>
+              {error && <p className="text-destructive text-sm">{error}</p>}
             </div>
           </CardContent>
           <CardFooter>
