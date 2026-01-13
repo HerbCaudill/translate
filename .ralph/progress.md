@@ -321,3 +321,24 @@ Also:
 **Why:** This is the first step in the Results UI section (7). The TranslationCard provides a clean, reusable component for displaying translation results, improving visual consistency with the shadcn card design system.
 
 **Notes:** Next tasks in Results UI: TranslationResults component (grid of cards) and loading skeleton.
+
+---
+
+## 2026-01-13: Create TranslationResults component
+
+**What changed:** Created `src/components/TranslationResults.tsx`:
+
+- Grid component that displays multiple TranslationCards
+- Responsive 2-column grid layout on medium screens and above (single column on mobile)
+- Returns null when results array is empty
+- Maps over results and renders a TranslationCard for each language
+
+Also:
+
+- Added `src/components/TranslationResults.test.tsx` with 6 unit tests
+- Updated `src/App.tsx` to use TranslationResults instead of inline mapping
+- Marked "Display multiple translation options with explanations" as complete (was already implemented in TranslationCard)
+
+**Why:** This component completes the grid layout for translation results. The responsive design ensures good UX on both desktop (2 columns) and mobile (1 column).
+
+**Notes:** Next task in Results UI: loading skeleton while translating.

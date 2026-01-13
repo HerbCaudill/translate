@@ -7,8 +7,8 @@
 #### 7. Results UI
 
 - [x] Create TranslationCard component (single language)
-- [ ] Display multiple translation options with explanations
-- [ ] Create TranslationResults component (grid of cards)
+- [x] Display multiple translation options with explanations
+- [x] Create TranslationResults component (grid of cards)
 - [ ] Add loading skeleton while translating
 
 #### 8. Settings

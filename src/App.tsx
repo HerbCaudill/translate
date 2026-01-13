@@ -5,7 +5,7 @@ import { useCompletionCheck } from "@/hooks/useCompletionCheck"
 import { useTranslation } from "@/hooks/useTranslation"
 import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
-import { TranslationCard } from "@/components/TranslationCard"
+import { TranslationResults } from "@/components/TranslationResults"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
@@ -75,13 +75,7 @@ export function App() {
       )}
 
       {/* Translation results */}
-      {results.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {results.map(result => (
-            <TranslationCard key={result.language.code} translation={result} />
-          ))}
-        </div>
-      )}
+      <TranslationResults results={results} />
     </div>
   )
 }
