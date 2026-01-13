@@ -60,4 +60,14 @@ describe("TranslateInput", () => {
     // Should not throw
     await user.keyboard("{Escape}")
   })
+
+  it("shows loading spinner when loading is true", () => {
+    render(<TranslateInput value="" onChange={() => {}} loading />)
+    expect(screen.getByRole("textbox").parentElement?.querySelector("svg")).toBeInTheDocument()
+  })
+
+  it("hides loading spinner when loading is false", () => {
+    render(<TranslateInput value="" onChange={() => {}} loading={false} />)
+    expect(screen.getByRole("textbox").parentElement?.querySelector("svg")).not.toBeInTheDocument()
+  })
 })

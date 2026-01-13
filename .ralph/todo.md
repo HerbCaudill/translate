@@ -1,12 +1,12 @@
 ### To do
 
-- [ ] Loading states for all async operations
 - [ ] Responsive layout for mobile
-- [x] Configure manifest (name, icons, theme color)
 - [ ] Add service worker for offline shell
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+- [x] Add loading spinner to TranslateInput for completion check and translation states
 
 - [x] Handle rate limiting gracefully
 - [x] Empty state when no translations yet

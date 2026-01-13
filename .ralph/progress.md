@@ -675,3 +675,28 @@ Updated `src/App.test.tsx`:
 **Why:** A properly configured manifest is essential for the PWA to install correctly on desktop and mobile. Icons and theme colors create a professional, branded appearance when the app is installed.
 
 **Notes:** The theme color (#3b82f6) matches the blue gradient in the icon. The icon design uses overlapping speech bubbles with "A" (Latin) and "あ" (Japanese hiragana) to visually represent translation between languages.
+
+---
+
+## 2026-01-13: Add loading spinner to TranslateInput
+
+**What changed:** Added a visual loading indicator to the text input area:
+
+- Updated `src/components/TranslateInput.tsx`:
+  - Added `loading` optional prop (defaults to false)
+  - Added IconLoader2 from Tabler icons with spin animation
+  - Spinner appears in top-right corner of textarea when loading is true
+  - Added right padding when loading to prevent text overlapping spinner
+  - Wrapped textarea in a relative div for absolute positioning of spinner
+
+- Updated `src/App.tsx`:
+  - Pass `loading` prop to TranslateInput
+  - Loading is true when `completionStatus === "checking"` OR `translationStatus === "translating"`
+
+- Added tests in `src/components/TranslateInput.test.tsx`:
+  - "shows loading spinner when loading is true"
+  - "hides loading spinner when loading is false"
+
+**Why:** Previously users had no visual feedback during the completion check phase. The spinner now shows activity during both completion checking (Haiku analyzing if input is complete) and translation (Sonnet translating to all languages), improving the user experience.
+
+**Notes:** The spinner uses Tailwind's `animate-spin` class for smooth rotation animation. This addresses the "Loading states for all async operations" todo item.
