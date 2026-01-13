@@ -483,3 +483,27 @@ Updated `src/components/SettingsDialog.test.tsx`:
 **Why:** Completes the Settings section (8). Users can now customize the translation prompt to change how translations are generated, and reset to default if needed.
 
 **Notes:** Section 8 (Settings) is now fully complete. Next section is 9 (History).
+
+---
+
+## 2026-01-13: Save translations to localStorage
+
+**What changed:** Updated `src/App.tsx` to integrate history saving:
+
+- Added `useHistory` hook import and usage
+- Added `savedTranslationRef` ref to track which translations have been saved (prevents duplicates)
+- Added `useEffect` that saves translations to history when:
+  - Translation status becomes "success" or "partial"
+  - There are results to save
+  - The input text hasn't already been saved
+- The Translation object saved includes: input text, results array, and timestamp
+
+Updated `src/App.test.tsx`:
+
+- Added "App history saving" describe block with 2 tests:
+  - "saves translation to history when translation completes" - verifies history entry is created with correct data
+  - "saves partial translations to history" - verifies partial successes (some languages fail) are also saved
+
+**Why:** This is the first task in section 9 (History). Translations are now automatically persisted to localStorage, enabling future features like viewing history, searching past translations, and restoring previous translations.
+
+**Notes:** The `useHistory` hook was already implemented with full functionality. This change just wires it up to the translation flow. Next tasks: create HistoryView component, search/filter, click to restore, clear history option.

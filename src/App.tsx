@@ -3,6 +3,7 @@ import { useSettings } from "@/hooks/useSettings"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useCompletionCheck } from "@/hooks/useCompletionCheck"
 import { useTranslation } from "@/hooks/useTranslation"
+import { useHistory } from "@/hooks/useHistory"
 import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
@@ -11,6 +12,7 @@ import { SettingsDialog } from "@/components/SettingsDialog"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
+  const { addEntry } = useHistory()
   const [inputText, setInputText] = useState("")
 
   const debouncedText = useDebounce(inputText, 500)
@@ -76,6 +78,25 @@ export function App() {
       resetTranslation()
     }
   }, [inputText, resetTranslation])
+
+  // Track which translation we've saved to avoid duplicates
+  const savedTranslationRef = useRef<string>("")
+
+  // Save translation to history when it completes
+  useEffect(() => {
+    const hasResults = results.length > 0
+    const isComplete = translationStatus === "success" || translationStatus === "partial"
+    const inputToSave = translatedTextRef.current
+
+    if (hasResults && isComplete && inputToSave && inputToSave !== savedTranslationRef.current) {
+      savedTranslationRef.current = inputToSave
+      addEntry({
+        input: inputToSave,
+        results,
+        timestamp: Date.now(),
+      })
+    }
+  }, [translationStatus, results, addEntry])
 
   const handleApiKeySubmit = async (apiKey: string) => {
     updateSettings({ apiKey })

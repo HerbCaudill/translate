@@ -17,7 +17,7 @@
 
 #### 9. History
 
-- [ ] Save each translation to localStorage
+- [x] Save each translation to localStorage
 - [ ] Create HistoryView component
 - [ ] Search/filter history by input text
 - [ ] Click history item to show translation again

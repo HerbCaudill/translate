@@ -184,3 +184,115 @@ describe("App fallback translation", () => {
     expect(anthropic.translate).not.toHaveBeenCalled()
   })
 })
+
+describe("App history saving", () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("saves translation to history when translation completes", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+        translationPrompt: "",
+        completionPrompt: "",
+      }),
+    )
+
+    vi.mocked(anthropic.checkCompletion).mockResolvedValue({ status: "complete" })
+    vi.mocked(anthropic.translate).mockResolvedValue({
+      success: true,
+      options: [{ text: "hola", explanation: "greeting" }],
+    })
+
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    fireEvent.change(input, { target: { value: "hello" } })
+
+    // Advance past debounces
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+
+    // Allow promises to resolve
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Translation should be called
+    expect(anthropic.translate).toHaveBeenCalled()
+
+    // Check history was saved
+    const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]")
+    expect(history).toHaveLength(1)
+    expect(history[0].input).toBe("hello")
+    expect(history[0].translation.results).toHaveLength(1)
+    expect(history[0].translation.results[0].language.code).toBe("es")
+    expect(history[0].translation.results[0].options[0].text).toBe("hola")
+  })
+
+  it("saves partial translations to history", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [
+          { code: "es", name: "Spanish" },
+          { code: "fr", name: "French" },
+        ],
+        translationPrompt: "",
+        completionPrompt: "",
+      }),
+    )
+
+    vi.mocked(anthropic.checkCompletion).mockResolvedValue({ status: "complete" })
+    // One succeeds, one fails - partial result
+    vi.mocked(anthropic.translate)
+      .mockResolvedValueOnce({
+        success: true,
+        options: [{ text: "hola", explanation: "greeting" }],
+      })
+      .mockResolvedValueOnce({
+        success: false,
+        error: "API error",
+      })
+
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    fireEvent.change(input, { target: { value: "hello" } })
+
+    // Advance past debounces
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+
+    // Allow promises to resolve
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Check history was saved even with partial results
+    const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]")
+    expect(history).toHaveLength(1)
+    expect(history[0].input).toBe("hello")
+    // Should only have the successful translation
+    expect(history[0].translation.results).toHaveLength(1)
+    expect(history[0].translation.results[0].language.code).toBe("es")
+  })
+})
