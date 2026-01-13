@@ -2,7 +2,7 @@
 
 #### 2. Core types and storage
 
-- [ ] Define TypeScript types (Settings, Translation, HistoryEntry)
+- [x] Define TypeScript types (Settings, Translation, HistoryEntry)
 - [ ] Create localStorage helper functions (get, set, remove)
 - [ ] Create useSettings hook
 - [ ] Create useHistory hook
