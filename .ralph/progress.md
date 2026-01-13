@@ -24,3 +24,22 @@ Each entry should include:
 **Why:** These types form the foundation for the app's data model. All hooks and components will use these types for type safety.
 
 **Notes:** The `TranslationOption` includes an `explanation` field to support the multi-option translation feature where each translation comes with context about when to use it.
+
+---
+
+## 2026-01-13: Create localStorage helper functions
+
+**What changed:** Created `src/lib/storage.ts` with typed localStorage helpers:
+
+- `getItem<T>(key)` - retrieves and parses JSON from localStorage, returns null on missing/invalid
+- `setItem<T>(key, value)` - stringifies and stores value
+- `removeItem(key)` - removes key from storage
+- `STORAGE_KEYS` - typed constants for storage keys (`translate:settings`, `translate:history`)
+
+Also added:
+- `vitest.config.ts` with jsdom environment for browser API testing
+- `src/lib/storage.test.ts` with comprehensive unit tests
+
+**Why:** These helpers provide a type-safe abstraction over localStorage with automatic JSON serialization. The typed storage keys prevent typos and ensure consistency.
+
+**Notes:** Installed `jsdom` as a dev dependency to support localStorage in Vitest tests.
