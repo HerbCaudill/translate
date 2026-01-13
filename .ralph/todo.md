@@ -1,13 +1,5 @@
 ### To do
 
-#### 4. Anthropic client
-
-- [ ] Install @anthropic-ai/sdk
-- [ ] Create anthropic.ts client wrapper
-- [ ] Create completion detection function (Haiku)
-- [ ] Create translation function (Opus)
-- [ ] Define default prompts in prompts.ts
-
 #### 5. Main translation flow
 
 - [ ] Create TranslateInput component with autofocus q
@@ -66,6 +58,14 @@
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+#### 4. Anthropic client
+
+- [x] Install @anthropic-ai/sdk
+- [x] Create anthropic.ts client wrapper
+- [x] Create completion detection function (Haiku)
+- [x] Create translation function (Opus)
+- [x] Define default prompts in prompts.ts
 
 #### 3. API key flow
 

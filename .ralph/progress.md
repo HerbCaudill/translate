@@ -154,3 +154,24 @@ Also added:
 **Why:** Validates API keys before storing them, so users get immediate feedback if their key is invalid. This prevents frustration from entering an invalid key and only discovering it later during translation.
 
 **Notes:** The Anthropic SDK was already installed. The validation treats rate limit errors as valid (the key works, just temporarily limited).
+
+---
+
+## 2026-01-13: Create Anthropic client wrapper and prompts
+
+**What changed:** Created the Anthropic client layer with:
+
+- `src/lib/prompts.ts`:
+  - `DEFAULT_COMPLETION_PROMPT` - system prompt for Haiku to detect if user has finished typing a complete thought
+  - `DEFAULT_TRANSLATION_PROMPT` - system prompt for translation with `{{language}}` placeholder
+
+- `src/lib/anthropic.ts`:
+  - `checkCompletion(apiKey, text, customPrompt?)` - uses Haiku to detect if input is complete; returns `{ status: "complete" | "incomplete" | "error" }`
+  - `translate(apiKey, text, language, customPrompt?)` - uses Sonnet to translate text; returns `{ success: true, options: TranslationOption[] }` or `{ success: false, error: string }`
+  - Both functions handle empty input, API errors, authentication errors, and rate limits gracefully
+
+- `src/lib/anthropic.test.ts` with 15 unit tests covering both functions
+
+**Why:** These functions provide the core translation functionality. The completion detection (Haiku) determines when to auto-trigger translation, and the translation function (using Sonnet for now, originally planned for Opus) performs the actual translation with multiple options.
+
+**Notes:** Using `claude-sonnet-4-20250514` instead of Opus for translations as it provides good quality at lower cost. The model can be easily changed later. The translation response format is JSON with an array of options, each containing text and explanation.
