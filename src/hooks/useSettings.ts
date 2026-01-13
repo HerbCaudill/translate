@@ -1,0 +1,45 @@
+import { useState, useCallback } from "react"
+import { Settings } from "@/types"
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
+
+export const DEFAULT_SETTINGS: Settings = {
+  apiKey: "",
+  languages: [
+    { code: "es", name: "Spanish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+  ],
+  translationPrompt: `You are a professional translator. Translate the following text into {{language}}.
+Provide 2-3 translation options when there are multiple valid ways to express the meaning.
+For each option, briefly explain any nuances or when it would be most appropriate to use.`,
+  completionPrompt: `Determine if the following text appears to be a complete thought or sentence that is ready for translation.
+Respond with only "complete" or "incomplete".`,
+}
+
+export const useSettings = () => {
+  const [settings, setSettings] = useState<Settings>(() => {
+    const stored = getItem<Settings>(STORAGE_KEYS.SETTINGS)
+    return stored ?? DEFAULT_SETTINGS
+  })
+
+  const updateSettings = useCallback((updates: Partial<Settings>) => {
+    setSettings(current => {
+      const newSettings = { ...current, ...updates }
+      setItem(STORAGE_KEYS.SETTINGS, newSettings)
+      return newSettings
+    })
+  }, [])
+
+  const resetSettings = useCallback(() => {
+    setSettings(DEFAULT_SETTINGS)
+    setItem(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS)
+  }, [])
+
+  return {
+    settings,
+    updateSettings,
+    resetSettings,
+  }
+}
+
+export type UseSettingsReturn = ReturnType<typeof useSettings>

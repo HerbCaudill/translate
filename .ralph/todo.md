@@ -4,7 +4,7 @@
 
 - [x] Define TypeScript types (Settings, Translation, HistoryEntry)
 - [x] Create localStorage helper functions (get, set, remove)
-- [ ] Create useSettings hook
+- [x] Create useSettings hook
 - [ ] Create useHistory hook
 
 #### 3. API key flow

@@ -37,9 +37,31 @@ Each entry should include:
 - `STORAGE_KEYS` - typed constants for storage keys (`translate:settings`, `translate:history`)
 
 Also added:
+
 - `vitest.config.ts` with jsdom environment for browser API testing
 - `src/lib/storage.test.ts` with comprehensive unit tests
 
 **Why:** These helpers provide a type-safe abstraction over localStorage with automatic JSON serialization. The typed storage keys prevent typos and ensure consistency.
 
 **Notes:** Installed `jsdom` as a dev dependency to support localStorage in Vitest tests.
+
+---
+
+## 2026-01-13: Create useSettings hook
+
+**What changed:** Created `src/hooks/useSettings.ts` with:
+
+- `DEFAULT_SETTINGS` - default configuration with empty API key, three default languages (Spanish, French, German), and default prompts
+- `useSettings()` hook that returns `{ settings, updateSettings, resetSettings }`
+- Settings are loaded from localStorage on mount, falling back to defaults
+- `updateSettings(partial)` merges partial updates and persists to localStorage
+- `resetSettings()` reverts to default settings
+
+Also added:
+
+- `src/hooks/useSettings.test.ts` with 6 unit tests covering load, update, merge, and reset behaviors
+- Installed `@testing-library/react` for hook testing
+
+**Why:** This hook provides the foundation for managing user preferences throughout the app. Components can read settings and update them through a consistent interface.
+
+**Notes:** The default translation prompt uses `{{language}}` as a placeholder that will be replaced with the target language name during translation.
