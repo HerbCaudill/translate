@@ -719,3 +719,28 @@ Updated `src/App.test.tsx`:
 - `TranslationResults` uses `md:grid-cols-2` (single column on mobile, two columns on tablet+)
 - `Dialog` uses `max-w-[calc(100%-2rem)]` on mobile and `sm:max-w-lg` on larger screens
 - `ApiKeyPrompt` already had `p-4` padding
+
+---
+
+## 2026-01-13: Add service worker for offline shell
+
+**What changed:** Added service worker registration and configuration for offline support:
+
+- Updated `vite.config.ts`:
+  - Added `navigateFallback: "index.html"` for SPA routing support
+  - Added `navigateFallbackDenylist: [/^\/api/]` to exclude API routes
+  - Added `runtimeCaching` for Google Fonts with CacheFirst strategy and 1-year expiration
+
+- Updated `src/main.tsx`:
+  - Added `registerSW` import from `virtual:pwa-register`
+  - Registered service worker with `onNeedRefresh` and `onOfflineReady` callbacks
+  - Auto-update enabled via the existing `registerType: "autoUpdate"` config
+
+- Updated `tsconfig.app.json`:
+  - Added `"vite-plugin-pwa/client"` to `types` array for TypeScript support
+
+- Added `workbox-window` dependency for service worker registration
+
+**Why:** Enables the app to work offline as a PWA. The service worker precaches all app assets (JS, CSS, HTML, fonts, images) and serves them from cache when offline. Navigation fallback ensures SPA routing works correctly. Font caching improves load times on repeat visits.
+
+**Notes:** The build now generates `sw.js` and `workbox-*.js` in the dist folder. The app shell (HTML, CSS, JS) is cached for offline use; however, translations still require network access since the Anthropic API cannot be cached.

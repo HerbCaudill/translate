@@ -46,6 +46,9 @@ importers:
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
+      workbox-window:
+        specifier: ^7.4.0
+        version: 7.4.0
     devDependencies:
       "@herbcaudill/ralph":
         specifier: link:../ralph

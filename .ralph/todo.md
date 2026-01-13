@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] Add service worker for offline shell
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+- [x] Add service worker for offline shell
 
 - [x] Responsive layout for mobile
 - [x] Add loading spinner to TranslateInput for completion check and translation states
