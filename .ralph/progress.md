@@ -419,3 +419,35 @@ Also:
 **Why:** First step in Settings section (8). The SettingsDialog provides the container for all settings controls. Currently shows placeholder content; future tasks will add language management and prompt editing.
 
 **Notes:** The dialog uses controlled state (`open`, `onOpenChange`) to manage visibility. Next tasks: languages list (add/remove/reorder), prompt editor, reset button.
+
+---
+
+## 2026-01-13: Add language list management to settings
+
+**What changed:** Created `src/components/LanguageList.tsx`:
+
+- Displays list of configured target languages with code and name
+- Each language has up/down arrows for reordering and trash button for removal
+- Add form at bottom with code and name inputs plus add button
+- Validates for duplicate language codes with error message
+- Empty state when no languages configured
+- First/last items have disabled move buttons appropriately
+
+Updated `src/components/SettingsDialog.tsx`:
+
+- Added LanguageList component with "Target languages" label
+- Now accepts `languages` and `onLanguagesChange` props
+- Wired up to update settings when languages change
+
+Updated `src/App.tsx`:
+
+- Passes `settings.languages` and update callback to SettingsDialog
+
+Also:
+
+- Added `src/components/LanguageList.test.tsx` with 12 unit tests
+- Updated `src/components/SettingsDialog.test.tsx` with 2 new integration tests
+
+**Why:** Users can now customize which languages to translate to. They can add new languages, remove existing ones, and reorder the list to prioritize their most-used languages.
+
+**Notes:** Next tasks in Settings: prompt editor textarea, reset prompt to default button.

@@ -1,17 +1,23 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 import { SettingsDialog } from "./SettingsDialog"
+import { Language } from "@/types"
+
+const defaultLanguages: Language[] = [
+  { code: "es", name: "Spanish" },
+  { code: "fr", name: "French" },
+]
 
 describe("SettingsDialog", () => {
   it("renders the settings button", () => {
-    render(<SettingsDialog />)
+    render(<SettingsDialog languages={defaultLanguages} onLanguagesChange={vi.fn()} />)
     expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument()
   })
 
   it("opens the dialog when the button is clicked", async () => {
     const user = userEvent.setup()
-    render(<SettingsDialog />)
+    render(<SettingsDialog languages={defaultLanguages} onLanguagesChange={vi.fn()} />)
 
     await user.click(screen.getByRole("button", { name: "Settings" }))
 
@@ -22,7 +28,7 @@ describe("SettingsDialog", () => {
 
   it("closes the dialog when the close button is clicked", async () => {
     const user = userEvent.setup()
-    render(<SettingsDialog />)
+    render(<SettingsDialog languages={defaultLanguages} onLanguagesChange={vi.fn()} />)
 
     await user.click(screen.getByRole("button", { name: "Settings" }))
     expect(screen.getByRole("dialog")).toBeInTheDocument()
@@ -34,7 +40,7 @@ describe("SettingsDialog", () => {
   it("renders custom children as trigger", async () => {
     const user = userEvent.setup()
     render(
-      <SettingsDialog>
+      <SettingsDialog languages={defaultLanguages} onLanguagesChange={vi.fn()}>
         <button>Custom trigger</button>
       </SettingsDialog>,
     )
@@ -44,5 +50,30 @@ describe("SettingsDialog", () => {
 
     await user.click(screen.getByRole("button", { name: "Custom trigger" }))
     expect(screen.getByRole("dialog")).toBeInTheDocument()
+  })
+
+  it("displays the language list when dialog is open", async () => {
+    const user = userEvent.setup()
+    render(<SettingsDialog languages={defaultLanguages} onLanguagesChange={vi.fn()} />)
+
+    await user.click(screen.getByRole("button", { name: "Settings" }))
+
+    expect(screen.getByText("Target languages")).toBeInTheDocument()
+    expect(screen.getByText("Spanish")).toBeInTheDocument()
+    expect(screen.getByText("French")).toBeInTheDocument()
+  })
+
+  it("calls onLanguagesChange when a language is removed", async () => {
+    const user = userEvent.setup()
+    const onLanguagesChange = vi.fn()
+    render(<SettingsDialog languages={defaultLanguages} onLanguagesChange={onLanguagesChange} />)
+
+    await user.click(screen.getByRole("button", { name: "Settings" }))
+
+    const spanishItem = screen.getByText("Spanish").closest("[data-language]")!
+    const removeButton = within(spanishItem).getByRole("button", { name: /remove/i })
+    await user.click(removeButton)
+
+    expect(onLanguagesChange).toHaveBeenCalledWith([{ code: "fr", name: "French" }])
   })
 })

@@ -9,8 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { LanguageList } from "@/components/LanguageList"
+import { Language } from "@/types"
 
-export const SettingsDialog = ({ children }: Props) => {
+export const SettingsDialog = ({ languages, onLanguagesChange, children }: Props) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -27,8 +30,11 @@ export const SettingsDialog = ({ children }: Props) => {
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Configure your translation preferences.</DialogDescription>
         </DialogHeader>
-        <div className="py-4">
-          <p className="text-muted-foreground text-sm">Settings content will be added here.</p>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>Target languages</Label>
+            <LanguageList languages={languages} onChange={onLanguagesChange} />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -36,5 +42,7 @@ export const SettingsDialog = ({ children }: Props) => {
 }
 
 type Props = {
+  languages: Language[]
+  onLanguagesChange: (languages: Language[]) => void
   children?: React.ReactNode
 }

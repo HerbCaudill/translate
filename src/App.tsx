@@ -89,7 +89,10 @@ export function App() {
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-6">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Translate</h1>
-        <SettingsDialog />
+        <SettingsDialog
+          languages={settings.languages}
+          onLanguagesChange={languages => updateSettings({ languages })}
+        />
       </header>
       <TranslateInput value={inputText} onChange={setInputText} />
 
