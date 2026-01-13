@@ -700,3 +700,22 @@ Updated `src/App.test.tsx`:
 **Why:** Previously users had no visual feedback during the completion check phase. The spinner now shows activity during both completion checking (Haiku analyzing if input is complete) and translation (Sonnet translating to all languages), improving the user experience.
 
 **Notes:** The spinner uses Tailwind's `animate-spin` class for smooth rotation animation. This addresses the "Loading states for all async operations" todo item.
+
+---
+
+## 2026-01-13: Responsive layout for mobile
+
+**What changed:** Adjusted the main layout container for better mobile experience:
+
+- Updated `src/App.tsx`:
+  - Changed container classes from `gap-6 p-6` to `gap-4 p-4 sm:gap-6 sm:p-6`
+  - On mobile (< 640px): Uses 16px padding and 16px gap between elements
+  - On desktop (≥ 640px): Uses 24px padding and 24px gap (original values)
+
+**Why:** The original 24px padding was too large on small mobile screens, wasting valuable screen real estate. The responsive padding provides a better experience on smaller devices while maintaining the spacious feel on larger screens.
+
+**Notes:** Other components already had good responsive behavior:
+
+- `TranslationResults` uses `md:grid-cols-2` (single column on mobile, two columns on tablet+)
+- `Dialog` uses `max-w-[calc(100%-2rem)]` on mobile and `sm:max-w-lg` on larger screens
+- `ApiKeyPrompt` already had `p-4` padding

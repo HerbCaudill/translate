@@ -1,11 +1,11 @@
 ### To do
 
-- [ ] Responsive layout for mobile
 - [ ] Add service worker for offline shell
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
 
+- [x] Responsive layout for mobile
 - [x] Add loading spinner to TranslateInput for completion check and translation states
 
 - [x] Handle rate limiting gracefully

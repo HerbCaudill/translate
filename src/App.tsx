@@ -152,7 +152,7 @@ export function App() {
   const displayResults = selectedHistoryEntry?.translation.results ?? results
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-6">
+    <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Translate</h1>
         <div className="flex items-center gap-1">
