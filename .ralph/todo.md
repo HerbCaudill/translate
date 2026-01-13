@@ -2,7 +2,7 @@
 
 #### 3. API key flow
 
-- [ ] Create ApiKeyPrompt component
+- [x] Create ApiKeyPrompt component
 - [ ] Add API key validation (test call to Anthropic)
 - [ ] Store API key in localStorage
 - [ ] Show prompt on first run or when key is missing
@@ -17,7 +17,7 @@
 
 #### 5. Main translation flow
 
-- [ ] Create TranslateInput component with autofocus
+- [ ] Create TranslateInput component with autofocus q
 - [ ] Implement debounce hook (500ms)
 - [ ] Create useCompletionCheck hook (calls Haiku)
 - [ ] Create useTranslation hook (calls Opus)

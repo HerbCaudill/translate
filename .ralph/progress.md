@@ -86,3 +86,27 @@ Also added:
 **Why:** This hook provides the foundation for translation history functionality. It allows saving translations for later reference, searching through past translations, and clearing history.
 
 **Notes:** The hook generates unique IDs using timestamp + random string. History is automatically sorted with newest entries first.
+
+---
+
+## 2026-01-13: Create ApiKeyPrompt component
+
+**What changed:** Created `src/components/ApiKeyPrompt.tsx`:
+
+- Card-based UI prompting user for their Anthropic API key
+- Password input field with autofocus
+- Link to Anthropic Console for obtaining an API key
+- Loading state ("Validating...") while async `onSubmit` is processing
+- Button disabled when input is empty or during submission
+- Accepts `onSubmit: (apiKey: string) => Promise<void>` prop for handling key validation
+
+Also added:
+
+- `src/components/ApiKeyPrompt.test.tsx` with 7 unit tests
+- `src/test/setup.ts` to configure jest-dom matchers for Vitest
+- Installed shadcn components: input, label, card
+- Installed dev dependencies: @testing-library/jest-dom, @testing-library/user-event
+
+**Why:** This component is the first step in the API key flow. Users need to provide their API key before they can use the translation service.
+
+**Notes:** The component handles UI only; validation logic will be wired up when the Anthropic client is implemented.
