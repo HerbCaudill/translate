@@ -8,10 +8,31 @@ const mockCreate = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.useFakeTimers()
   ;(Anthropic as unknown as Mock).mockImplementation(() => ({
     messages: { create: mockCreate },
   }))
 })
+
+const createRateLimitError = (retryAfter?: string) => {
+  const headers = new Headers()
+  if (retryAfter) {
+    headers.set("retry-after", retryAfter)
+  }
+  return new Anthropic.RateLimitError(
+    429,
+    { type: "error", error: { type: "rate_limit_error", message: "Rate limited" } },
+    "Rate limited",
+    headers,
+  )
+}
+
+const flushRetries = async () => {
+  // Flush all pending timers from retries
+  for (let i = 0; i < 4; i++) {
+    await vi.runAllTimersAsync()
+  }
+}
 
 describe("checkCompletion", () => {
   it("returns incomplete for empty text", async () => {
@@ -58,21 +79,44 @@ describe("checkCompletion", () => {
     expect(result).toEqual({ status: "error", error: "Invalid API key" })
   })
 
-  it("handles rate limit error", async () => {
-    mockCreate.mockRejectedValue(
-      new Anthropic.RateLimitError(
-        429,
-        { type: "error", error: { type: "rate_limit_error", message: "Rate limited" } },
-        "Rate limited",
-        {} as Headers,
-      ),
-    )
+  it("retries on rate limit error and eventually fails after max retries", async () => {
+    mockCreate.mockRejectedValue(createRateLimitError())
 
-    const result = await checkCompletion("test-key", "Hello")
+    const resultPromise = checkCompletion("test-key", "Hello")
+    await flushRetries()
+    const result = await resultPromise
+
+    // Should have tried 4 times (1 initial + 3 retries)
+    expect(mockCreate).toHaveBeenCalledTimes(4)
     expect(result).toEqual({
       status: "error",
       error: "Rate limit exceeded. Please try again later.",
     })
+  })
+
+  it("succeeds after rate limit retry", async () => {
+    mockCreate
+      .mockRejectedValueOnce(createRateLimitError())
+      .mockResolvedValueOnce({ content: [{ type: "text", text: "complete" }] })
+
+    const resultPromise = checkCompletion("test-key", "Hello")
+    await flushRetries()
+    const result = await resultPromise
+
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+    expect(result).toEqual({ status: "complete" })
+  })
+
+  it("uses retry-after header for delay", async () => {
+    mockCreate
+      .mockRejectedValueOnce(createRateLimitError("5"))
+      .mockResolvedValueOnce({ content: [{ type: "text", text: "complete" }] })
+
+    const resultPromise = checkCompletion("test-key", "Hello")
+    await flushRetries()
+    const result = await resultPromise
+
+    expect(result).toEqual({ status: "complete" })
   })
 
   it("uses custom prompt when provided", async () => {
@@ -139,21 +183,33 @@ describe("translate", () => {
     expect(result).toEqual({ success: false, error: "Invalid API key" })
   })
 
-  it("handles rate limit error", async () => {
-    mockCreate.mockRejectedValue(
-      new Anthropic.RateLimitError(
-        429,
-        { type: "error", error: { type: "rate_limit_error", message: "Rate limited" } },
-        "Rate limited",
-        {} as Headers,
-      ),
-    )
+  it("retries on rate limit error and eventually fails after max retries", async () => {
+    mockCreate.mockRejectedValue(createRateLimitError())
 
-    const result = await translate("test-key", "Hello", language)
+    const resultPromise = translate("test-key", "Hello", language)
+    await flushRetries()
+    const result = await resultPromise
+
+    // Should have tried 4 times (1 initial + 3 retries)
+    expect(mockCreate).toHaveBeenCalledTimes(4)
     expect(result).toEqual({
       success: false,
       error: "Rate limit exceeded. Please try again later.",
     })
+  })
+
+  it("succeeds after rate limit retry", async () => {
+    const options = [{ text: "Hola", explanation: "Standard greeting" }]
+    mockCreate
+      .mockRejectedValueOnce(createRateLimitError())
+      .mockResolvedValueOnce({ content: [{ type: "text", text: JSON.stringify({ options }) }] })
+
+    const resultPromise = translate("test-key", "Hello", language)
+    await flushRetries()
+    const result = await resultPromise
+
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+    expect(result).toEqual({ success: true, options })
   })
 
   it("replaces language placeholder in prompt", async () => {

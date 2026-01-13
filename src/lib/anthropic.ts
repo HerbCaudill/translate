@@ -5,6 +5,30 @@ import { DEFAULT_COMPLETION_PROMPT, DEFAULT_TRANSLATION_PROMPT } from "./prompts
 const HAIKU_MODEL = "claude-3-5-haiku-latest"
 const OPUS_MODEL = "claude-sonnet-4-20250514"
 
+const MAX_RETRIES = 3
+const INITIAL_RETRY_DELAY_MS = 1000
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+const getRetryAfterMs = (error: Anthropic.RateLimitError): number | undefined => {
+  const retryAfter = error.headers?.get("retry-after")
+  if (!retryAfter) return undefined
+
+  // retry-after can be seconds (number) or HTTP-date
+  const seconds = parseInt(retryAfter, 10)
+  if (!isNaN(seconds)) {
+    return seconds * 1000
+  }
+
+  // Try parsing as HTTP-date
+  const date = Date.parse(retryAfter)
+  if (!isNaN(date)) {
+    return Math.max(0, date - Date.now())
+  }
+
+  return undefined
+}
+
 export type CompletionResult =
   | { status: "complete" }
   | { status: "incomplete" }
@@ -33,36 +57,51 @@ export const checkCompletion = async (
   const client = createClient(apiKey)
   const systemPrompt = customPrompt || DEFAULT_COMPLETION_PROMPT
 
-  try {
-    const response = await client.messages.create({
-      model: HAIKU_MODEL,
-      max_tokens: 10,
-      system: systemPrompt,
-      messages: [{ role: "user", content: text }],
-    })
+  let lastError: Error | undefined
 
-    const content = response.content[0]
-    if (content.type !== "text") {
-      return { status: "error", error: "Unexpected response format" }
-    }
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await client.messages.create({
+        model: HAIKU_MODEL,
+        max_tokens: 10,
+        system: systemPrompt,
+        messages: [{ role: "user", content: text }],
+      })
 
-    const result = content.text.toLowerCase().trim()
-    if (result.includes("complete") && !result.includes("incomplete")) {
-      return { status: "complete" }
+      const content = response.content[0]
+      if (content.type !== "text") {
+        return { status: "error", error: "Unexpected response format" }
+      }
+
+      const result = content.text.toLowerCase().trim()
+      if (result.includes("complete") && !result.includes("incomplete")) {
+        return { status: "complete" }
+      }
+      return { status: "incomplete" }
+    } catch (error) {
+      lastError = error as Error
+
+      if (error instanceof Anthropic.AuthenticationError) {
+        return { status: "error", error: "Invalid API key" }
+      }
+
+      if (error instanceof Anthropic.RateLimitError) {
+        if (attempt < MAX_RETRIES) {
+          const retryAfterMs = getRetryAfterMs(error)
+          const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
+          await sleep(delayMs)
+          continue
+        }
+        return { status: "error", error: "Rate limit exceeded. Please try again later." }
+      }
+
+      if (error instanceof Anthropic.APIError) {
+        return { status: "error", error: `API error: ${error.message}` }
+      }
     }
-    return { status: "incomplete" }
-  } catch (error) {
-    if (error instanceof Anthropic.AuthenticationError) {
-      return { status: "error", error: "Invalid API key" }
-    }
-    if (error instanceof Anthropic.RateLimitError) {
-      return { status: "error", error: "Rate limit exceeded. Please try again later." }
-    }
-    if (error instanceof Anthropic.APIError) {
-      return { status: "error", error: `API error: ${error.message}` }
-    }
-    return { status: "error", error: "Failed to check completion" }
   }
+
+  return { status: "error", error: lastError?.message ?? "Failed to check completion" }
 }
 
 export const translate = async (
@@ -79,38 +118,54 @@ export const translate = async (
   const basePrompt = customPrompt || DEFAULT_TRANSLATION_PROMPT
   const systemPrompt = basePrompt.replace("{{language}}", `${language.name} (${language.code})`)
 
-  try {
-    const response = await client.messages.create({
-      model: OPUS_MODEL,
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: [{ role: "user", content: text }],
-    })
+  let lastError: Error | undefined
 
-    const content = response.content[0]
-    if (content.type !== "text") {
-      return { success: false, error: "Unexpected response format" }
-    }
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await client.messages.create({
+        model: OPUS_MODEL,
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: [{ role: "user", content: text }],
+      })
 
-    const parsed = JSON.parse(content.text) as { options: TranslationOption[] }
-    if (!parsed.options || !Array.isArray(parsed.options)) {
-      return { success: false, error: "Invalid response format" }
-    }
+      const content = response.content[0]
+      if (content.type !== "text") {
+        return { success: false, error: "Unexpected response format" }
+      }
 
-    return { success: true, options: parsed.options }
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      return { success: false, error: "Failed to parse translation response" }
+      const parsed = JSON.parse(content.text) as { options: TranslationOption[] }
+      if (!parsed.options || !Array.isArray(parsed.options)) {
+        return { success: false, error: "Invalid response format" }
+      }
+
+      return { success: true, options: parsed.options }
+    } catch (error) {
+      lastError = error as Error
+
+      if (error instanceof SyntaxError) {
+        return { success: false, error: "Failed to parse translation response" }
+      }
+
+      if (error instanceof Anthropic.AuthenticationError) {
+        return { success: false, error: "Invalid API key" }
+      }
+
+      if (error instanceof Anthropic.RateLimitError) {
+        if (attempt < MAX_RETRIES) {
+          const retryAfterMs = getRetryAfterMs(error)
+          const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
+          await sleep(delayMs)
+          continue
+        }
+        return { success: false, error: "Rate limit exceeded. Please try again later." }
+      }
+
+      if (error instanceof Anthropic.APIError) {
+        return { success: false, error: `API error: ${error.message}` }
+      }
     }
-    if (error instanceof Anthropic.AuthenticationError) {
-      return { success: false, error: "Invalid API key" }
-    }
-    if (error instanceof Anthropic.RateLimitError) {
-      return { success: false, error: "Rate limit exceeded. Please try again later." }
-    }
-    if (error instanceof Anthropic.APIError) {
-      return { success: false, error: `API error: ${error.message}` }
-    }
-    return { success: false, error: "Failed to translate" }
   }
+
+  return { success: false, error: lastError?.message ?? "Failed to translate" }
 }

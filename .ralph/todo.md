@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] Handle rate limiting gracefully
 - [ ] Loading states for all async operations
 - [ ] Responsive layout for mobile
 - [ ] Configure manifest (name, icons, theme color)
@@ -9,6 +8,7 @@
 
 ### Done
 
+- [x] Handle rate limiting gracefully
 - [x] Empty state when no translations yet
 - [x] Install sonner for toast notifications
 - [x] Show toast on API errors

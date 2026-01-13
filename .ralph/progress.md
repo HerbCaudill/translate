@@ -620,3 +620,30 @@ Updated `src/App.test.tsx`:
 **Why:** New users need clear feedback about what to do when they first open the app. The empty state provides a friendly prompt to start typing, improving the onboarding experience.
 
 **Notes:** The empty state appears both on first load and after clearing the input with Escape. It disappears as soon as translation begins (skeleton shows) or results are displayed.
+
+---
+
+## 2026-01-13: Handle rate limiting gracefully
+
+**What changed:** Added automatic retry with exponential backoff for rate limit errors:
+
+- Updated `src/lib/anthropic.ts`:
+  - Added `MAX_RETRIES = 3` and `INITIAL_RETRY_DELAY_MS = 1000` constants
+  - Added `sleep()` helper for retry delays
+  - Added `getRetryAfterMs()` to parse the `retry-after` header from rate limit errors
+  - Modified `checkCompletion()` to retry up to 3 times on rate limit errors with exponential backoff
+  - Modified `translate()` to retry up to 3 times on rate limit errors with exponential backoff
+  - When `retry-after` header is present, uses that value; otherwise uses exponential backoff (1s, 2s, 4s)
+
+- Updated `src/lib/anthropic.test.ts`:
+  - Added `vi.useFakeTimers()` to control timing in tests
+  - Added `createRateLimitError()` helper to create rate limit errors with optional `retry-after` header
+  - Added `flushRetries()` helper to advance timers through retry delays
+  - Updated rate limit tests to verify retry behavior:
+    - "retries on rate limit error and eventually fails after max retries" (4 total attempts)
+    - "succeeds after rate limit retry" (succeeds on 2nd attempt)
+    - "uses retry-after header for delay"
+
+**Why:** Rate limiting can occur during normal use, especially with concurrent translations to multiple languages. Automatic retry with exponential backoff handles transient rate limits gracefully without user intervention. Only after 4 attempts (1 initial + 3 retries) does the user see an error, at which point the manual retry button in the toast can be used.
+
+**Notes:** The retry logic respects the `retry-after` header when provided by the API, which gives better guidance on when to retry. The exponential backoff (1s, 2s, 4s) provides reasonable delays when no header is present.
