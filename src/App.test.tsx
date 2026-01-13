@@ -34,7 +34,8 @@ describe("App", () => {
     render(<App />)
 
     expect(screen.queryByText("API key required")).not.toBeInTheDocument()
-    expect(screen.getByText("Hello, world")).toBeInTheDocument()
+    expect(screen.getByText("Translate")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
   })
 
   it("stores API key and shows main content after submission", async () => {
@@ -45,9 +46,10 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /save api key/i }))
 
     await waitFor(() => {
-      expect(screen.getByText("Hello, world")).toBeInTheDocument()
+      expect(screen.getByText("Translate")).toBeInTheDocument()
     })
     expect(screen.queryByText("API key required")).not.toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || "{}")
     expect(stored.apiKey).toBe("sk-ant-test123")

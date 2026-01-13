@@ -175,3 +175,25 @@ Also added:
 **Why:** These functions provide the core translation functionality. The completion detection (Haiku) determines when to auto-trigger translation, and the translation function (using Sonnet for now, originally planned for Opus) performs the actual translation with multiple options.
 
 **Notes:** Using `claude-sonnet-4-20250514` instead of Opus for translations as it provides good quality at lower cost. The model can be easily changed later. The translation response format is JSON with an array of options, each containing text and explanation.
+
+---
+
+## 2026-01-13: Create TranslateInput component
+
+**What changed:** Created `src/components/TranslateInput.tsx`:
+
+- Textarea component for entering text to translate
+- Autofocuses on mount using `useRef` and `useEffect`
+- Accepts `value`, `onChange`, `placeholder`, and `disabled` props
+- Uses shadcn Textarea component with custom styling (`min-h-32`, `resize-none`, `text-lg`)
+
+Also:
+
+- Added `src/components/TranslateInput.test.tsx` with 7 unit tests
+- Installed shadcn `textarea` component
+- Updated `App.tsx` to show TranslateInput when API key is stored
+- Updated `App.test.tsx` to reflect new main content UI
+
+**Why:** This is the first component of the main translation flow. Users type text into this input, which will later be wired up to debounce → completion detection → translation.
+
+**Notes:** The component is a controlled input, receiving value and onChange from parent. This allows the App to manage translation state.
