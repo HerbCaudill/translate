@@ -342,3 +342,31 @@ Also:
 **Why:** This component completes the grid layout for translation results. The responsive design ensures good UX on both desktop (2 columns) and mobile (1 column).
 
 **Notes:** Next task in Results UI: loading skeleton while translating.
+
+---
+
+## 2026-01-13: Add loading skeleton while translating
+
+**What changed:** Added loading skeleton components:
+
+- Created `src/components/TranslationCardSkeleton.tsx`:
+  - Skeleton version of TranslationCard matching its layout
+  - Shows language name in header (if provided)
+  - Displays skeleton placeholders for two translation options
+  - Uses shadcn Skeleton component
+
+- Created `src/components/TranslationResultsSkeleton.tsx`:
+  - Grid layout matching TranslationResults
+  - Renders a skeleton card for each configured language
+  - Shows language names so users know what's being translated
+
+- Updated `src/App.tsx`:
+  - Shows skeleton while `translationStatus === "translating"`
+  - Shows actual results when translation completes
+  - Removed temporary status text indicators
+
+- Added tests for both skeleton components
+
+**Why:** Provides visual feedback during translation, improving perceived performance and user experience. Users see cards for each language they're translating to, with animated skeleton placeholders.
+
+**Notes:** The skeleton shows the actual language names, giving users context about what's being translated.

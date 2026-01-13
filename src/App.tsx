@@ -6,6 +6,7 @@ import { useTranslation } from "@/hooks/useTranslation"
 import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
+import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
@@ -66,16 +67,10 @@ export function App() {
       <h1 className="text-2xl font-semibold">Translate</h1>
       <TranslateInput value={inputText} onChange={setInputText} />
 
-      {/* Status indicators for debugging */}
-      {completionStatus === "checking" && (
-        <p className="text-muted-foreground text-sm">Checking if complete...</p>
-      )}
-      {translationStatus === "translating" && (
-        <p className="text-muted-foreground text-sm">Translating...</p>
-      )}
-
-      {/* Translation results */}
-      <TranslationResults results={results} />
+      {/* Show skeleton while translating, results when done */}
+      {translationStatus === "translating" ?
+        <TranslationResultsSkeleton languages={settings.languages} />
+      : <TranslationResults results={results} />}
     </div>
   )
 }

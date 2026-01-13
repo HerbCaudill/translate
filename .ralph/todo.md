@@ -9,7 +9,7 @@
 - [x] Create TranslationCard component (single language)
 - [x] Display multiple translation options with explanations
 - [x] Create TranslationResults component (grid of cards)
-- [ ] Add loading skeleton while translating
+- [x] Add loading skeleton while translating
 
 #### 8. Settings
 
