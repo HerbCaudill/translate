@@ -5,7 +5,7 @@
 - [x] Create TranslateInput component with autofocus
 - [x] Implement debounce hook (500ms)
 - [x] Create useCompletionCheck hook (calls Haiku)
-- [ ] Create useTranslation hook (calls Opus)
+- [x] Create useTranslation hook (calls Opus)
 - [ ] Wire up: input → debounce → detection → translation
 
 #### 6. Fallback translate button

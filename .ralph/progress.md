@@ -252,3 +252,33 @@ Also:
 **Why:** This hook provides the completion detection functionality for the main translation flow. It wraps the `checkCompletion` API call with debouncing and state management.
 
 **Notes:** Next step is to create `useTranslation` hook for the actual translation call, then wire everything together.
+
+---
+
+## 2026-01-13: Create useTranslation hook
+
+**What changed:** Created `src/hooks/useTranslation.ts`:
+
+- `useTranslation({ apiKey, languages, customPrompt? })` hook
+- Returns `{ status, results, error, translate, reset }` where status is one of: `idle | translating | success | partial | error`
+- `translate(text)` triggers translation to all configured languages in parallel
+- `reset()` clears results and returns to idle state
+- Results are `LanguageTranslation[]` with language info and translation options
+- Handles partial failures when some languages succeed but others fail
+
+Also:
+
+- Added `src/hooks/useTranslation.test.ts` with 10 unit tests covering:
+  - Initial idle state
+  - Translation triggering and success status
+  - Custom prompt pass-through
+  - Empty/whitespace text rejection
+  - Error handling
+  - Partial failure handling
+  - Reset functionality
+  - Multiple language translation
+  - Language info in results
+
+**Why:** This hook provides the translation functionality for the main flow. It wraps the `translate` API call with state management and handles translating to multiple languages concurrently.
+
+**Notes:** Next step is to wire up: input → debounce → detection → translation.
