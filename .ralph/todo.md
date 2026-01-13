@@ -12,8 +12,8 @@
 - [x] Create SettingsDialog component
 - [x] Settings gear icon in header
 - [x] Languages list: add, remove, reorder
-- [ ] Prompt editor: textarea with default prompt
-- [ ] Reset prompt to default button
+- [x] Prompt editor: textarea with default prompt
+- [x] Reset prompt to default button
 
 #### 9. History
 

@@ -451,3 +451,35 @@ Also:
 **Why:** Users can now customize which languages to translate to. They can add new languages, remove existing ones, and reorder the list to prioritize their most-used languages.
 
 **Notes:** Next tasks in Settings: prompt editor textarea, reset prompt to default button.
+
+---
+
+## 2026-01-13: Add prompt editor to settings
+
+**What changed:** Updated `src/components/SettingsDialog.tsx`:
+
+- Added textarea for editing the translation prompt
+- Shows current prompt value with monospace font for better readability
+- Helper text explaining `{{language}}` placeholder usage
+- "Reset to default" button with restore icon (IconRestore from Tabler)
+- Reset button is disabled when prompt matches default
+- Clicking reset restores `DEFAULT_SETTINGS.translationPrompt`
+
+Updated `src/App.tsx`:
+
+- Passes `translationPrompt` and `onTranslationPromptChange` props to SettingsDialog
+- Updates settings when user edits the prompt
+
+Updated `src/components/SettingsDialog.test.tsx`:
+
+- Added 6 new tests for prompt editor functionality:
+  - Displays textarea when dialog is open
+  - Shows current prompt value
+  - Calls callback when prompt is edited
+  - Disables reset when prompt is default
+  - Enables reset when prompt differs from default
+  - Resets to default when button clicked
+
+**Why:** Completes the Settings section (8). Users can now customize the translation prompt to change how translations are generated, and reset to default if needed.
+
+**Notes:** Section 8 (Settings) is now fully complete. Next section is 9 (History).

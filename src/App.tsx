@@ -92,6 +92,8 @@ export function App() {
         <SettingsDialog
           languages={settings.languages}
           onLanguagesChange={languages => updateSettings({ languages })}
+          translationPrompt={settings.translationPrompt}
+          onTranslationPromptChange={translationPrompt => updateSettings({ translationPrompt })}
         />
       </header>
       <TranslateInput value={inputText} onChange={setInputText} />
