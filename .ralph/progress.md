@@ -593,3 +593,30 @@ Updated `src/App.test.tsx`:
 **Why:** Quick UX improvement that users expect. Pressing Escape provides a fast way to clear the input and start fresh without needing to select and delete text.
 
 **Notes:** The existing reset logic in App.tsx already handles clearing translation results when input becomes empty, so no additional changes were needed there.
+
+---
+
+## 2026-01-13: Add empty state when no translations yet
+
+**What changed:** Added an empty state to guide users when they first open the app:
+
+- Created `src/components/EmptyState.tsx`:
+  - Centered content with language icon (IconLanguage from Tabler)
+  - "Start typing to translate" heading
+  - Descriptive text explaining auto-translation behavior
+  - Uses muted foreground color for subtle appearance
+
+- Updated `src/App.tsx`:
+  - Imported EmptyState component
+  - Modified rendering logic to show EmptyState when:
+    - Not translating (no skeleton)
+    - No results to display (empty `displayResults` array)
+  - Uses ternary chain: skeleton → results → empty state
+
+- Added tests:
+  - `src/components/EmptyState.test.tsx` with 3 tests (heading, description, icon)
+  - Updated `src/App.test.tsx` with "shows empty state when no translations yet" test
+
+**Why:** New users need clear feedback about what to do when they first open the app. The empty state provides a friendly prompt to start typing, improving the onboarding experience.
+
+**Notes:** The empty state appears both on first load and after clearing the input with Escape. It disappears as soon as translation begins (skeleton shows) or results are displayed.

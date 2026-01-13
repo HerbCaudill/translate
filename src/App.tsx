@@ -11,6 +11,7 @@ import { TranslationResults } from "@/components/TranslationResults"
 import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
 import { SettingsDialog } from "@/components/SettingsDialog"
 import { HistoryDialog } from "@/components/HistoryDialog"
+import { EmptyState } from "@/components/EmptyState"
 import { HistoryEntry } from "@/types"
 
 export function App() {
@@ -170,10 +171,12 @@ export function App() {
       </header>
       <TranslateInput value={inputText} onChange={setInputText} onEscape={() => setInputText("")} />
 
-      {/* Show skeleton while translating, results when done */}
+      {/* Show skeleton while translating, results when done, or empty state */}
       {translationStatus === "translating" ?
         <TranslationResultsSkeleton languages={settings.languages} />
-      : <TranslationResults results={displayResults} />}
+      : displayResults.length > 0 ?
+        <TranslationResults results={displayResults} />
+      : <EmptyState />}
     </div>
   )
 }

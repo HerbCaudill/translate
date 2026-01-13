@@ -51,6 +51,25 @@ describe("App", () => {
     expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
   })
 
+  it("shows empty state when no translations yet", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+        translationPrompt: "",
+        completionPrompt: "",
+      }),
+    )
+
+    render(<App />)
+
+    expect(screen.getByText("Start typing to translate")).toBeInTheDocument()
+    expect(
+      screen.getByText(/Enter text above and it will be translated automatically/),
+    ).toBeInTheDocument()
+  })
+
   it("stores API key and shows main content after submission", async () => {
     const user = userEvent.setup()
     render(<App />)

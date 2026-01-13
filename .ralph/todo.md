@@ -2,7 +2,6 @@
 
 - [ ] Handle rate limiting gracefully
 - [ ] Loading states for all async operations
-- [ ] Empty state when no translations yet
 - [ ] Responsive layout for mobile
 - [ ] Configure manifest (name, icons, theme color)
 - [ ] Add service worker for offline shell
@@ -10,6 +9,7 @@
 
 ### Done
 
+- [x] Empty state when no translations yet
 - [x] Install sonner for toast notifications
 - [x] Show toast on API errors
 - [x] Add retry button to error toasts
