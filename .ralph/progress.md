@@ -223,3 +223,32 @@ Also:
 **Why:** This hook is needed to debounce user input before triggering the completion check. Prevents excessive API calls while user is still typing.
 
 **Notes:** Will be used in the main translation flow: input → debounce → completion detection → translation.
+
+---
+
+## 2026-01-13: Create useCompletionCheck hook
+
+**What changed:** Created `src/hooks/useCompletionCheck.ts`:
+
+- `useCompletionCheck({ text, apiKey, customPrompt?, debounceMs? })` hook
+- Returns `{ status, error }` where status is one of: `idle | checking | complete | incomplete | error`
+- Built-in debounce (default 500ms) before making API call
+- Automatically resets to `idle` when text or apiKey becomes empty
+- Cancels in-flight requests when text changes using AbortController
+- Passes through custom completion prompt if provided
+
+Also:
+
+- Added `src/hooks/useCompletionCheck.test.ts` with 10 unit tests covering:
+  - Initial idle state
+  - Idle when text/apiKey empty
+  - Completion check after debounce
+  - Complete/incomplete/error status handling
+  - Custom prompt pass-through
+  - Cancellation on text change
+  - Custom debounce delay
+  - Reset to idle when text cleared
+
+**Why:** This hook provides the completion detection functionality for the main translation flow. It wraps the `checkCompletion` API call with debouncing and state management.
+
+**Notes:** Next step is to create `useTranslation` hook for the actual translation call, then wire everything together.
