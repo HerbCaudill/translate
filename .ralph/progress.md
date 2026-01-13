@@ -65,3 +65,24 @@ Also added:
 **Why:** This hook provides the foundation for managing user preferences throughout the app. Components can read settings and update them through a consistent interface.
 
 **Notes:** The default translation prompt uses `{{language}}` as a placeholder that will be replaced with the target language name during translation.
+
+---
+
+## 2026-01-13: Create useHistory hook
+
+**What changed:** Created `src/hooks/useHistory.ts` with:
+
+- `useHistory()` hook that returns `{ history, addEntry, removeEntry, clearHistory, findEntry }`
+- History entries are loaded from localStorage on mount, sorted by newest first
+- `addEntry(translation)` creates a new HistoryEntry with generated ID and persists to localStorage
+- `removeEntry(id)` removes a specific entry
+- `clearHistory()` removes all entries
+- `findEntry(id)` looks up an entry by ID
+
+Also added:
+
+- `src/hooks/useHistory.test.ts` with 8 unit tests covering load, add, remove, clear, find, and sorting behaviors
+
+**Why:** This hook provides the foundation for translation history functionality. It allows saving translations for later reference, searching through past translations, and clearing history.
+
+**Notes:** The hook generates unique IDs using timestamp + random string. History is automatically sorted with newest entries first.

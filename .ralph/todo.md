@@ -1,12 +1,5 @@
 ### To do
 
-#### 2. Core types and storage
-
-- [x] Define TypeScript types (Settings, Translation, HistoryEntry)
-- [x] Create localStorage helper functions (get, set, remove)
-- [x] Create useSettings hook
-- [ ] Create useHistory hook
-
 #### 3. API key flow
 
 - [ ] Create ApiKeyPrompt component
@@ -80,6 +73,13 @@
 - [ ] Test install prompt on desktop and mobile
 
 ### Done
+
+#### 2. Core types and storage
+
+- [x] Define TypeScript types (Settings, Translation, HistoryEntry)
+- [x] Create localStorage helper functions (get, set, remove)
+- [x] Create useSettings hook
+- [x] Create useHistory hook
 
 #### 1. Project setup
 
