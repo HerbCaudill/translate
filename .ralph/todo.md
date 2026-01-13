@@ -1,14 +1,12 @@
 ### To do
 
-#### 6. Fallback translate button
+#### 6. Fallback
 
-- [ ] Show button after 2s if auto-detection hasn't triggered
-- [ ] Hide button when translation starts
-- [ ] Button triggers translation directly
+- [ ] Try to translate after 2s if auto-detection hasn't triggered
 
 #### 7. Results UI
 
-- [ ] Create TranslationCard component (single language)
+- [x] Create TranslationCard component (single language)
 - [ ] Display multiple translation options with explanations
 - [ ] Create TranslationResults component (grid of cards)
 - [ ] Add loading skeleton while translating

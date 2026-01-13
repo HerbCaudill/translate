@@ -300,3 +300,24 @@ Also:
 **Why:** This completes section 5 of the todo list - the main translation flow is now fully functional. Users can type text, the app detects when they've completed a thought, and automatically translates to configured languages.
 
 **Notes:** The results display is basic inline rendering. Section 7 will add proper TranslationCard and TranslationResults components. Section 6 will add a fallback translate button for when auto-detection doesn't trigger.
+
+---
+
+## 2026-01-13: Create TranslationCard component
+
+**What changed:** Created `src/components/TranslationCard.tsx`:
+
+- Card component that displays translation results for a single language
+- Uses shadcn Card, CardHeader, CardTitle, and CardContent components
+- Shows language name as the card title
+- Lists all translation options with their explanations
+- Adds `data-language` attribute for testing/styling purposes
+
+Also:
+
+- Added `src/components/TranslationCard.test.tsx` with 6 unit tests
+- Updated `src/App.tsx` to use TranslationCard instead of inline rendering
+
+**Why:** This is the first step in the Results UI section (7). The TranslationCard provides a clean, reusable component for displaying translation results, improving visual consistency with the shadcn card design system.
+
+**Notes:** Next tasks in Results UI: TranslationResults component (grid of cards) and loading skeleton.
