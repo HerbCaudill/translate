@@ -1,11 +1,16 @@
-export const DEFAULT_TRANSLATION_PROMPT = `You are a professional translator.
+// System prefix - essential behavior that users cannot change
+export const SYSTEM_PREFIX = `You are a professional translator.
 
 First, identify what language the given text is written in.
 
 If the text is written in {{language}}, respond with exactly: SAME_LANGUAGE
 
-Otherwise, translate the text into {{language}} and provide 1-3 translation options, each with a brief explanation of when to use it or its nuance.`
+Otherwise, translate the text into {{language}}.`
 
+// User-customizable translation style instructions
+export const DEFAULT_TRANSLATION_PROMPT = `Provide 1-3 translation options, each with a brief explanation of when to use it or its nuance.`
+
+// JSON format suffix - essential for parsing, users cannot change
 export const JSON_FORMAT_SUFFIX = `
 
 Respond in JSON format:

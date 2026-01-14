@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { Language, TranslationOption } from "../types"
-import { DEFAULT_TRANSLATION_PROMPT, JSON_FORMAT_SUFFIX } from "./prompts"
+import { SYSTEM_PREFIX, DEFAULT_TRANSLATION_PROMPT, JSON_FORMAT_SUFFIX } from "./prompts"
 
 const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
 
@@ -52,12 +52,9 @@ export const translate = async (
   }
 
   const client = createClient(apiKey)
-  const basePrompt = customPrompt || DEFAULT_TRANSLATION_PROMPT
-  const promptWithFormat = basePrompt + JSON_FORMAT_SUFFIX
-  const systemPrompt = promptWithFormat.replaceAll(
-    "{{language}}",
-    `${language.name} (${language.code})`,
-  )
+  const stylePrompt = customPrompt || DEFAULT_TRANSLATION_PROMPT
+  const fullPrompt = SYSTEM_PREFIX + "\n\n" + stylePrompt + JSON_FORMAT_SUFFIX
+  const systemPrompt = fullPrompt.replaceAll("{{language}}", `${language.name} (${language.code})`)
 
   let lastError: Error | undefined
 

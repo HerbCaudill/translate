@@ -1,7 +1,7 @@
 ### To do
 
 - [ ] add a bit more spacing between language cards in results
-- [ ]
+- [ ] use Plex Serif for the
 
 ### Done
 
