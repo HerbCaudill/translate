@@ -7,9 +7,10 @@ const getDefaultApiKey = () => import.meta.env.VITE_ANTHROPIC_API_KEY ?? ""
 export const DEFAULT_SETTINGS: Settings = {
   apiKey: getDefaultApiKey(),
   languages: [
+    { code: "ca", name: "Catalan" },
     { code: "es", name: "Spanish" },
     { code: "fr", name: "French" },
-    { code: "de", name: "German" },
+    { code: "pt", name: "Portuguese" },
   ],
   translationPrompt: `You are a professional translator. Translate the following text into {{language}}. Provide multiple options when there is more than one valid way to express the meaning. Briefly explain any nuances or when it would be most appropriate to use one option over another.`,
 }
