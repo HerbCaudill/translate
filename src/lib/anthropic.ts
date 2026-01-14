@@ -135,7 +135,14 @@ export const translate = async (
         return { success: false, error: "Unexpected response format" }
       }
 
-      const parsed = JSON.parse(content.text) as { options: TranslationOption[] }
+      // Extract JSON from potential markdown code blocks
+      let jsonText = content.text.trim()
+      const codeBlockMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/)
+      if (codeBlockMatch) {
+        jsonText = codeBlockMatch[1].trim()
+      }
+
+      const parsed = JSON.parse(jsonText) as { options: TranslationOption[] }
       if (!parsed.options || !Array.isArray(parsed.options)) {
         return { success: false, error: "Invalid response format" }
       }
