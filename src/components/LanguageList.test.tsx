@@ -116,7 +116,9 @@ describe("LanguageList", () => {
     await user.click(screen.getByRole("button", { name: /add/i }))
 
     // Combobox should be reset to placeholder
-    expect(screen.getByRole("combobox", { name: /select language/i })).toHaveTextContent("Add a language...")
+    expect(screen.getByRole("combobox", { name: /select language/i })).toHaveTextContent(
+      "Add a language...",
+    )
   })
 
   it("disables add button when no language is selected", () => {

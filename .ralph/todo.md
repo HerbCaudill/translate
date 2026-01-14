@@ -1,6 +1,7 @@
 ### To do
 
-- [ ] use the Vercel AI SDK
+- [ ] add a bit more spacing between language cards in results
+- [ ]
 
 ### Done
 

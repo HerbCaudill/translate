@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { Settings } from "@/types"
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
+import { DEFAULT_TRANSLATION_PROMPT } from "@/lib/prompts"
 
 const getDefaultApiKey = () => import.meta.env.VITE_ANTHROPIC_API_KEY ?? ""
 
@@ -13,7 +14,7 @@ export const DEFAULT_SETTINGS: Settings = {
     { code: "fr", name: "French" },
     { code: "pt", name: "Portuguese" },
   ],
-  translationPrompt: `You are a professional translator. Translate the following text into {{language}}. Provide multiple options when there is more than one valid way to express the meaning. Briefly explain any nuances or when it would be most appropriate to use one option over another.`,
+  translationPrompt: DEFAULT_TRANSLATION_PROMPT,
 }
 
 export const useSettings = () => {

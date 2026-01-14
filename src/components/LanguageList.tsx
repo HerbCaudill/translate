@@ -79,7 +79,7 @@ export const LanguageList = ({ languages, onChange }: Props) => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   )
 
   const handleRemove = (index: number) => {
@@ -116,11 +116,17 @@ export const LanguageList = ({ languages, onChange }: Props) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {languages.length === 0 ? (
+        {languages.length === 0 ?
           <p className="text-muted-foreground py-4 text-center text-sm">No languages configured</p>
-        ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={languages.map(l => l.code)} strategy={verticalListSortingStrategy}>
+        : <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={languages.map(l => l.code)}
+              strategy={verticalListSortingStrategy}
+            >
               {languages.map((language, index) => (
                 <SortableLanguageItem
                   key={language.code}
@@ -130,7 +136,7 @@ export const LanguageList = ({ languages, onChange }: Props) => {
               ))}
             </SortableContext>
           </DndContext>
-        )}
+        }
       </div>
 
       <div className="space-y-2">

@@ -120,6 +120,8 @@ export const searchLanguages = (query: string): Language[] => {
   if (!normalizedQuery) return LANGUAGES
 
   return LANGUAGES.filter(
-    lang => lang.code.toLowerCase().includes(normalizedQuery) || lang.name.toLowerCase().includes(normalizedQuery)
+    lang =>
+      lang.code.toLowerCase().includes(normalizedQuery) ||
+      lang.name.toLowerCase().includes(normalizedQuery),
   )
 }

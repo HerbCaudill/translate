@@ -54,8 +54,8 @@ export const TranslateInput = ({
         disabled={disabled || !value.trim() || loading}
         size="icon"
         className={cn(
-          "shrink-0 bg-blue-600 hover:bg-blue-500 text-white",
-          loading && "pointer-events-none"
+          "shrink-0 bg-blue-600 text-white hover:bg-blue-500",
+          loading && "pointer-events-none",
         )}
       >
         {loading ?
