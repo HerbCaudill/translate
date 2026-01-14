@@ -29,3 +29,25 @@ Made translation cards more compact by reducing padding and text sizes across fo
 
 **TranslationResults.tsx & TranslationResultsSkeleton.tsx:**
 - Grid gap: `gap-4` → `gap-3` (16px → 12px between cards)
+
+### Change the language interface to autocomplete
+
+Replaced the two-input language entry system (code + name) with an autocomplete dropdown. Users no longer need to know ISO 639-1 codes.
+
+**New files created:**
+- `src/lib/languages.ts` - Contains a comprehensive list of ~100 languages with their ISO 639-1 codes and names, plus helper functions `findLanguageByCode()` and `searchLanguages()`
+- `src/components/ui/command.tsx` - shadcn/ui style Command component built on `cmdk` library for the autocomplete functionality
+- `src/components/ui/popover.tsx` - Radix UI Popover wrapper for the dropdown container
+- `src/components/LanguageCombobox.tsx` - Combines Command + Popover into a searchable language selector that:
+  - Shows language code badges alongside names
+  - Filters out already-added languages via `excludeCodes` prop
+  - Provides search across both code and name
+
+**Modified files:**
+- `src/components/LanguageList.tsx` - Replaced the two text inputs with LanguageCombobox. The add flow is now: click combobox → search/select language → click add button
+- `src/components/LanguageList.test.tsx` - Updated tests to interact with the new combobox interface using `cmdk-item` selectors
+- `src/test/setup.ts` - Added mocks for `ResizeObserver` and `Element.scrollIntoView` required by cmdk in jsdom
+
+**Dependencies added:**
+- `@radix-ui/react-popover` - For dropdown positioning
+- `cmdk` - Command palette library for fast fuzzy search

@@ -1,12 +1,11 @@
 import { useState } from "react"
 import { IconPlus, IconTrash, IconChevronUp, IconChevronDown } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { LanguageCombobox } from "@/components/LanguageCombobox"
 import { Language } from "@/types"
 
 export const LanguageList = ({ languages, onChange }: Props) => {
-  const [newCode, setNewCode] = useState("")
-  const [newName, setNewName] = useState("")
+  const [pendingLanguage, setPendingLanguage] = useState<Language | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const handleRemove = (index: number) => {
@@ -29,30 +28,28 @@ export const LanguageList = ({ languages, onChange }: Props) => {
   }
 
   const handleAdd = () => {
-    const trimmedCode = newCode.trim().toLowerCase()
-    const trimmedName = newName.trim()
+    if (!pendingLanguage) return
 
-    if (!trimmedCode || !trimmedName) return
-
-    if (languages.some(lang => lang.code === trimmedCode)) {
-      setError("Language code already exists")
+    if (languages.some(lang => lang.code === pendingLanguage.code)) {
+      setError("Language already added")
       return
     }
 
-    onChange([...languages, { code: trimmedCode, name: trimmedName }])
-    setNewCode("")
-    setNewName("")
+    onChange([...languages, pendingLanguage])
+    setPendingLanguage(null)
     setError(null)
   }
 
-  const canAdd = newCode.trim() && newName.trim()
+  // Get codes of already-added languages to exclude from autocomplete
+  const excludedCodes = languages.map(lang => lang.code)
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {languages.length === 0 ?
+        {languages.length === 0 ? (
           <p className="text-muted-foreground py-4 text-center text-sm">No languages configured</p>
-        : languages.map((language, index) => (
+        ) : (
+          languages.map((language, index) => (
             <div
               key={language.code}
               data-language={language.code}
@@ -95,30 +92,23 @@ export const LanguageList = ({ languages, onChange }: Props) => {
               </div>
             </div>
           ))
-        }
+        )}
       </div>
 
       <div className="space-y-2">
         <div className="flex gap-2">
-          <Input
-            placeholder="Code (e.g. ja)"
-            value={newCode}
-            onChange={e => {
-              setNewCode(e.target.value)
-              setError(null)
-            }}
-            className="w-24"
-          />
-          <Input
-            placeholder="Name (e.g. Japanese)"
-            value={newName}
-            onChange={e => {
-              setNewName(e.target.value)
-              setError(null)
-            }}
-            className="flex-1"
-          />
-          <Button onClick={handleAdd} disabled={!canAdd} size="icon" aria-label="Add">
+          <div className="flex-1">
+            <LanguageCombobox
+              value={pendingLanguage}
+              onChange={lang => {
+                setPendingLanguage(lang)
+                setError(null)
+              }}
+              excludeCodes={excludedCodes}
+              placeholder="Add a language..."
+            />
+          </div>
+          <Button onClick={handleAdd} disabled={!pendingLanguage} size="icon" aria-label="Add">
             <IconPlus className="h-4 w-4" />
           </Button>
         </div>
