@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { translate, TranslationResult } from "@/lib/anthropic"
+import { translate, detectLanguage, TranslationResult } from "@/lib/anthropic"
 import { Language, LanguageTranslation } from "@/types"
 
 export type TranslationStatus = "idle" | "translating" | "success" | "partial" | "error"
@@ -8,6 +8,7 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
   const [status, setStatus] = useState<TranslationStatus>("idle")
   const [results, setResults] = useState<LanguageTranslation[]>([])
   const [error, setError] = useState<string | undefined>()
+  const [detectedLanguage, setDetectedLanguage] = useState<Language | undefined>()
 
   const translateText = useCallback(
     async (text: string) => {
@@ -18,8 +19,28 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
       setStatus("translating")
       setResults([])
       setError(undefined)
+      setDetectedLanguage(undefined)
 
-      const translationPromises = languages.map(
+      // First, detect the source language
+      const detectionResult = await detectLanguage(apiKey, text)
+
+      let targetLanguages = languages
+      if (detectionResult.success) {
+        setDetectedLanguage(detectionResult.language)
+        // Filter out the detected language from targets
+        targetLanguages = languages.filter(
+          lang => lang.code.toLowerCase() !== detectionResult.language.code.toLowerCase()
+        )
+      }
+
+      // If no target languages remain after filtering, show a message
+      if (targetLanguages.length === 0) {
+        setStatus("success")
+        setResults([])
+        return
+      }
+
+      const translationPromises = targetLanguages.map(
         async (language): Promise<TranslationResult & { language: Language }> => {
           const result = await translate(apiKey, text, language, customPrompt)
           return { ...result, language }
@@ -47,7 +68,7 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
       if (successful.length === 0) {
         setStatus("error")
         setError(firstError)
-      } else if (successful.length < languages.length) {
+      } else if (successful.length < targetLanguages.length) {
         setStatus("partial")
         setError(firstError)
       } else {
@@ -61,12 +82,14 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
     setStatus("idle")
     setResults([])
     setError(undefined)
+    setDetectedLanguage(undefined)
   }, [])
 
   return {
     status,
     results,
     error,
+    detectedLanguage,
     translate: translateText,
     reset,
   }

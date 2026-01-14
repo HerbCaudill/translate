@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
-import { translate } from "./anthropic"
+import { translate, detectLanguage } from "./anthropic"
 import Anthropic from "@anthropic-ai/sdk"
 
 vi.mock("@anthropic-ai/sdk")
@@ -146,5 +146,78 @@ describe("translate", () => {
         system: expect.stringContaining("Respond in JSON format"),
       }),
     )
+  })
+})
+
+describe("detectLanguage", () => {
+  it("returns error for empty text", async () => {
+    const result = await detectLanguage("test-key", "")
+    expect(result).toEqual({ success: false, error: "No text to analyze" })
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it("returns detected language on success", async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: "text", text: "es" }],
+    })
+
+    const result = await detectLanguage("test-key", "Hola mundo")
+    expect(result).toEqual({ success: true, language: { code: "es", name: "Spanish" } })
+  })
+
+  it("handles uppercase response", async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: "text", text: "FR" }],
+    })
+
+    const result = await detectLanguage("test-key", "Bonjour")
+    expect(result).toEqual({ success: true, language: { code: "fr", name: "French" } })
+  })
+
+  it("returns error when language is unknown", async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: "text", text: "unknown" }],
+    })
+
+    const result = await detectLanguage("test-key", "xyz123")
+    expect(result).toEqual({ success: false, error: "Could not determine language" })
+  })
+
+  it("returns error for unrecognized language code", async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: "text", text: "zz" }],
+    })
+
+    const result = await detectLanguage("test-key", "text")
+    expect(result).toEqual({ success: false, error: "Unknown language code: zz" })
+  })
+
+  it("handles API authentication error", async () => {
+    mockCreate.mockRejectedValue(
+      new Anthropic.AuthenticationError(
+        401,
+        { type: "error", error: { type: "authentication_error", message: "Invalid" } },
+        "Invalid",
+        {} as Headers,
+      ),
+    )
+
+    const result = await detectLanguage("bad-key", "Hello")
+    expect(result).toEqual({ success: false, error: "Invalid API key" })
+  })
+
+  it("retries on rate limit error and eventually fails after max retries", async () => {
+    mockCreate.mockRejectedValue(createRateLimitError())
+
+    const resultPromise = detectLanguage("test-key", "Hello")
+    await flushRetries()
+    const result = await resultPromise
+
+    // Should have tried 4 times (1 initial + 3 retries)
+    expect(mockCreate).toHaveBeenCalledTimes(4)
+    expect(result).toEqual({
+      success: false,
+      error: "Rate limit exceeded. Please try again later.",
+    })
   })
 })

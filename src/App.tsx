@@ -24,6 +24,7 @@ export function App() {
     status: translationStatus,
     results,
     error: translationError,
+    detectedLanguage,
     translate,
     reset: resetTranslation,
   } = useTranslation({
@@ -145,6 +146,12 @@ export function App() {
         onEscape={() => setInputText("")}
         loading={translationStatus === "translating"}
       />
+
+      {detectedLanguage && (translationStatus === "success" || translationStatus === "partial") && (
+        <p className="text-sm text-muted-foreground">
+          Detected language: <span className="font-medium">{detectedLanguage.name}</span>
+        </p>
+      )}
 
       {translationStatus === "translating" ?
         <TranslationResultsSkeleton languages={settings.languages} />

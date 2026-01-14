@@ -1,5 +1,75 @@
 # Progress Log
 
+## 2025-01-17
+
+### Add language detection and skip translating to detected language
+
+Added automatic language detection to identify the source language before translation. When the detected language matches one of the target languages, that language is skipped to avoid redundant translation (e.g., don't translate Spanish text to Spanish).
+
+**Key changes:**
+
+1. **Added English to default languages** - English is now the first default target language (en, ca, es, fr, pt)
+
+2. **New `detectLanguage` function in `anthropic.ts`**:
+   - Uses Claude 3.5 Haiku for fast language detection
+   - Returns ISO 639-1 language code
+   - Includes retry logic for rate limits (same pattern as translate)
+   - Handles "unknown" response when language cannot be determined
+
+3. **Updated `useTranslation` hook**:
+   - Now calls `detectLanguage` before translating
+   - Filters out the detected language from target languages
+   - Exposes `detectedLanguage` in the return value
+   - If detection fails, translates to all target languages (fallback behavior)
+
+4. **Updated `App.tsx`**:
+   - Displays detected language when translation completes
+   - Shows "Detected language: {name}" above results
+
+**Modified files:**
+- `src/lib/anthropic.ts`:
+  - Added `DETECTION_MODEL` constant (claude-3-5-haiku-20241022)
+  - Added `DetectionResult` type
+  - Added `LANGUAGE_DETECTION_PROMPT`
+  - Added `detectLanguage` function with retry logic
+  - Imported `findLanguageByCode` from languages.ts
+
+- `src/hooks/useTranslation.ts`:
+  - Added `detectedLanguage` state
+  - Call `detectLanguage` at start of translation
+  - Filter target languages to exclude detected language
+  - Reset `detectedLanguage` on reset()
+  - Return `detectedLanguage` from hook
+
+- `src/hooks/useSettings.ts`:
+  - Added English (en) as first default language
+
+- `src/App.tsx`:
+  - Destructure `detectedLanguage` from useTranslation
+  - Display detected language when status is success/partial
+
+**Test files updated:**
+- `src/lib/anthropic.test.ts` - Added 7 new tests for `detectLanguage`:
+  - Returns error for empty text
+  - Returns detected language on success
+  - Handles uppercase response
+  - Returns error when language is unknown
+  - Returns error for unrecognized language code
+  - Handles API authentication error
+  - Retries on rate limit error
+
+- `src/hooks/useTranslation.test.ts`:
+  - Added mock for `detectLanguage`
+  - Added default mock behavior in beforeEach
+  - Added 4 new tests:
+    - Should detect language and return it
+    - Should skip translation to detected language
+    - Should translate to all languages if detection fails
+    - Should return success with empty results when all targets match detected
+
+- `src/App.test.tsx`:
+  - Added mock for `detectLanguage` in all describe blocks
+
 ## 2025-01-16
 
 ### Auto-submit API key on paste

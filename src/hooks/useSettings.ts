@@ -7,6 +7,7 @@ const getDefaultApiKey = () => import.meta.env.VITE_ANTHROPIC_API_KEY ?? ""
 export const DEFAULT_SETTINGS: Settings = {
   apiKey: getDefaultApiKey(),
   languages: [
+    { code: "en", name: "English" },
     { code: "ca", name: "Catalan" },
     { code: "es", name: "Spanish" },
     { code: "fr", name: "French" },
