@@ -1,4 +1,4 @@
-import { render, screen, within, waitFor } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, it, expect, vi } from "vitest"
 import { LanguageList } from "./LanguageList"
@@ -43,56 +43,23 @@ describe("LanguageList", () => {
     ])
   })
 
-  it("moves a language up when move up button is clicked", async () => {
-    const user = userEvent.setup()
-    const onChange = vi.fn()
-    render(<LanguageList languages={defaultLanguages} onChange={onChange} />)
-
-    const frenchItem = screen.getByText("French").closest("[data-language]") as HTMLElement
-    const moveUpButton = within(frenchItem).getByRole("button", { name: /move up/i })
-
-    await user.click(moveUpButton)
-
-    expect(onChange).toHaveBeenCalledWith([
-      { code: "fr", name: "French" },
-      { code: "es", name: "Spanish" },
-      { code: "de", name: "German" },
-    ])
-  })
-
-  it("moves a language down when move down button is clicked", async () => {
-    const user = userEvent.setup()
-    const onChange = vi.fn()
-    render(<LanguageList languages={defaultLanguages} onChange={onChange} />)
-
-    const frenchItem = screen.getByText("French").closest("[data-language]") as HTMLElement
-    const moveDownButton = within(frenchItem).getByRole("button", { name: /move down/i })
-
-    await user.click(moveDownButton)
-
-    expect(onChange).toHaveBeenCalledWith([
-      { code: "es", name: "Spanish" },
-      { code: "de", name: "German" },
-      { code: "fr", name: "French" },
-    ])
-  })
-
-  it("disables move up button for first item", () => {
+  it("renders drag handles for reordering", () => {
     render(<LanguageList languages={defaultLanguages} onChange={vi.fn()} />)
 
-    const spanishItem = screen.getByText("Spanish").closest("[data-language]") as HTMLElement
-    const moveUpButton = within(spanishItem).getByRole("button", { name: /move up/i })
-
-    expect(moveUpButton).toBeDisabled()
+    // Each language item should have a drag handle
+    const dragHandles = screen.getAllByRole("button", { name: /drag to reorder/i })
+    expect(dragHandles).toHaveLength(3)
   })
 
-  it("disables move down button for last item", () => {
+  it("has sortable items with correct aria attributes", () => {
     render(<LanguageList languages={defaultLanguages} onChange={vi.fn()} />)
 
-    const germanItem = screen.getByText("German").closest("[data-language]") as HTMLElement
-    const moveDownButton = within(germanItem).getByRole("button", { name: /move down/i })
+    const dragHandles = screen.getAllByRole("button", { name: /drag to reorder/i })
 
-    expect(moveDownButton).toBeDisabled()
+    // Each drag handle should have sortable role description for accessibility
+    dragHandles.forEach(handle => {
+      expect(handle).toHaveAttribute("aria-roledescription", "sortable")
+    })
   })
 
   it("adds a new language when selected from autocomplete", async () => {

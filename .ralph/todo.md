@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Let me drag and drop languages to reorder
-
 ### Done
+
+- [x] Let me drag and drop languages to reorder
 
 - [x] In the results, put the language name in a little badge on the border
 - [x] Change the language interface to autocomplete. I shouldn't have to know the two-letter code for a language.

@@ -1,30 +1,100 @@
 import { useState } from "react"
-import { IconPlus, IconTrash, IconChevronUp, IconChevronDown } from "@tabler/icons-react"
+import { IconPlus, IconTrash, IconGripVertical } from "@tabler/icons-react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { Button } from "@/components/ui/button"
 import { LanguageCombobox } from "@/components/LanguageCombobox"
 import { Language } from "@/types"
 
+const SortableLanguageItem = ({
+  language,
+  onRemove,
+}: {
+  language: Language
+  onRemove: () => void
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: language.code,
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      data-language={language.code}
+      className={`bg-muted/50 flex items-center gap-2 rounded-md p-2 ${isDragging ? "z-50 opacity-80 shadow-lg" : ""}`}
+    >
+      <button
+        className="text-muted-foreground hover:text-foreground cursor-grab touch-none active:cursor-grabbing"
+        aria-label="Drag to reorder"
+        {...attributes}
+        {...listeners}
+      >
+        <IconGripVertical className="h-4 w-4" />
+      </button>
+      <span className="bg-muted text-muted-foreground w-10 rounded px-2 py-1 text-center text-xs font-medium">
+        {language.code}
+      </span>
+      <span className="flex-1 text-sm">{language.name}</span>
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-destructive hover:text-destructive h-7 w-7"
+          onClick={onRemove}
+          aria-label="Remove"
+        >
+          <IconTrash className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export const LanguageList = ({ languages, onChange }: Props) => {
   const [pendingLanguage, setPendingLanguage] = useState<Language | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   const handleRemove = (index: number) => {
     const updated = languages.filter((_, i) => i !== index)
     onChange(updated)
   }
 
-  const handleMoveUp = (index: number) => {
-    if (index === 0) return
-    const updated = [...languages]
-    ;[updated[index - 1], updated[index]] = [updated[index], updated[index - 1]]
-    onChange(updated)
-  }
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
 
-  const handleMoveDown = (index: number) => {
-    if (index === languages.length - 1) return
-    const updated = [...languages]
-    ;[updated[index], updated[index + 1]] = [updated[index + 1], updated[index]]
-    onChange(updated)
+    if (over && active.id !== over.id) {
+      const oldIndex = languages.findIndex(lang => lang.code === active.id)
+      const newIndex = languages.findIndex(lang => lang.code === over.id)
+      onChange(arrayMove(languages, oldIndex, newIndex))
+    }
   }
 
   const handleAdd = () => {
@@ -49,49 +119,17 @@ export const LanguageList = ({ languages, onChange }: Props) => {
         {languages.length === 0 ? (
           <p className="text-muted-foreground py-4 text-center text-sm">No languages configured</p>
         ) : (
-          languages.map((language, index) => (
-            <div
-              key={language.code}
-              data-language={language.code}
-              className="bg-muted/50 flex items-center gap-2 rounded-md p-2"
-            >
-              <span className="bg-muted text-muted-foreground w-10 rounded px-2 py-1 text-center text-xs font-medium">
-                {language.code}
-              </span>
-              <span className="flex-1 text-sm">{language.name}</span>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => handleMoveUp(index)}
-                  disabled={index === 0}
-                  aria-label="Move up"
-                >
-                  <IconChevronUp className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => handleMoveDown(index)}
-                  disabled={index === languages.length - 1}
-                  aria-label="Move down"
-                >
-                  <IconChevronDown className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive hover:text-destructive h-7 w-7"
-                  onClick={() => handleRemove(index)}
-                  aria-label="Remove"
-                >
-                  <IconTrash className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={languages.map(l => l.code)} strategy={verticalListSortingStrategy}>
+              {languages.map((language, index) => (
+                <SortableLanguageItem
+                  key={language.code}
+                  language={language}
+                  onRemove={() => handleRemove(index)}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 

@@ -66,3 +66,25 @@ Changed the language name display from a card header title to a badge that float
 **TranslationCardSkeleton.tsx:**
 - Mirrored the same badge positioning for loading state consistency
 - Skeleton badge uses same absolute positioning and rounded-full shape
+
+### Drag and drop to reorder languages
+
+Replaced the up/down arrow buttons with drag-and-drop functionality for reordering languages in settings, providing a more intuitive interaction.
+
+**Dependencies added:**
+- `@dnd-kit/core` - Core drag and drop primitives
+- `@dnd-kit/sortable` - Sortable list functionality
+- `@dnd-kit/utilities` - CSS transform utilities
+
+**Modified files:**
+- `src/components/LanguageList.tsx`:
+  - Added `SortableLanguageItem` component using `useSortable` hook
+  - Wrapped language list in `DndContext` and `SortableContext`
+  - Added drag handle with grip icon (`IconGripVertical`) replacing up/down buttons
+  - Used `arrayMove` from dnd-kit to handle reordering on drag end
+  - Added visual feedback (opacity, shadow) when dragging
+  - Supports both pointer (mouse/touch) and keyboard sensors for accessibility
+
+- `src/components/LanguageList.test.tsx`:
+  - Removed tests for old move up/down buttons
+  - Added tests for drag handles presence and accessibility attributes
