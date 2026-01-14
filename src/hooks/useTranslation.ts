@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { translate, detectLanguage, TranslationResult } from "@/lib/anthropic"
+import { translate, TranslationResult } from "@/lib/anthropic"
 import { Language, LanguageTranslation } from "@/types"
 
 export type TranslationStatus = "idle" | "translating" | "success" | "partial" | "error"
@@ -8,7 +8,6 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
   const [status, setStatus] = useState<TranslationStatus>("idle")
   const [results, setResults] = useState<LanguageTranslation[]>([])
   const [error, setError] = useState<string | undefined>()
-  const [detectedLanguage, setDetectedLanguage] = useState<Language | undefined>()
 
   const translateText = useCallback(
     async (text: string) => {
@@ -19,28 +18,8 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
       setStatus("translating")
       setResults([])
       setError(undefined)
-      setDetectedLanguage(undefined)
 
-      // First, detect the source language
-      const detectionResult = await detectLanguage(apiKey, text)
-
-      let targetLanguages = languages
-      if (detectionResult.success) {
-        setDetectedLanguage(detectionResult.language)
-        // Filter out the detected language from targets
-        targetLanguages = languages.filter(
-          lang => lang.code.toLowerCase() !== detectionResult.language.code.toLowerCase()
-        )
-      }
-
-      // If no target languages remain after filtering, show a message
-      if (targetLanguages.length === 0) {
-        setStatus("success")
-        setResults([])
-        return
-      }
-
-      const translationPromises = targetLanguages.map(
+      const translationPromises = languages.map(
         async (language): Promise<TranslationResult & { language: Language }> => {
           const result = await translate(apiKey, text, language, customPrompt)
           return { ...result, language }
@@ -54,6 +33,10 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
 
       for (const result of settled) {
         if (result.success) {
+          // Skip languages where the text is already in that language
+          if ("sameLanguage" in result) {
+            continue
+          }
           successful.push({
             language: result.language,
             options: result.options,
@@ -65,10 +48,10 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
 
       setResults(successful)
 
-      if (successful.length === 0) {
+      if (successful.length === 0 && firstError) {
         setStatus("error")
         setError(firstError)
-      } else if (successful.length < targetLanguages.length) {
+      } else if (firstError) {
         setStatus("partial")
         setError(firstError)
       } else {
@@ -82,14 +65,12 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
     setStatus("idle")
     setResults([])
     setError(undefined)
-    setDetectedLanguage(undefined)
   }, [])
 
   return {
     status,
     results,
     error,
-    detectedLanguage,
     translate: translateText,
     reset,
   }

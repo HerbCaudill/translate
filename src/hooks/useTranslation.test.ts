@@ -5,11 +5,9 @@ import * as anthropic from "@/lib/anthropic"
 
 vi.mock("@/lib/anthropic", () => ({
   translate: vi.fn(),
-  detectLanguage: vi.fn(),
 }))
 
 const mockTranslate = vi.mocked(anthropic.translate)
-const mockDetectLanguage = vi.mocked(anthropic.detectLanguage)
 
 describe("useTranslation", () => {
   const apiKey = "test-api-key"
@@ -21,11 +19,6 @@ describe("useTranslation", () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // Default: detect English so no target languages are filtered out
-    mockDetectLanguage.mockResolvedValue({
-      success: true,
-      language: { code: "en", name: "English" },
-    })
   })
 
   afterEach(() => {
@@ -170,7 +163,6 @@ describe("useTranslation", () => {
     expect(result.current.status).toBe("idle")
     expect(result.current.results).toEqual([])
     expect(result.current.error).toBeUndefined()
-    expect(result.current.detectedLanguage).toBeUndefined()
   })
 
   it("should translate to all provided languages", async () => {
@@ -219,40 +211,17 @@ describe("useTranslation", () => {
     expect(result.current.results[1].language).toEqual(languages[1])
   })
 
-  it("should detect language and return it", async () => {
-    mockDetectLanguage.mockResolvedValue({
-      success: true,
-      language: { code: "de", name: "German" },
-    })
-    mockTranslate.mockResolvedValue({
-      success: true,
-      options: [{ text: "Translated", explanation: "Translation" }],
-    })
-
-    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
-
-    act(() => {
-      result.current.translate("Guten Tag")
-    })
-
-    await waitFor(() => {
-      expect(result.current.status).toBe("success")
-    })
-
-    expect(result.current.detectedLanguage).toEqual({ code: "de", name: "German" })
-    expect(mockDetectLanguage).toHaveBeenCalledWith(apiKey, "Guten Tag")
-  })
-
-  it("should skip translation to detected language", async () => {
-    // Detect Spanish - should skip translating to Spanish
-    mockDetectLanguage.mockResolvedValue({
-      success: true,
-      language: { code: "es", name: "Spanish" },
-    })
-    mockTranslate.mockResolvedValue({
-      success: true,
-      options: [{ text: "Translated", explanation: "Translation" }],
-    })
+  it("should skip language when text is already in that language", async () => {
+    // Spanish returns SAME_LANGUAGE, French returns translation
+    mockTranslate
+      .mockResolvedValueOnce({
+        success: true,
+        sameLanguage: true,
+      } as anthropic.TranslationResult)
+      .mockResolvedValueOnce({
+        success: true,
+        options: [{ text: "Bonjour", explanation: "French greeting" }],
+      })
 
     const { result } = renderHook(() => useTranslation({ apiKey, languages }))
 
@@ -264,64 +233,30 @@ describe("useTranslation", () => {
       expect(result.current.status).toBe("success")
     })
 
-    // Should only translate to French (1 language), not Spanish
-    expect(mockTranslate).toHaveBeenCalledTimes(1)
-    expect(mockTranslate).toHaveBeenCalledWith(
-      apiKey,
-      "Hola mundo",
-      { code: "fr", name: "French" },
-      undefined
-    )
+    // Should have called translate for both languages
+    expect(mockTranslate).toHaveBeenCalledTimes(2)
+    // But results should only include French (not Spanish since it was same language)
     expect(result.current.results).toHaveLength(1)
     expect(result.current.results[0].language.code).toBe("fr")
   })
 
-  it("should translate to all languages if detection fails", async () => {
-    mockDetectLanguage.mockResolvedValue({
-      success: false,
-      error: "Could not detect language",
-    })
+  it("should return success with empty results when all languages return same language", async () => {
     mockTranslate.mockResolvedValue({
       success: true,
-      options: [{ text: "Translated", explanation: "Translation" }],
-    })
+      sameLanguage: true,
+    } as anthropic.TranslationResult)
 
     const { result } = renderHook(() => useTranslation({ apiKey, languages }))
 
     act(() => {
-      result.current.translate("xyz123")
+      result.current.translate("Hello")
     })
 
     await waitFor(() => {
       expect(result.current.status).toBe("success")
     })
 
-    // Should translate to both languages since detection failed
     expect(mockTranslate).toHaveBeenCalledTimes(2)
-    expect(result.current.detectedLanguage).toBeUndefined()
-  })
-
-  it("should return success with empty results when all target languages match detected", async () => {
-    // Only have Spanish as a target language, and detect Spanish
-    const spanishOnly = [{ code: "es", name: "Spanish" }]
-    mockDetectLanguage.mockResolvedValue({
-      success: true,
-      language: { code: "es", name: "Spanish" },
-    })
-
-    const { result } = renderHook(() => useTranslation({ apiKey, languages: spanishOnly }))
-
-    act(() => {
-      result.current.translate("Hola")
-    })
-
-    await waitFor(() => {
-      expect(result.current.status).toBe("success")
-    })
-
-    // Should not call translate at all
-    expect(mockTranslate).not.toHaveBeenCalled()
     expect(result.current.results).toEqual([])
-    expect(result.current.detectedLanguage).toEqual({ code: "es", name: "Spanish" })
   })
 })

@@ -1,10 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { Language, TranslationOption } from "../types"
 import { DEFAULT_TRANSLATION_PROMPT, JSON_FORMAT_SUFFIX } from "./prompts"
-import { findLanguageByCode } from "./languages"
 
 const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
-const DETECTION_MODEL = "claude-3-5-haiku-20241022"
 
 const MAX_RETRIES = 3
 const INITIAL_RETRY_DELAY_MS = 1000
@@ -33,10 +31,7 @@ const getRetryAfterMs = (error: InstanceType<typeof Anthropic.APIError>): number
 
 export type TranslationResult =
   | { success: true; options: TranslationOption[] }
-  | { success: false; error: string }
-
-export type DetectionResult =
-  | { success: true; language: Language }
+  | { success: true; sameLanguage: true }
   | { success: false; error: string }
 
 const createClient = (apiKey: string): Anthropic => {
@@ -44,72 +39,6 @@ const createClient = (apiKey: string): Anthropic => {
     apiKey,
     dangerouslyAllowBrowser: true,
   })
-}
-
-const LANGUAGE_DETECTION_PROMPT = `Identify the language of the following text.
-Respond with ONLY a valid ISO 639-1 two-letter language code (e.g., "en" for English, "es" for Spanish, "fr" for French).
-If you cannot determine the language or the text is too short/ambiguous, respond with "unknown".
-Do not include any other text in your response.`
-
-export const detectLanguage = async (apiKey: string, text: string): Promise<DetectionResult> => {
-  if (!text.trim()) {
-    return { success: false, error: "No text to analyze" }
-  }
-
-  const client = createClient(apiKey)
-
-  let lastError: Error | undefined
-
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      const response = await client.messages.create({
-        model: DETECTION_MODEL,
-        max_tokens: 10,
-        system: LANGUAGE_DETECTION_PROMPT,
-        messages: [{ role: "user", content: text }],
-      })
-
-      const content = response.content[0]
-      if (content.type !== "text") {
-        return { success: false, error: "Unexpected response format" }
-      }
-
-      const detectedCode = content.text.trim().toLowerCase()
-
-      if (detectedCode === "unknown") {
-        return { success: false, error: "Could not determine language" }
-      }
-
-      const language = findLanguageByCode(detectedCode)
-      if (!language) {
-        return { success: false, error: `Unknown language code: ${detectedCode}` }
-      }
-
-      return { success: true, language }
-    } catch (error) {
-      lastError = error as Error
-
-      if (error instanceof Anthropic.AuthenticationError) {
-        return { success: false, error: "Invalid API key" }
-      }
-
-      if (error instanceof Anthropic.RateLimitError) {
-        if (attempt < MAX_RETRIES) {
-          const retryAfterMs = getRetryAfterMs(error)
-          const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
-          await sleep(delayMs)
-          continue
-        }
-        return { success: false, error: "Rate limit exceeded. Please try again later." }
-      }
-
-      if (error instanceof Anthropic.APIError) {
-        return { success: false, error: `API error: ${error.message}` }
-      }
-    }
-  }
-
-  return { success: false, error: lastError?.message ?? "Failed to detect language" }
 }
 
 export const translate = async (
@@ -125,7 +54,7 @@ export const translate = async (
   const client = createClient(apiKey)
   const basePrompt = customPrompt || DEFAULT_TRANSLATION_PROMPT
   const promptWithFormat = basePrompt + JSON_FORMAT_SUFFIX
-  const systemPrompt = promptWithFormat.replace(
+  const systemPrompt = promptWithFormat.replaceAll(
     "{{language}}",
     `${language.name} (${language.code})`,
   )
@@ -146,8 +75,15 @@ export const translate = async (
         return { success: false, error: "Unexpected response format" }
       }
 
+      const responseText = content.text.trim()
+
+      // Check if the text is already in the target language
+      if (responseText === "SAME_LANGUAGE") {
+        return { success: true, sameLanguage: true }
+      }
+
       // Extract JSON from potential markdown code blocks or surrounding text
-      let jsonText = content.text.trim()
+      let jsonText = responseText
 
       // Try extracting from markdown code blocks first
       const codeBlockMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/)
