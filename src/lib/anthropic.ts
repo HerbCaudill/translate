@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk"
 import { Language, TranslationOption } from "../types"
 import { DEFAULT_COMPLETION_PROMPT, DEFAULT_TRANSLATION_PROMPT } from "./prompts"
 
-const HAIKU_MODEL = "claude-3-5-haiku-latest"
+const HAIKU_MODEL = "claude-haiku-4-5-20251001"
 const OPUS_MODEL = "claude-sonnet-4-20250514"
 
 const MAX_RETRIES = 3
@@ -10,8 +10,9 @@ const INITIAL_RETRY_DELAY_MS = 1000
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-const getRetryAfterMs = (error: Anthropic.RateLimitError): number | undefined => {
-  const retryAfter = error.headers?.get("retry-after")
+const getRetryAfterMs = (error: InstanceType<typeof Anthropic.APIError>): number | undefined => {
+  const headers = error.headers as Headers | undefined
+  const retryAfter = headers?.get("retry-after")
   if (!retryAfter) return undefined
 
   // retry-after can be seconds (number) or HTTP-date

@@ -32,7 +32,7 @@ describe("LanguageList", () => {
     const onChange = vi.fn()
     render(<LanguageList languages={defaultLanguages} onChange={onChange} />)
 
-    const spanishItem = screen.getByText("Spanish").closest("[data-language]")!
+    const spanishItem = screen.getByText("Spanish").closest("[data-language]") as HTMLElement
     const removeButton = within(spanishItem).getByRole("button", { name: /remove/i })
 
     await user.click(removeButton)
@@ -48,7 +48,7 @@ describe("LanguageList", () => {
     const onChange = vi.fn()
     render(<LanguageList languages={defaultLanguages} onChange={onChange} />)
 
-    const frenchItem = screen.getByText("French").closest("[data-language]")!
+    const frenchItem = screen.getByText("French").closest("[data-language]") as HTMLElement
     const moveUpButton = within(frenchItem).getByRole("button", { name: /move up/i })
 
     await user.click(moveUpButton)
@@ -65,7 +65,7 @@ describe("LanguageList", () => {
     const onChange = vi.fn()
     render(<LanguageList languages={defaultLanguages} onChange={onChange} />)
 
-    const frenchItem = screen.getByText("French").closest("[data-language]")!
+    const frenchItem = screen.getByText("French").closest("[data-language]") as HTMLElement
     const moveDownButton = within(frenchItem).getByRole("button", { name: /move down/i })
 
     await user.click(moveDownButton)
@@ -80,7 +80,7 @@ describe("LanguageList", () => {
   it("disables move up button for first item", () => {
     render(<LanguageList languages={defaultLanguages} onChange={vi.fn()} />)
 
-    const spanishItem = screen.getByText("Spanish").closest("[data-language]")!
+    const spanishItem = screen.getByText("Spanish").closest("[data-language]") as HTMLElement
     const moveUpButton = within(spanishItem).getByRole("button", { name: /move up/i })
 
     expect(moveUpButton).toBeDisabled()
@@ -89,7 +89,7 @@ describe("LanguageList", () => {
   it("disables move down button for last item", () => {
     render(<LanguageList languages={defaultLanguages} onChange={vi.fn()} />)
 
-    const germanItem = screen.getByText("German").closest("[data-language]")!
+    const germanItem = screen.getByText("German").closest("[data-language]") as HTMLElement
     const moveDownButton = within(germanItem).getByRole("button", { name: /move down/i })
 
     expect(moveDownButton).toBeDisabled()

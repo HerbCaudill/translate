@@ -78,7 +78,7 @@ describe("SettingsDialog", () => {
 
     await user.click(screen.getByRole("button", { name: "Settings" }))
 
-    const spanishItem = screen.getByText("Spanish").closest("[data-language]")!
+    const spanishItem = screen.getByText("Spanish").closest("[data-language]") as HTMLElement
     const removeButton = within(spanishItem).getByRole("button", { name: /remove/i })
     await user.click(removeButton)
 
