@@ -12,19 +12,23 @@ import {
 } from "@/components/ui/card"
 import { validateApiKey } from "@/lib/validateApiKey"
 
+// Check if a string looks like an Anthropic API key format
+const looksLikeApiKey = (text: string): boolean => {
+  return text.trim().startsWith("sk-ant-")
+}
+
 export const ApiKeyPrompt = ({ onSubmit }: Props) => {
   const [apiKey, setApiKey] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!apiKey.trim()) return
+  const submitApiKey = async (key: string) => {
+    if (!key.trim()) return
 
     setIsSubmitting(true)
     setError(null)
 
-    const result = await validateApiKey(apiKey.trim())
+    const result = await validateApiKey(key.trim())
 
     if (!result.valid) {
       setError(result.error)
@@ -32,8 +36,24 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
       return
     }
 
-    await onSubmit(apiKey.trim())
+    await onSubmit(key.trim())
     setIsSubmitting(false)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await submitApiKey(apiKey)
+  }
+
+  const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData.getData("text")
+    if (looksLikeApiKey(pastedText)) {
+      // Prevent default paste so we can handle it ourselves
+      e.preventDefault()
+      setApiKey(pastedText.trim())
+      await submitApiKey(pastedText)
+    }
+    // Otherwise, let the default paste behavior happen
   }
 
   return (
@@ -57,6 +77,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
                 placeholder="sk-ant-..."
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
+                onPaste={handlePaste}
                 autoFocus
                 disabled={isSubmitting}
                 aria-label="API key"

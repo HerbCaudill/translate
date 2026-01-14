@@ -1,5 +1,26 @@
 # Progress Log
 
+## 2025-01-16
+
+### Auto-submit API key on paste
+
+Added functionality to automatically validate and submit the API key when the user pastes text that looks like an Anthropic API key (starts with `sk-ant-`). This streamlines the onboarding experience since users typically copy/paste their API key from the Anthropic Console.
+
+**Modified files:**
+- `src/components/ApiKeyPrompt.tsx`:
+  - Added `looksLikeApiKey()` helper function to check if text starts with `sk-ant-`
+  - Extracted validation logic into `submitApiKey()` function for reuse
+  - Added `handlePaste` handler that auto-submits when pasting valid-looking keys
+  - Added `onPaste` prop to the Input component
+  - Non-API-key text pastes still work normally (default behavior preserved)
+
+**Test file updated:**
+- `src/components/ApiKeyPrompt.test.tsx` - Added 4 new tests:
+  - Auto-submits when pasting a valid API key format
+  - Shows the pasted key in the input field
+  - Does not auto-submit when pasting text that doesn't look like an API key
+  - Shows validation error when pasted API key is invalid
+
 ## 2025-01-15
 
 ### Clean up API key dialog UI

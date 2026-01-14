@@ -127,4 +127,67 @@ describe("ApiKeyPrompt", () => {
     })
     expect(onSubmit).toHaveBeenCalledWith("sk-ant-valid")
   })
+
+  it("auto-submits when pasting a valid API key format", async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    const input = screen.getByLabelText("API key")
+    await user.click(input)
+    await user.paste("sk-ant-api03-pasted-key")
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith("sk-ant-api03-pasted-key")
+    })
+    expect(mockValidateApiKey).toHaveBeenCalledWith("sk-ant-api03-pasted-key")
+  })
+
+  it("shows the pasted key in the input field", async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    const input = screen.getByLabelText("API key")
+    await user.click(input)
+    await user.paste("sk-ant-api03-pasted-key")
+
+    await waitFor(() => {
+      expect(input).toHaveValue("sk-ant-api03-pasted-key")
+    })
+  })
+
+  it("does not auto-submit when pasting text that doesn't look like an API key", async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    const input = screen.getByLabelText("API key")
+    await user.click(input)
+    await user.paste("not-an-api-key")
+
+    // Wait a bit to ensure no auto-submit happens
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(mockValidateApiKey).not.toHaveBeenCalled()
+    // The text should still be pasted normally
+    expect(input).toHaveValue("not-an-api-key")
+  })
+
+  it("shows validation error when pasted API key is invalid", async () => {
+    const user = userEvent.setup()
+    mockValidateApiKey.mockResolvedValue({ valid: false, error: "Invalid API key" })
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    const input = screen.getByLabelText("API key")
+    await user.click(input)
+    await user.paste("sk-ant-invalid-key")
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid API key")).toBeInTheDocument()
+    })
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
 })
