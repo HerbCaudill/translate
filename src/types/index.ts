@@ -9,7 +9,6 @@ export type Settings = {
   apiKey: string
   languages: Language[]
   translationPrompt: string
-  completionPrompt: string
 }
 
 /** A single translation option with explanation */

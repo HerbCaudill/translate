@@ -39,7 +39,6 @@ describe("App", () => {
         apiKey: "sk-ant-test123",
         languages: [],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -74,7 +73,6 @@ describe("App", () => {
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -110,7 +108,6 @@ describe("App", () => {
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -149,7 +146,6 @@ describe("App history saving", () => {
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -189,7 +185,6 @@ describe("App history saving", () => {
           { code: "fr", name: "French" },
         ],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -239,7 +234,6 @@ describe("App error toasts", () => {
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
@@ -277,7 +271,6 @@ describe("App error toasts", () => {
           { code: "fr", name: "French" },
         ],
         translationPrompt: "",
-        completionPrompt: "",
       }),
     )
 
