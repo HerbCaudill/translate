@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
 import { useSettings } from "@/hooks/useSettings"
-import { useDebounce } from "@/hooks/useDebounce"
-import { useCompletionCheck } from "@/hooks/useCompletionCheck"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useHistory } from "@/hooks/useHistory"
 import { useInstallPrompt } from "@/hooks/useInstallPrompt"
@@ -12,7 +10,6 @@ import { TranslationResults } from "@/components/TranslationResults"
 import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
 import { SettingsDialog } from "@/components/SettingsDialog"
 import { HistoryDialog } from "@/components/HistoryDialog"
-import { EmptyState } from "@/components/EmptyState"
 import { InstallPrompt } from "@/components/InstallPrompt"
 import { HistoryEntry } from "@/types"
 
@@ -22,14 +19,6 @@ export function App() {
   const { canInstall, promptInstall } = useInstallPrompt()
   const [inputText, setInputText] = useState("")
   const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(null)
-
-  const debouncedText = useDebounce(inputText, 500)
-
-  const { status: completionStatus } = useCompletionCheck({
-    text: debouncedText,
-    apiKey: settings.apiKey,
-    customPrompt: settings.completionPrompt,
-  })
 
   const {
     status: translationStatus,
@@ -46,44 +35,23 @@ export function App() {
   // Track which text we've already translated to avoid re-translating
   const translatedTextRef = useRef<string>("")
 
-  // Trigger translation when completion check returns "complete"
-  useEffect(() => {
-    if (
-      completionStatus === "complete" &&
-      debouncedText.trim() &&
-      debouncedText !== translatedTextRef.current
-    ) {
-      translatedTextRef.current = debouncedText
-      translate(debouncedText)
+  // Track which translation we've saved to avoid duplicates
+  const savedTranslationRef = useRef<string>("")
+
+  const handleSubmit = useCallback(() => {
+    const text = inputText.trim()
+    if (text && text !== translatedTextRef.current) {
+      translatedTextRef.current = text
+      setSelectedHistoryEntry(null)
+      translate(text)
     }
-  }, [completionStatus, debouncedText, translate])
-
-  // Fallback: translate after 2s if auto-detection hasn't triggered
-  useEffect(() => {
-    // Skip if no text, already translated this text, or completion check succeeded
-    if (
-      !debouncedText.trim() ||
-      debouncedText === translatedTextRef.current ||
-      completionStatus === "complete"
-    ) {
-      return
-    }
-
-    const fallbackTimer = setTimeout(() => {
-      // Double-check we still haven't translated this text
-      if (debouncedText.trim() && debouncedText !== translatedTextRef.current) {
-        translatedTextRef.current = debouncedText
-        translate(debouncedText)
-      }
-    }, 2000)
-
-    return () => clearTimeout(fallbackTimer)
-  }, [debouncedText, completionStatus, translate])
+  }, [inputText, translate])
 
   // Reset translation when input is cleared
   useEffect(() => {
     if (!inputText.trim()) {
       translatedTextRef.current = ""
+      savedTranslationRef.current = ""
       resetTranslation()
       setSelectedHistoryEntry(null)
     }
@@ -95,9 +63,6 @@ export function App() {
       setSelectedHistoryEntry(null)
     }
   }, [inputText, selectedHistoryEntry])
-
-  // Track which translation we've saved to avoid duplicates
-  const savedTranslationRef = useRef<string>("")
 
   // Save translation to history when it completes
   useEffect(() => {
@@ -176,16 +141,16 @@ export function App() {
       <TranslateInput
         value={inputText}
         onChange={setInputText}
+        onSubmit={handleSubmit}
         onEscape={() => setInputText("")}
-        loading={completionStatus === "checking" || translationStatus === "translating"}
+        loading={translationStatus === "translating"}
       />
 
-      {/* Show skeleton while translating, results when done, or empty state */}
       {translationStatus === "translating" ?
         <TranslationResultsSkeleton languages={settings.languages} />
       : displayResults.length > 0 ?
         <TranslationResults results={displayResults} />
-      : <EmptyState />}
+      : null}
     </div>
   )
 }

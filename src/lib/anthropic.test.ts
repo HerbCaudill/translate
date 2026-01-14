@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
-import { checkCompletion, translate } from "./anthropic"
+import { translate } from "./anthropic"
 import Anthropic from "@anthropic-ai/sdk"
 
 vi.mock("@anthropic-ai/sdk")
@@ -33,101 +33,6 @@ const flushRetries = async () => {
     await vi.runAllTimersAsync()
   }
 }
-
-describe("checkCompletion", () => {
-  it("returns incomplete for empty text", async () => {
-    const result = await checkCompletion("test-key", "")
-    expect(result).toEqual({ status: "incomplete" })
-    expect(mockCreate).not.toHaveBeenCalled()
-  })
-
-  it("returns incomplete for whitespace-only text", async () => {
-    const result = await checkCompletion("test-key", "   ")
-    expect(result).toEqual({ status: "incomplete" })
-    expect(mockCreate).not.toHaveBeenCalled()
-  })
-
-  it("returns complete when API responds with complete", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "complete" }],
-    })
-
-    const result = await checkCompletion("test-key", "Hello world")
-    expect(result).toEqual({ status: "complete" })
-  })
-
-  it("returns incomplete when API responds with incomplete", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "incomplete" }],
-    })
-
-    const result = await checkCompletion("test-key", "Hello wor")
-    expect(result).toEqual({ status: "incomplete" })
-  })
-
-  it("handles API authentication error", async () => {
-    mockCreate.mockRejectedValue(
-      new Anthropic.AuthenticationError(
-        401,
-        { type: "error", error: { type: "authentication_error", message: "Invalid" } },
-        "Invalid",
-        {} as Headers,
-      ),
-    )
-
-    const result = await checkCompletion("bad-key", "Hello")
-    expect(result).toEqual({ status: "error", error: "Invalid API key" })
-  })
-
-  it("retries on rate limit error and eventually fails after max retries", async () => {
-    mockCreate.mockRejectedValue(createRateLimitError())
-
-    const resultPromise = checkCompletion("test-key", "Hello")
-    await flushRetries()
-    const result = await resultPromise
-
-    // Should have tried 4 times (1 initial + 3 retries)
-    expect(mockCreate).toHaveBeenCalledTimes(4)
-    expect(result).toEqual({
-      status: "error",
-      error: "Rate limit exceeded. Please try again later.",
-    })
-  })
-
-  it("succeeds after rate limit retry", async () => {
-    mockCreate
-      .mockRejectedValueOnce(createRateLimitError())
-      .mockResolvedValueOnce({ content: [{ type: "text", text: "complete" }] })
-
-    const resultPromise = checkCompletion("test-key", "Hello")
-    await flushRetries()
-    const result = await resultPromise
-
-    expect(mockCreate).toHaveBeenCalledTimes(2)
-    expect(result).toEqual({ status: "complete" })
-  })
-
-  it("uses retry-after header for delay", async () => {
-    mockCreate
-      .mockRejectedValueOnce(createRateLimitError("5"))
-      .mockResolvedValueOnce({ content: [{ type: "text", text: "complete" }] })
-
-    const resultPromise = checkCompletion("test-key", "Hello")
-    await flushRetries()
-    const result = await resultPromise
-
-    expect(result).toEqual({ status: "complete" })
-  })
-
-  it("uses custom prompt when provided", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "complete" }],
-    })
-
-    await checkCompletion("test-key", "Hello", "Custom prompt")
-    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ system: "Custom prompt" }))
-  })
-})
 
 describe("translate", () => {
   const language = { code: "es", name: "Spanish" }
