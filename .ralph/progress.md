@@ -51,3 +51,18 @@ Replaced the two-input language entry system (code + name) with an autocomplete 
 **Dependencies added:**
 - `@radix-ui/react-popover` - For dropdown positioning
 - `cmdk` - Command palette library for fast fuzzy search
+
+### Put language name in a badge on the border
+
+Changed the language name display from a card header title to a badge that floats on the top border of the card.
+
+**TranslationCard.tsx:**
+- Removed CardHeader and CardTitle components in favor of a styled `<span>` badge
+- Badge positioned absolutely at `-top-2.5 left-3` to float on the card border
+- Badge uses `bg-primary text-primary-foreground` for consistent theming
+- Added `rounded-full` pill shape with `px-2.5 py-0.5 text-xs font-medium` styling
+- Card padding adjusted from `py-3` to `pt-5 pb-3` to accommodate badge overflow
+
+**TranslationCardSkeleton.tsx:**
+- Mirrored the same badge positioning for loading state consistency
+- Skeleton badge uses same absolute positioning and rounded-full shape
