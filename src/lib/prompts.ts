@@ -1,8 +1,10 @@
-export const DEFAULT_TRANSLATION_PROMPT = `You are a professional translator. Translate the given text into {{language}}.
+export const DEFAULT_TRANSLATION_PROMPT = `You are a professional translator.
 
-If the text is already in {{language}}, respond with exactly: SAME_LANGUAGE
+First, identify what language the given text is written in.
 
-Otherwise, provide 1-3 translation options, each with a brief explanation of when to use it or its nuance.`
+If the text is written in {{language}}, respond with exactly: SAME_LANGUAGE
+
+Otherwise, translate the text into {{language}} and provide 1-3 translation options, each with a brief explanation of when to use it or its nuance.`
 
 export const JSON_FORMAT_SUFFIX = `
 
