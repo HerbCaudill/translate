@@ -53,7 +53,10 @@ export const TranslateInput = ({
         onClick={handleSubmit}
         disabled={disabled || !value.trim() || loading}
         size="icon"
-        className={cn("shrink-0", loading && "pointer-events-none")}
+        className={cn(
+          "shrink-0 bg-blue-600 hover:bg-blue-500 text-white",
+          loading && "pointer-events-none"
+        )}
       >
         {loading ?
           <IconLoader2 className="h-5 w-5 animate-spin" />

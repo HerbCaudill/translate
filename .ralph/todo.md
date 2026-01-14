@@ -1,56 +1,11 @@
 ### To do
 
+- [ ] Make the default languages Catalan, Spanish, French, and Portuguese
+- [ ] Change the language interface to autocomplete. I shouldn't have to know the two-letter code for a language.
+- [ ] In the results, put the language name in a little badge on the border
+- [ ] Make the results more compact: less padding, smaller text
+- [ ] Let me drag and drop languages to reorder
+
 ### Done
 
-- [x] Add install prompt for PWA
-
-- [x] Add service worker for offline shell
-
-- [x] Responsive layout for mobile
-- [x] Add loading spinner to TranslateInput for completion check and translation states
-
-- [x] Handle rate limiting gracefully
-- [x] Empty state when no translations yet
-- [x] Install sonner for toast notifications
-- [x] Show toast on API errors
-- [x] Add retry button to error toasts
-- [x] Create folder structure (components, hooks, lib, types)
-- [x] Add IBM Plex fonts
-- [x] Set up PWA with vite-plugin-pwa
-- [x] Install and configure shadcn/ui
-- [x] Install and configure Tailwind CSS v4
-- [x] Initialize Vite project with React + TypeScript
-- [x] Create useHistory hook
-- [x] Create useSettings hook
-- [x] Create localStorage helper functions (get, set, remove)
-- [x] Define TypeScript types (Settings, Translation, HistoryEntry)
-- [x] Add API key validation (test call to Anthropic)
-- [x] Show prompt on first run or when key is missing
-- [x] Store API key in localStorage
-- [x] Create ApiKeyPrompt component
-- [x] Define default prompts in prompts.ts
-- [x] Create translation function (Opus)
-- [x] Create completion detection function (Haiku)
-- [x] Create anthropic.ts client wrapper
-- [x] Install @anthropic-ai/sdk
-- [x] Wire up: input → debounce → detection → translation
-- [x] Create useTranslation hook (calls Opus)
-- [x] Create useCompletionCheck hook (calls Haiku)
-- [x] Implement debounce hook (500ms)
-- [x] Create TranslateInput component with autofocus
-- [x] Try to translate after 2s if auto-detection hasn't triggered
-- [x] Add loading skeleton while translating
-- [x] Create TranslationResults component (grid of cards)
-- [x] Display multiple translation options with explanations
-- [x] Create TranslationCard component (single language)
-- [x] Reset prompt to default button
-- [x] Prompt editor: textarea with default prompt
-- [x] Languages list: add, remove, reorder
-- [x] Settings gear icon in header
-- [x] Create SettingsDialog component
-- [x] Clear history option
-- [x] Click history item to show translation again
-- [x] Search/filter history by input text
-- [x] Create HistoryView component
-- [x] Save each translation to localStorage
-- [x] Escape key clears input and results
+- [x] Make the submit button blue
