@@ -225,14 +225,21 @@ describe("translate", () => {
     )
   })
 
-  it("uses custom prompt when provided", async () => {
+  it("uses custom prompt when provided and appends JSON format", async () => {
     mockCreate.mockResolvedValue({
       content: [{ type: "text", text: JSON.stringify({ options: [] }) }],
     })
 
     await translate("test-key", "Hello", language, "Translate to {{language}}")
     expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ system: "Translate to Spanish (es)" }),
+      expect.objectContaining({
+        system: expect.stringContaining("Translate to Spanish (es)"),
+      }),
+    )
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining("Respond in JSON format"),
+      }),
     )
   })
 })

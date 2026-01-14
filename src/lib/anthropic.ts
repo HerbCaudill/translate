@@ -1,6 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { Language, TranslationOption } from "../types"
-import { DEFAULT_COMPLETION_PROMPT, DEFAULT_TRANSLATION_PROMPT } from "./prompts"
+import {
+  DEFAULT_COMPLETION_PROMPT,
+  DEFAULT_TRANSLATION_PROMPT,
+  JSON_FORMAT_SUFFIX,
+} from "./prompts"
 
 const HAIKU_MODEL = "claude-haiku-4-5-20251001"
 const OPUS_MODEL = "claude-sonnet-4-20250514"
@@ -117,7 +121,11 @@ export const translate = async (
 
   const client = createClient(apiKey)
   const basePrompt = customPrompt || DEFAULT_TRANSLATION_PROMPT
-  const systemPrompt = basePrompt.replace("{{language}}", `${language.name} (${language.code})`)
+  const promptWithFormat = basePrompt + JSON_FORMAT_SUFFIX
+  const systemPrompt = promptWithFormat.replace(
+    "{{language}}",
+    `${language.name} (${language.code})`,
+  )
 
   let lastError: Error | undefined
 
@@ -135,11 +143,21 @@ export const translate = async (
         return { success: false, error: "Unexpected response format" }
       }
 
-      // Extract JSON from potential markdown code blocks
+      // Extract JSON from potential markdown code blocks or surrounding text
       let jsonText = content.text.trim()
+
+      // Try extracting from markdown code blocks first
       const codeBlockMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/)
       if (codeBlockMatch) {
         jsonText = codeBlockMatch[1].trim()
+      }
+
+      // If still not valid JSON, try to find a JSON object in the text
+      if (!jsonText.startsWith("{")) {
+        const jsonObjectMatch = jsonText.match(/\{[\s\S]*\}/)
+        if (jsonObjectMatch) {
+          jsonText = jsonObjectMatch[0]
+        }
       }
 
       const parsed = JSON.parse(jsonText) as { options: TranslationOption[] }
