@@ -2,6 +2,13 @@
 
 ## 2025-01-15
 
+### Show API key as plain text instead of password field
+
+Changed the API key input from `type="password"` to `type="text"` so users can see what they're typing and verify their key is correct before submitting.
+
+**Modified files:**
+- `src/components/ApiKeyPrompt.tsx` - Changed input type from "password" to "text"
+
 ### Unify language badge between results and skeleton views
 
 Created a shared `LanguageBadge` component to ensure the language name is displayed consistently between the translation results and the skeleton loading state.

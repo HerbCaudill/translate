@@ -55,7 +55,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
               <Label htmlFor="api-key">API key</Label>
               <Input
                 id="api-key"
-                type="password"
+                type="text"
                 placeholder="sk-ant-..."
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}

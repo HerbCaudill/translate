@@ -6,11 +6,12 @@
 API key dialog
 
 - [ ] trigger "save api key" on paste if the text is valid
-- [ ] don't treat the api key as a password - it's ok to show it on screen
 - [ ] add some padding around the "Get your api key..." label
 - [ ] The "API key" label before the input is redundant
 
 ### Done
+
+- [x] don't treat the api key as a password - it's ok to show it on screen
 
 - [x] The results display and the skeleton view should use the same component for the language cards (currently the language names are displayed differently)
 - [x] Let me drag and drop languages to reorder
