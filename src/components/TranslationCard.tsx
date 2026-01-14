@@ -5,15 +5,15 @@ export function TranslationCard({ translation }: Props) {
   const { language, options } = translation
 
   return (
-    <Card data-language={language.code}>
-      <CardHeader>
-        <CardTitle>{language.name}</CardTitle>
+    <Card data-language={language.code} className="gap-3 py-3">
+      <CardHeader className="px-4">
+        <CardTitle className="text-sm">{language.name}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 px-4">
         {options.map((option, index) => (
-          <div key={index} className="flex flex-col gap-1">
-            <p className="text-lg">{option.text}</p>
-            <p className="text-muted-foreground text-sm">{option.explanation}</p>
+          <div key={index} className="flex flex-col gap-0.5">
+            <p className="text-base">{option.text}</p>
+            <p className="text-muted-foreground text-xs">{option.explanation}</p>
           </div>
         ))}
       </CardContent>
