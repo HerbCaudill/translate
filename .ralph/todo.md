@@ -6,10 +6,10 @@
 API key dialog
 
 - [ ] trigger "save api key" on paste if the text is valid
-- [ ] add some padding around the "Get your api key..." label
-- [ ] The "API key" label before the input is redundant
 
 ### Done
+
+- [x] Remove redundant "API key" label and add padding around "Get your api key..." text
 
 - [x] don't treat the api key as a password - it's ok to show it on screen
 

@@ -2,6 +2,17 @@
 
 ## 2025-01-15
 
+### Clean up API key dialog UI
+
+Simplified the API key prompt by removing the redundant "API key" label (the card title already says "API key required") and increased spacing around the helper text.
+
+**Modified files:**
+- `src/components/ApiKeyPrompt.tsx`:
+  - Removed the visible `<Label>` element (redundant with card title)
+  - Added `aria-label="API key"` to the input for accessibility
+  - Increased gap from `gap-2` to `gap-3` for better spacing around the "Get your API key" helper text
+  - Removed unused `Label` import
+
 ### Show API key as plain text instead of password field
 
 Changed the API key input from `type="password"` to `type="text"` so users can see what they're typing and verify their key is correct before submitting.

@@ -2,7 +2,6 @@ import { useState } from "react"
 import { IconKey, IconExternalLink } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Card,
   CardContent,
@@ -51,8 +50,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="api-key">API key</Label>
+            <div className="flex flex-col gap-3">
               <Input
                 id="api-key"
                 type="text"
@@ -61,6 +59,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
                 onChange={e => setApiKey(e.target.value)}
                 autoFocus
                 disabled={isSubmitting}
+                aria-label="API key"
               />
               <p className="text-muted-foreground text-sm">
                 Get your API key from the{" "}
