@@ -8,7 +8,6 @@ export type Language = {
 export type Settings = {
   apiKey: string
   languages: Language[]
-  translationPrompt: string
 }
 
 /** A single translation option with explanation */

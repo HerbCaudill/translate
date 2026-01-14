@@ -29,7 +29,6 @@ export function App() {
   } = useTranslation({
     apiKey: settings.apiKey,
     languages: settings.languages,
-    customPrompt: settings.translationPrompt,
   })
 
   // Track which text we've already translated to avoid re-translating
@@ -133,8 +132,6 @@ export function App() {
           <SettingsDialog
             languages={settings.languages}
             onLanguagesChange={languages => updateSettings({ languages })}
-            translationPrompt={settings.translationPrompt}
-            onTranslationPromptChange={translationPrompt => updateSettings({ translationPrompt })}
           />
         </div>
       </header>

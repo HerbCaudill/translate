@@ -4,7 +4,7 @@ import { Language, LanguageTranslation } from "@/types"
 
 export type TranslationStatus = "idle" | "translating" | "success" | "partial" | "error"
 
-export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
+export const useTranslation = ({ apiKey, languages }: Props) => {
   const [status, setStatus] = useState<TranslationStatus>("idle")
   const [results, setResults] = useState<LanguageTranslation[]>([])
   const [error, setError] = useState<string | undefined>()
@@ -21,7 +21,7 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
 
       const translationPromises = languages.map(
         async (language): Promise<TranslationResult & { language: Language }> => {
-          const result = await translate(apiKey, text, language, customPrompt)
+          const result = await translate(apiKey, text, language)
           return { ...result, language }
         },
       )
@@ -58,7 +58,7 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
         setStatus("success")
       }
     },
-    [apiKey, languages, customPrompt],
+    [apiKey, languages],
   )
 
   const reset = useCallback(() => {
@@ -79,5 +79,4 @@ export const useTranslation = ({ apiKey, languages, customPrompt }: Props) => {
 type Props = {
   apiKey: string
   languages: Language[]
-  customPrompt?: string
 }

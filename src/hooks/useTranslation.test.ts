@@ -15,7 +15,6 @@ describe("useTranslation", () => {
     { code: "es", name: "Spanish" },
     { code: "fr", name: "French" },
   ]
-  const customPrompt = "Custom prompt {{language}}"
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -53,25 +52,6 @@ describe("useTranslation", () => {
 
     expect(result.current.results).toHaveLength(2)
     expect(mockTranslate).toHaveBeenCalledTimes(2)
-  })
-
-  it("should pass custom prompt to translate function", async () => {
-    mockTranslate.mockResolvedValue({
-      success: true,
-      options: [{ text: "Translated", explanation: "Explanation" }],
-    })
-
-    const { result } = renderHook(() => useTranslation({ apiKey, languages, customPrompt }))
-
-    act(() => {
-      result.current.translate("Test text")
-    })
-
-    await waitFor(() => {
-      expect(result.current.status).toBe("success")
-    })
-
-    expect(mockTranslate).toHaveBeenCalledWith(apiKey, "Test text", languages[0], customPrompt)
   })
 
   it("should not translate empty text", () => {

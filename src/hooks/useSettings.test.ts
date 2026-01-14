@@ -18,7 +18,6 @@ describe("useSettings", () => {
     const savedSettings = {
       apiKey: "test-key",
       languages: [{ code: "es", name: "Spanish" }],
-      translationPrompt: "custom translation prompt",
     }
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(savedSettings))
 

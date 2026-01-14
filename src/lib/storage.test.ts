@@ -18,7 +18,6 @@ describe("storage", () => {
       const settings: Settings = {
         apiKey: "test-key",
         languages: [{ code: "es", name: "Spanish" }],
-        translationPrompt: "Translate this",
       }
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings))
 
@@ -39,7 +38,6 @@ describe("storage", () => {
       const settings: Settings = {
         apiKey: "test-key",
         languages: [{ code: "fr", name: "French" }],
-        translationPrompt: "Translate",
       }
 
       setItem(STORAGE_KEYS.SETTINGS, settings)
@@ -52,12 +50,10 @@ describe("storage", () => {
       const initial: Settings = {
         apiKey: "old-key",
         languages: [],
-        translationPrompt: "",
       }
       const updated: Settings = {
         apiKey: "new-key",
         languages: [{ code: "de", name: "German" }],
-        translationPrompt: "New prompt",
       }
 
       setItem(STORAGE_KEYS.SETTINGS, initial)
@@ -73,7 +69,6 @@ describe("storage", () => {
       const settings: Settings = {
         apiKey: "test",
         languages: [],
-        translationPrompt: "",
       }
       setItem(STORAGE_KEYS.SETTINGS, settings)
 

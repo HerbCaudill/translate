@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react"
 import { Settings } from "@/types"
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
-import { DEFAULT_TRANSLATION_PROMPT } from "@/lib/prompts"
 
 const getDefaultApiKey = () => import.meta.env.VITE_ANTHROPIC_API_KEY ?? ""
 
@@ -14,7 +13,6 @@ export const DEFAULT_SETTINGS: Settings = {
     { code: "fr", name: "French" },
     { code: "pt", name: "Portuguese" },
   ],
-  translationPrompt: DEFAULT_TRANSLATION_PROMPT,
 }
 
 export const useSettings = () => {

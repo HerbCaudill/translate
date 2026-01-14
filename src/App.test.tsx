@@ -44,7 +44,6 @@ describe("App", () => {
       JSON.stringify({
         apiKey: "sk-ant-test123",
         languages: [],
-        translationPrompt: "",
       }),
     )
 
@@ -78,7 +77,6 @@ describe("App", () => {
       JSON.stringify({
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
-        translationPrompt: "",
       }),
     )
 
@@ -113,7 +111,6 @@ describe("App", () => {
       JSON.stringify({
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
-        translationPrompt: "",
       }),
     )
 
@@ -156,7 +153,6 @@ describe("App history saving", () => {
       JSON.stringify({
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
-        translationPrompt: "",
       }),
     )
 
@@ -195,7 +191,6 @@ describe("App history saving", () => {
           { code: "es", name: "Spanish" },
           { code: "fr", name: "French" },
         ],
-        translationPrompt: "",
       }),
     )
 
@@ -249,7 +244,6 @@ describe("App error toasts", () => {
       JSON.stringify({
         apiKey: "sk-ant-test123",
         languages: [{ code: "es", name: "Spanish" }],
-        translationPrompt: "",
       }),
     )
 
@@ -286,7 +280,6 @@ describe("App error toasts", () => {
           { code: "es", name: "Spanish" },
           { code: "fr", name: "French" },
         ],
-        translationPrompt: "",
       }),
     )
 
