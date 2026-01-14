@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] English should be one of the default languages and if what I type isn't in English then it should translate it to Engish and not into the language it's already in. so there needs to be a separate step of identifying the language
 - [ ] use the Vercel AI SDK
 
 API key dialog
