@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
+import { LanguageBadge } from "./LanguageBadge"
 import type { LanguageTranslation } from "@/types"
 
 export function TranslationCard({ translation }: Props) {
@@ -6,9 +7,7 @@ export function TranslationCard({ translation }: Props) {
 
   return (
     <Card data-language={language.code} className="relative gap-3 pt-5 pb-3">
-      <span className="bg-primary text-primary-foreground absolute -top-2.5 left-3 rounded-full px-2.5 py-0.5 text-xs font-medium">
-        {language.name}
-      </span>
+      <LanguageBadge name={language.name} />
       <CardContent className="flex flex-col gap-3 px-4">
         {options.map((option, index) => (
           <div key={index} className="flex flex-col gap-0.5">

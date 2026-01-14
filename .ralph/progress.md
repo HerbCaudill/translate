@@ -1,5 +1,22 @@
 # Progress Log
 
+## 2025-01-15
+
+### Unify language badge between results and skeleton views
+
+Created a shared `LanguageBadge` component to ensure the language name is displayed consistently between the translation results and the skeleton loading state.
+
+**New file created:**
+- `src/components/LanguageBadge.tsx` - Reusable badge component with `bg-primary text-primary-foreground` styling, positioned absolutely on the card border
+
+**Modified files:**
+- `src/components/TranslationCard.tsx` - Now uses `LanguageBadge` instead of inline styled span
+- `src/components/TranslationCardSkeleton.tsx` - Replaced `Skeleton` wrapper around language name with `LanguageBadge`. The badge now displays with the same styling as the results (no pulsing animation), while the content below remains skeletal
+- `src/components/TranslationCardSkeleton.test.tsx` - Updated skeleton count from 5 to 4 since the badge is no longer a skeleton element
+
+**New test file:**
+- `src/components/LanguageBadge.test.tsx` - Tests for rendering, custom className support, and base styling
+
 ## 2025-01-14
 
 ### Make the submit button blue

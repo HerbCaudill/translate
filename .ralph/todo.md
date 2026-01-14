@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] The results display and the skeleton view should use the same component for the language cards (currently the language names are displayed differently)
 - [ ] use the Vercel AI SDK
 
 API key dialog
@@ -12,6 +11,7 @@ API key dialog
 
 ### Done
 
+- [x] The results display and the skeleton view should use the same component for the language cards (currently the language names are displayed differently)
 - [x] Let me drag and drop languages to reorder
 - [x] In the results, put the language name in a little badge on the border
 - [x] Change the language interface to autocomplete. I shouldn't have to know the two-letter code for a language.

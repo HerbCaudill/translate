@@ -16,8 +16,8 @@ describe("TranslationCardSkeleton", () => {
 
   it("renders two translation option placeholders", () => {
     const { container } = render(<TranslationCardSkeleton />)
-    // Each option has 2 skeletons (text + explanation), plus 1 for header
+    // Each option has 2 skeletons (text + explanation)
     const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
-    expect(skeletons.length).toBe(5)
+    expect(skeletons.length).toBe(4)
   })
 })
