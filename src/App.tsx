@@ -256,7 +256,7 @@ export function App() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Blue header area - fixed, non-scrollable */}
-      <div className="shrink-0 bg-blue-600">
+      <div className="shrink-0 bg-blue-600 pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
