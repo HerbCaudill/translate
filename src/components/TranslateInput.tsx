@@ -30,7 +30,7 @@ export const TranslateInput = ({
   }, [value, suggestions])
 
   useEffect(() => {
-    inputRef.current?.focus()
+    inputRef.current?.focus({ preventScroll: true })
   }, [])
 
   // Show suggestions when there are matches, hide when empty
@@ -94,6 +94,11 @@ export const TranslateInput = ({
   }
 
   const handleFocus = () => {
+    // Prevent mobile browsers from scrolling when focusing input
+    const scrollY = window.scrollY
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollY)
+    })
     inputRef.current?.select()
   }
 
