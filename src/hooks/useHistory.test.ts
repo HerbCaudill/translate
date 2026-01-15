@@ -186,4 +186,37 @@ describe("useHistory", () => {
     expect(result.current.searchHistory("")).toEqual([])
     expect(result.current.searchHistory("   ")).toEqual([])
   })
+
+  it("excludes exact matches from search results", () => {
+    const existingHistory = [
+      createMockEntry("1", "Hello world"),
+      createMockEntry("2", "Hello"),
+      createMockEntry("3", "Hello there"),
+    ]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    // When searching for exactly "Hello", the entry with input "Hello" should be excluded
+    const found = result.current.searchHistory("Hello")
+    expect(found).toHaveLength(2)
+    expect(found[0].input).toBe("Hello world")
+    expect(found[1].input).toBe("Hello there")
+    expect(found.find(e => e.input === "Hello")).toBeUndefined()
+  })
+
+  it("excludes exact matches case-insensitively", () => {
+    const existingHistory = [
+      createMockEntry("1", "HELLO"),
+      createMockEntry("2", "Hello world"),
+    ]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    // "hello" should not match "HELLO" exactly (case-insensitive)
+    const found = result.current.searchHistory("hello")
+    expect(found).toHaveLength(1)
+    expect(found[0].input).toBe("Hello world")
+  })
 })

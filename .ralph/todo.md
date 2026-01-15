@@ -2,50 +2,20 @@
 
 ### Done
 
+- [x] when I type something in and I get results, it's added to history and the history autocomplete shows up with the same item that is being shown. One solution might be to not include in the autocomplete any items that exactly match the input
+
 - [x] add a refresh button for results
-
 - [x] make the input text smaller
-
 - [x] show the icon in the header
-
 - [x] when typing in the input and more than 3 characters have been entered, show any matching text from history and let me just tap on those results if I want
-
 - [x] remove the subtitle from the history dialog
-
 - [x] get rid of the delete button that clears all history
-
 - [x] allow deleting history items
-
 - [x] history results need to be in a scrolling container
-
 - [x] show the most recent request and response on first load
-
 - [x] If the text entry matches a previous translation, just use that without going to the api
-
 - [x] get rid of the focus ring on the input
-
 - [x] use mono for the input and for the translation in the results
-
-- [x] make the tab buttons smaller and left-align them
-- [x] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
-
-- [x] get rid of the gray backdrop on the tabs
-- [x] remember the last selected tab (already implemented)
-- [x] Show languages in the order defined in settings, not in the order they come in
-
-- [x] Add logging for API requests, responses, and retries
-- [x] Show the results in tabs. Remember the last tab the user selected. Hide the tab for the source language
-- [x] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
-- [x] use Plex Serif for the translations
-- [x] add a bit more spacing between language cards in results
-- [x] English should be one of the default languages and if what I type isn't in English then it should translate it to Engish and not into the language it's already in. so there needs to be a separate step of identifying the language
-- [x] trigger "save api key" on paste if the text is valid
-- [x] Remove redundant "API key" label and add padding around "Get your api key..." text
-- [x] don't treat the api key as a password - it's ok to show it on screen
-- [x] The results display and the skeleton view should use the same component for the language cards (currently the language names are displayed differently)
-- [x] Let me drag and drop languages to reorder
-- [x] In the results, put the language name in a little badge on the border
-- [x] Change the language interface to autocomplete. I shouldn't have to know the two-letter code for a language.
-- [x] Make the results more compact: less padding, smaller text
-- [x] Make the default languages Catalan, Spanish, French, and Portuguese
-- [x] Make the submit button blue
+- [x] make the tab buttons smaller and left-align them- [x] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
+- [x] get rid of the gray backdrop on the tabs- [x] remember the last selected tab (already implemented)- [x] Show languages in the order defined in settings, not in the order they come in
+- [x] Add logging for API requests, responses, and retries- [x] Show the results in tabs. Remember the last tab the user selected. Hide the tab for the source language- [x] get rid of the loading cards - just show a spinner while it's working, and show results as they come in- [x] use Plex Serif for the translations- [x] add a bit more spacing between language cards in results- [x] English should be one of the default languages and if what I type isn't in English then it should translate it to Engish and not into the language it's already in. so there needs to be a separate step of identifying the language- [x] trigger "save api key" on paste if the text is valid- [x] Remove redundant "API key" label and add padding around "Get your api key..." text- [x] don't treat the api key as a password - it's ok to show it on screen- [x] The results display and the skeleton view should use the same component for the language cards (currently the language names are displayed differently)- [x] Let me drag and drop languages to reorder- [x] In the results, put the language name in a little badge on the border- [x] Change the language interface to autocomplete. I shouldn't have to know the two-letter code for a language.- [x] Make the results more compact: less padding, smaller text- [x] Make the default languages Catalan, Spanish, French, and Portuguese- [x] Make the submit button blue

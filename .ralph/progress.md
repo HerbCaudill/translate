@@ -2,6 +2,26 @@
 
 ## 2026-01-15
 
+### Exclude exact matches from history autocomplete suggestions
+
+Fixed an issue where after typing something and getting translation results, the history autocomplete would show the same item as a suggestion. This was confusing because the user is already viewing that translation. The fix ensures that entries which exactly match the input text are excluded from the autocomplete dropdown.
+
+**Key changes:**
+
+1. **Updated `searchHistory` function in `useHistory.ts`:**
+   - Added an additional condition to filter out entries where the input exactly matches the query (case-insensitive)
+   - The search still returns partial matches, just not exact matches
+
+**Modified files:**
+
+- `src/hooks/useHistory.ts` - Updated `searchHistory` to exclude exact matches
+
+**Test files updated:**
+
+- `src/hooks/useHistory.test.ts` - Added 2 tests:
+  - "excludes exact matches from search results"
+  - "excludes exact matches case-insensitively"
+
 ### Add refresh button for results
 
 Added a refresh button to the translation results that allows users to force a fresh translation from the API, bypassing the history cache. The button appears next to the language tabs and shows a spinner while refreshing.

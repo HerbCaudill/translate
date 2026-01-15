@@ -63,7 +63,11 @@ export const useHistory = () => {
     (query: string): HistoryEntry[] => {
       const trimmedQuery = query.trim().toLowerCase()
       if (!trimmedQuery) return []
-      return history.filter(entry => entry.input.toLowerCase().includes(trimmedQuery))
+      return history.filter(entry => {
+        const entryInput = entry.input.toLowerCase()
+        // Include entries that contain the query but exclude exact matches
+        return entryInput.includes(trimmedQuery) && entryInput !== trimmedQuery
+      })
     },
     [history],
   )
