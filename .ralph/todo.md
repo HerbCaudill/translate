@@ -1,6 +1,5 @@
 ### To do
 
-- [ ] get rid of the delete button that clears all history
 - [ ] remove the subtitle from the history dialog
 - [ ] when typing in the input and more than 3 characters have been entered, show any matching text from history and let me just tap on those results if I want
 - [ ] make the input text smaller
@@ -8,6 +7,8 @@
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] get rid of the delete button that clears all history
 
 - [x] allow deleting history items
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { IconSearch, IconTrash, IconX } from "@tabler/icons-react"
+import { IconSearch, IconX } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { HistoryEntry } from "@/types"
@@ -20,7 +20,7 @@ const formatRelativeTime = (timestamp: number): string => {
   return new Date(timestamp).toLocaleDateString()
 }
 
-export const HistoryView = ({ history, onSelectEntry, onRemoveEntry, onClearHistory }: Props) => {
+export const HistoryView = ({ history, onSelectEntry, onRemoveEntry }: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredHistory = useMemo(() => {
@@ -42,19 +42,14 @@ export const HistoryView = ({ history, onSelectEntry, onRemoveEntry, onClearHist
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <IconSearch className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-          <Input
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search history..."
-            className="pl-9"
-          />
-        </div>
-        <Button variant="ghost" size="icon" onClick={onClearHistory} aria-label="Clear history">
-          <IconTrash className="size-4" />
-        </Button>
+      <div className="relative">
+        <IconSearch className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+        <Input
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search history..."
+          className="pl-9"
+        />
       </div>
 
       {!hasResults ?
@@ -99,5 +94,4 @@ type Props = {
   history: HistoryEntry[]
   onSelectEntry: (entry: HistoryEntry) => void
   onRemoveEntry: (id: string) => void
-  onClearHistory: () => void
 }

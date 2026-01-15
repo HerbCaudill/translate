@@ -16,7 +16,6 @@ export const HistoryDialog = ({
   history,
   onSelectEntry,
   onRemoveEntry,
-  onClearHistory,
   className,
 }: Props) => {
   const [open, setOpen] = useState(false)
@@ -42,7 +41,6 @@ export const HistoryDialog = ({
           history={history}
           onSelectEntry={handleSelectEntry}
           onRemoveEntry={onRemoveEntry}
-          onClearHistory={onClearHistory}
         />
       </DialogContent>
     </Dialog>
@@ -53,6 +51,5 @@ type Props = {
   history: HistoryEntry[]
   onSelectEntry: (entry: HistoryEntry) => void
   onRemoveEntry: (id: string) => void
-  onClearHistory: () => void
   className?: string
 }

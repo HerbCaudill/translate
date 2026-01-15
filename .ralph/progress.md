@@ -2,6 +2,38 @@
 
 ## 2025-01-15
 
+### Remove "clear all history" button
+
+Removed the trash icon button that cleared all history entries. Since users can already delete individual items, a "clear all" button is redundant and poses a risk of accidental data loss.
+
+**Key changes:**
+
+1. **Updated `HistoryView.tsx`:**
+   - Removed the trash icon button and its `onClearHistory` prop
+   - Removed `IconTrash` import
+   - Simplified the search bar layout (no longer needs flex container with button)
+
+2. **Updated `HistoryDialog.tsx`:**
+   - Removed `onClearHistory` prop from Props type
+   - Removed prop passthrough to `HistoryView`
+
+3. **Updated `App.tsx`:**
+   - Removed `clearHistory` from useHistory destructuring
+   - Removed `onClearHistory` prop from HistoryDialog usage
+
+**Modified files:**
+
+- `src/components/HistoryView.tsx` - Removed clear button and `onClearHistory` prop
+- `src/components/HistoryDialog.tsx` - Removed `onClearHistory` prop
+- `src/App.tsx` - Removed `clearHistory` usage
+
+**Test files updated:**
+
+- `src/components/HistoryView.test.tsx` - Removed 3 tests related to clear history button, removed `onClearHistory={vi.fn()}` from all remaining tests
+- `src/components/HistoryDialog.test.tsx` - Removed `onClearHistory={vi.fn()}` from all tests
+
+## 2025-01-15
+
 ### History results in a scrolling container
 
 Added a scrolling container around the history list in the HistoryView component to prevent overflow when there are many history entries.

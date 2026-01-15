@@ -29,7 +29,6 @@ describe("HistoryDialog", () => {
         history={[]}
         onSelectEntry={vi.fn()}
         onRemoveEntry={vi.fn()}
-        onClearHistory={vi.fn()}
       />,
     )
 
@@ -43,7 +42,6 @@ describe("HistoryDialog", () => {
         history={[]}
         onSelectEntry={vi.fn()}
         onRemoveEntry={vi.fn()}
-        onClearHistory={vi.fn()}
       />,
     )
 
@@ -62,7 +60,6 @@ describe("HistoryDialog", () => {
         history={history}
         onSelectEntry={vi.fn()}
         onRemoveEntry={vi.fn()}
-        onClearHistory={vi.fn()}
       />,
     )
 
@@ -81,7 +78,6 @@ describe("HistoryDialog", () => {
         history={history}
         onSelectEntry={onSelectEntry}
         onRemoveEntry={vi.fn()}
-        onClearHistory={vi.fn()}
       />,
     )
 
