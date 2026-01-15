@@ -14,7 +14,7 @@ import { HistoryEntry } from "@/types"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
-  const { history, addEntry, clearHistory, findByInput } = useHistory()
+  const { history, addEntry, removeEntry, clearHistory, findByInput } = useHistory()
   const { canInstall, promptInstall } = useInstallPrompt()
 
   // Initialize from most recent history entry if available
@@ -148,6 +148,7 @@ export function App() {
               <HistoryDialog
                 history={history}
                 onSelectEntry={handleSelectHistoryEntry}
+                onRemoveEntry={removeEntry}
                 onClearHistory={clearHistory}
                 className="text-white hover:bg-white/20"
               />

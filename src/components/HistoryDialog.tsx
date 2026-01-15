@@ -12,7 +12,13 @@ import {
 import { HistoryView } from "@/components/HistoryView"
 import { HistoryEntry } from "@/types"
 
-export const HistoryDialog = ({ history, onSelectEntry, onClearHistory, className }: Props) => {
+export const HistoryDialog = ({
+  history,
+  onSelectEntry,
+  onRemoveEntry,
+  onClearHistory,
+  className,
+}: Props) => {
   const [open, setOpen] = useState(false)
 
   const handleSelectEntry = (entry: HistoryEntry) => {
@@ -35,6 +41,7 @@ export const HistoryDialog = ({ history, onSelectEntry, onClearHistory, classNam
         <HistoryView
           history={history}
           onSelectEntry={handleSelectEntry}
+          onRemoveEntry={onRemoveEntry}
           onClearHistory={onClearHistory}
         />
       </DialogContent>
@@ -45,6 +52,7 @@ export const HistoryDialog = ({ history, onSelectEntry, onClearHistory, classNam
 type Props = {
   history: HistoryEntry[]
   onSelectEntry: (entry: HistoryEntry) => void
+  onRemoveEntry: (id: string) => void
   onClearHistory: () => void
   className?: string
 }

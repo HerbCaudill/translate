@@ -598,3 +598,43 @@ Replaced the up/down arrow buttons with drag-and-drop functionality for reorderi
 - `src/components/LanguageList.test.tsx`:
   - Removed tests for old move up/down buttons
   - Added tests for drag handles presence and accessibility attributes
+
+## 2025-01-15
+
+### Allow deleting individual history items
+
+Added the ability to delete individual history entries from the history dialog. Each history entry now has a delete button (X icon) that appears on hover.
+
+**Key changes:**
+
+1. **Updated `HistoryView.tsx`:**
+   - Added `onRemoveEntry` prop to handle deletion
+   - Added delete button (`IconX`) to each history item
+   - Button appears on hover via `group-hover:opacity-100` class
+   - Uses `e.stopPropagation()` to prevent triggering selection when clicking delete
+   - Accessible `aria-label` includes the entry text for screen readers
+
+2. **Updated `HistoryDialog.tsx`:**
+   - Added `onRemoveEntry` prop to pass through to `HistoryView`
+   - Updated Props type to include the new prop
+
+3. **Updated `App.tsx`:**
+   - Extracted `removeEntry` from `useHistory` hook
+   - Passed `removeEntry` as `onRemoveEntry` prop to `HistoryDialog`
+
+**Note:** The `useHistory` hook already had a `removeEntry` function implemented - this change just wired it up to the UI.
+
+**Modified files:**
+
+- `src/components/HistoryView.tsx` - Added delete button UI and `onRemoveEntry` prop
+- `src/components/HistoryDialog.tsx` - Added `onRemoveEntry` prop passthrough
+- `src/App.tsx` - Connected `removeEntry` from useHistory to HistoryDialog
+
+**Test files updated:**
+
+- `src/components/HistoryView.test.tsx` - Added 3 new tests:
+  - "shows delete button for each entry on hover"
+  - "calls onRemoveEntry when clicking delete button"
+  - "does not call onSelectEntry when clicking delete button"
+  - Updated all existing tests to include the new `onRemoveEntry` prop
+- `src/components/HistoryDialog.test.tsx` - Updated all tests to include `onRemoveEntry` prop

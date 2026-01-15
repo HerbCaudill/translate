@@ -24,14 +24,28 @@ const createMockEntry = (id: string, input: string, createdAt: number): HistoryE
 
 describe("HistoryDialog", () => {
   it("renders history button", () => {
-    render(<HistoryDialog history={[]} onSelectEntry={vi.fn()} onClearHistory={vi.fn()} />)
+    render(
+      <HistoryDialog
+        history={[]}
+        onSelectEntry={vi.fn()}
+        onRemoveEntry={vi.fn()}
+        onClearHistory={vi.fn()}
+      />,
+    )
 
     expect(screen.getByRole("button", { name: "History" })).toBeInTheDocument()
   })
 
   it("opens dialog when clicking history button", async () => {
     const user = userEvent.setup()
-    render(<HistoryDialog history={[]} onSelectEntry={vi.fn()} onClearHistory={vi.fn()} />)
+    render(
+      <HistoryDialog
+        history={[]}
+        onSelectEntry={vi.fn()}
+        onRemoveEntry={vi.fn()}
+        onClearHistory={vi.fn()}
+      />,
+    )
 
     await user.click(screen.getByRole("button", { name: "History" }))
 
@@ -43,7 +57,14 @@ describe("HistoryDialog", () => {
     const user = userEvent.setup()
     const history = [createMockEntry("1", "Hello world", Date.now())]
 
-    render(<HistoryDialog history={history} onSelectEntry={vi.fn()} onClearHistory={vi.fn()} />)
+    render(
+      <HistoryDialog
+        history={history}
+        onSelectEntry={vi.fn()}
+        onRemoveEntry={vi.fn()}
+        onClearHistory={vi.fn()}
+      />,
+    )
 
     await user.click(screen.getByRole("button", { name: "History" }))
 
@@ -56,7 +77,12 @@ describe("HistoryDialog", () => {
     const onSelectEntry = vi.fn()
 
     render(
-      <HistoryDialog history={history} onSelectEntry={onSelectEntry} onClearHistory={vi.fn()} />,
+      <HistoryDialog
+        history={history}
+        onSelectEntry={onSelectEntry}
+        onRemoveEntry={vi.fn()}
+        onClearHistory={vi.fn()}
+      />,
     )
 
     await user.click(screen.getByRole("button", { name: "History" }))

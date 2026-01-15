@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { IconSearch, IconTrash } from "@tabler/icons-react"
+import { IconSearch, IconTrash, IconX } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { HistoryEntry } from "@/types"
@@ -20,7 +20,7 @@ const formatRelativeTime = (timestamp: number): string => {
   return new Date(timestamp).toLocaleDateString()
 }
 
-export const HistoryView = ({ history, onSelectEntry, onClearHistory }: Props) => {
+export const HistoryView = ({ history, onSelectEntry, onRemoveEntry, onClearHistory }: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredHistory = useMemo(() => {
@@ -64,16 +64,28 @@ export const HistoryView = ({ history, onSelectEntry, onClearHistory }: Props) =
       : <div className="max-h-80 overflow-y-auto">
           <ul className="flex flex-col gap-2">
             {filteredHistory.map(entry => (
-              <li key={entry.id}>
+              <li key={entry.id} className="group relative">
                 <button
                   onClick={() => onSelectEntry(entry)}
-                  className="hover:bg-muted/50 flex w-full flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors"
+                  className="hover:bg-muted/50 flex w-full flex-col items-start gap-1 rounded-lg border p-3 pr-10 text-left transition-colors"
                 >
                   <span className="line-clamp-2">{entry.input}</span>
                   <span className="text-muted-foreground text-xs">
                     {formatRelativeTime(entry.createdAt)}
                   </span>
                 </button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 right-1 h-8 w-8 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onRemoveEntry(entry.id)
+                  }}
+                  aria-label={`Delete "${entry.input}"`}
+                >
+                  <IconX className="size-4" />
+                </Button>
               </li>
             ))}
           </ul>
@@ -86,5 +98,6 @@ export const HistoryView = ({ history, onSelectEntry, onClearHistory }: Props) =
 type Props = {
   history: HistoryEntry[]
   onSelectEntry: (entry: HistoryEntry) => void
+  onRemoveEntry: (id: string) => void
   onClearHistory: () => void
 }
