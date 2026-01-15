@@ -2,6 +2,28 @@
 
 ## 2026-01-15
 
+### Replace existing history entries when refreshing results
+
+Fixed an issue where refreshing translation results would create duplicate history entries for the same input text. Now when a translation is added to history, if an entry with the same input already exists, it updates that entry's results instead of creating a new one. This ensures there's only ever one set of results for any given string.
+
+**Key changes:**
+
+1. **Updated `addEntry` function in `useHistory.ts`:**
+   - Before adding a new entry, checks if one with the same input (trimmed) already exists
+   - If found, updates the existing entry with new translation results and timestamp
+   - The original entry ID is preserved, but the timestamp is updated so it moves to the top of history
+   - If no existing entry, creates a new one as before
+
+**Modified files:**
+
+- `src/hooks/useHistory.ts` - Updated `addEntry` to upsert (update or insert) instead of always creating new entries
+
+**Test files updated:**
+
+- `src/hooks/useHistory.test.ts` - Added 2 tests:
+  - "updates existing entry when adding with same input" - verifies that adding a translation with an existing input updates instead of duplicating
+  - "updates existing entry with whitespace-trimmed input matching" - verifies whitespace is handled correctly when matching inputs
+
 ### Use trash icon for deleting history items
 
 Changed the delete button icon in the history dialog from an X icon (`IconX`) to a trash icon (`IconTrash`) for clearer visual communication of the delete action.

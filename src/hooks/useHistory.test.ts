@@ -216,4 +216,72 @@ describe("useHistory", () => {
     expect(found).toHaveLength(1)
     expect(found[0].input).toBe("Hello world")
   })
+
+  it("updates existing entry when adding with same input", () => {
+    const existingHistory = [
+      createMockEntry("1", "Hello", 1000),
+      createMockEntry("2", "World", 2000),
+    ]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    // Add a new translation with the same input "Hello" but different results
+    const newTranslation: Translation = {
+      input: "Hello",
+      results: [
+        {
+          language: { code: "fr", name: "French" },
+          options: [{ text: "Bonjour", explanation: "Updated greeting" }],
+        },
+      ],
+      timestamp: Date.now(),
+    }
+
+    act(() => {
+      result.current.addEntry(newTranslation)
+    })
+
+    // Should still have only 2 entries, not 3
+    expect(result.current.history).toHaveLength(2)
+
+    // The "Hello" entry should now have the updated results
+    const helloEntry = result.current.history.find(e => e.input === "Hello")
+    expect(helloEntry).toBeDefined()
+    expect(helloEntry!.translation.results[0].language.code).toBe("fr")
+    expect(helloEntry!.translation.results[0].options[0].text).toBe("Bonjour")
+
+    // The updated entry should keep its original ID
+    expect(helloEntry!.id).toBe("1")
+
+    // The updated entry should be moved to the top (most recent)
+    expect(result.current.history[0].input).toBe("Hello")
+  })
+
+  it("updates existing entry with whitespace-trimmed input matching", () => {
+    const existingHistory = [createMockEntry("1", "Hello")]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    // Add translation with extra whitespace around "Hello"
+    const newTranslation: Translation = {
+      input: "  Hello  ",
+      results: [
+        {
+          language: { code: "de", name: "German" },
+          options: [{ text: "Hallo", explanation: "German greeting" }],
+        },
+      ],
+      timestamp: Date.now(),
+    }
+
+    act(() => {
+      result.current.addEntry(newTranslation)
+    })
+
+    // Should still have only 1 entry
+    expect(result.current.history).toHaveLength(1)
+    expect(result.current.history[0].translation.results[0].language.code).toBe("de")
+  })
 })

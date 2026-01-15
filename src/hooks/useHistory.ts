@@ -17,14 +17,35 @@ export const useHistory = () => {
   })
 
   const addEntry = useCallback((translation: Translation) => {
-    const entry: HistoryEntry = {
-      id: generateId(),
-      input: translation.input,
-      translation,
-      createdAt: Date.now(),
-    }
-
     setHistory(current => {
+      // Check if an entry with the same input already exists
+      const existingIndex = current.findIndex(
+        entry => entry.input.trim() === translation.input.trim(),
+      )
+
+      if (existingIndex !== -1) {
+        // Update the existing entry with new results and timestamp
+        const updatedEntry: HistoryEntry = {
+          ...current[existingIndex],
+          translation,
+          createdAt: Date.now(), // Update timestamp so it moves to the top
+        }
+        const newHistory = sortByNewest([
+          updatedEntry,
+          ...current.slice(0, existingIndex),
+          ...current.slice(existingIndex + 1),
+        ])
+        setItem(STORAGE_KEYS.HISTORY, newHistory)
+        return newHistory
+      }
+
+      // No existing entry, create a new one
+      const entry: HistoryEntry = {
+        id: generateId(),
+        input: translation.input,
+        translation,
+        createdAt: Date.now(),
+      }
       const newHistory = sortByNewest([entry, ...current])
       setItem(STORAGE_KEYS.HISTORY, newHistory)
       return newHistory
