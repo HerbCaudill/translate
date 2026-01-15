@@ -2,6 +2,31 @@
 
 ## 2025-01-15
 
+### Smaller and left-aligned tab buttons
+
+Made the language tabs more compact and left-aligned to improve visual appearance.
+
+**Key changes:**
+
+1. **Updated `TabsList` component** (`src/components/ui/tabs.tsx`):
+   - Changed `justify-center` to `justify-start` for left-alignment
+   - Changed `h-9` to `h-auto` for flexible height (moved from TranslationResults)
+
+2. **Updated `TabsTrigger` component** (`src/components/ui/tabs.tsx`):
+   - Reduced padding from `px-3 py-1` to `px-2 py-0.5`
+   - Reduced text size from `text-sm` to `text-xs`
+
+3. **Simplified `TranslationResults.tsx`**:
+   - Removed `h-auto gap-1` override (now in base component)
+   - Kept `flex-wrap` for multi-line support
+
+**Modified files:**
+
+- `src/components/ui/tabs.tsx` - Smaller triggers, left-aligned list
+- `src/components/TranslationResults.tsx` - Simplified TabsList className
+
+## 2025-01-15
+
 ### Blue header with input
 
 Applied a solid blue background (#3b82f6 / `bg-blue-600`) to the header area, matching the app icon's gradient. The header now contains both the title/toolbar and the translation input field, creating a prominent branded header bar.

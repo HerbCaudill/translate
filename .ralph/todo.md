@@ -2,10 +2,10 @@
 
 - [ ] add a refresh button for results
 - [ ] use mono for the input and for the translation in the results
-- [ ] make the tab buttons smaller and left-align them
 
 ### Done
 
+- [x] make the tab buttons smaller and left-align them
 - [x] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
 
 - [x] get rid of the gray backdrop on the tabs

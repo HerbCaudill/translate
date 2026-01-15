@@ -44,7 +44,7 @@ export function TranslationResults({ results }: Props) {
 
   return (
     <Tabs value={selectedTab} onValueChange={handleTabChange}>
-      <TabsList className="flex-wrap h-auto gap-1">
+      <TabsList className="flex-wrap">
         {results.map(result => (
           <TabsTrigger key={result.language.code} value={result.language.code}>
             {result.language.name}
