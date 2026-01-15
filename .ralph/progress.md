@@ -2,6 +2,26 @@
 
 ## 2025-01-15
 
+### Show languages in the order defined in settings
+
+Fixed a bug where translation results were displayed in whatever order the API returned them, instead of respecting the user's preferred language order from settings.
+
+**The problem:**
+When calling `translateAll`, the code iterated over `parsed.translations` (the API response) to build the results array. The API doesn't guarantee any particular ordering, so languages appeared in an unpredictable order.
+
+**The fix:**
+Changed the iteration to loop over `languages` (the settings order) and look up each translation from the API response. This ensures translations are always displayed in the order the user configured in settings.
+
+**Modified files:**
+
+- `src/lib/anthropic.ts` - Changed the result mapping loop from iterating over API response to iterating over settings languages
+
+**Test file updated:**
+
+- `src/lib/anthropic.test.ts` - Added test "returns translations in the order defined in settings, not API response order" that verifies when the API returns languages in a different order (French before Spanish), the results still match the settings order (Spanish before French)
+
+## 2025-01-15
+
 ### Add logging for API requests, responses, and retries
 
 Added a logging system to help debug API interactions. Logs are written to the browser console with structured data including timestamps, log levels, and contextual information.
@@ -138,6 +158,7 @@ Increased the gap between translation cards in the results grid from `gap-3` (12
 The `App.test.tsx` file was mocking a `detectLanguage` function that no longer exists and expecting a 4th argument to `translate()` that was removed. This was leftover from a previous implementation that was later replaced with a simpler approach (integrated language detection in the translation prompt itself).
 
 **Changes:**
+
 - Removed `detectLanguage` from the mock in `App.test.tsx`
 - Updated `translate()` call expectations from 4 arguments to 3
 - Added `vi.stubEnv("VITE_ANTHROPIC_API_KEY", "")` in `src/test/setup.ts` to ensure predictable test behavior

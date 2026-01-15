@@ -2,12 +2,14 @@
 
 - [ ] remember the last selected tab
 - [ ] get rid of the gray backdrop on the tabs
+- [ ] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
+
 ### Done
 
+- [x] Show languages in the order defined in settings, not in the order they come in
+
 - [x] Add logging for API requests, responses, and retries
-
 - [x] Show the results in tabs. Remember the last tab the user selected. Hide the tab for the source language
-
 - [x] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
 - [x] use Plex Serif for the translations
 - [x] add a bit more spacing between language cards in results

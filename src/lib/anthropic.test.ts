@@ -297,4 +297,48 @@ describe("translateAll", () => {
     const result = await translateAll("bad-key", "Hello", languages)
     expect(result).toEqual({ success: false, error: "Invalid API key" })
   })
+
+  it("returns translations in the order defined in settings, not API response order", async () => {
+    // API returns French before Spanish (different from settings order)
+    const apiResponse = {
+      translations: [
+        {
+          languageCode: "fr",
+          sourceLanguage: false,
+          options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+        },
+        {
+          languageCode: "es",
+          sourceLanguage: false,
+          options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+        },
+      ],
+    }
+    mockCreate.mockResolvedValue({
+      content: [{ type: "text", text: JSON.stringify(apiResponse) }],
+    })
+
+    // Settings order: Spanish first, then French
+    const settingsLanguages = [
+      { code: "es", name: "Spanish" },
+      { code: "fr", name: "French" },
+    ]
+
+    const result = await translateAll("test-key", "Hello world", settingsLanguages)
+
+    expect(result).toEqual({
+      success: true,
+      translations: [
+        // Should be in settings order (es, fr), not API order (fr, es)
+        {
+          language: { code: "es", name: "Spanish" },
+          options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+        },
+        {
+          language: { code: "fr", name: "French" },
+          options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+        },
+      ],
+    })
+  })
 })

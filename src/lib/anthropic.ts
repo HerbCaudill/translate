@@ -253,13 +253,14 @@ export const translateAll = async (
         return { success: false, error: "Invalid response format" }
       }
 
-      // Map the API response back to our types, filtering out same-language entries
+      // Map the API response back to our types, maintaining the order from settings
+      // and filtering out same-language entries
       const translations: LanguageTranslation[] = []
-      for (const entry of parsed.translations) {
-        if (entry.sourceLanguage) continue
+      for (const language of languages) {
+        const entry = parsed.translations.find(t => t.languageCode === language.code)
+        if (!entry || entry.sourceLanguage) continue
 
-        const language = languages.find(l => l.code === entry.languageCode)
-        if (language && entry.options) {
+        if (entry.options) {
           translations.push({
             language,
             options: entry.options,
