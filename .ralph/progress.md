@@ -2,6 +2,24 @@
 
 ## 2026-01-15
 
+### Select all text on input focus
+
+Added functionality to select all text in the translation input field when it receives focus. This improves UX by allowing users to quickly replace the current text without manually selecting or deleting it.
+
+**Key changes:**
+
+1. **Updated `TranslateInput.tsx`:**
+   - Added `handleFocus` function that calls `select()` on the input element
+   - Added `onFocus={handleFocus}` prop to the Input component
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Added focus handler to select all text
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Added test "selects all text on focus" that verifies text selection occurs when input receives focus
+
 ### Add more lines to the loading skeleton
 
 Increased the number of skeleton placeholder lines in the loading state from 2 to 3 options. This provides a fuller visual preview while translations are loading.

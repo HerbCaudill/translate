@@ -43,6 +43,23 @@ describe("TranslateInput", () => {
     expect(screen.getByRole("textbox")).toHaveFocus()
   })
 
+  it("selects all text on focus", async () => {
+    const user = userEvent.setup()
+    render(<TranslateInput value="Hello world" onChange={() => {}} onSubmit={() => {}} />)
+
+    const input = screen.getByRole("textbox") as HTMLInputElement
+
+    // Blur the input first (it has autofocus)
+    input.blur()
+
+    // Now focus it again
+    await user.click(input)
+
+    // Check that all text is selected
+    expect(input.selectionStart).toBe(0)
+    expect(input.selectionEnd).toBe(input.value.length)
+  })
+
   it("displays the current value", () => {
     render(<TranslateInput value="Hello world" onChange={() => {}} onSubmit={() => {}} />)
     expect(screen.getByRole("textbox")).toHaveValue("Hello world")

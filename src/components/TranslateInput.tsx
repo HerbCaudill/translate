@@ -93,6 +93,10 @@ export const TranslateInput = ({
     setTimeout(() => setShowSuggestions(false), 150)
   }
 
+  const handleFocus = () => {
+    inputRef.current?.select()
+  }
+
   return (
     <div className="relative flex gap-2">
       <div className="relative flex-1">
@@ -102,6 +106,7 @@ export const TranslateInput = ({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
+          onFocus={handleFocus}
           placeholder={placeholder}
           disabled={disabled}
           className="border-white/20 bg-white font-mono text-sm focus-visible:border-white/20 focus-visible:ring-0"
