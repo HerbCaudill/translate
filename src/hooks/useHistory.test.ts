@@ -122,4 +122,29 @@ describe("useHistory", () => {
     expect(result.current.history[1].input).toBe("Second")
     expect(result.current.history[2].input).toBe("First")
   })
+
+  it("finds entry by input text", () => {
+    const existingHistory = [createMockEntry("1", "Hello"), createMockEntry("2", "World")]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    const found = result.current.findByInput("World")
+    expect(found?.id).toBe("2")
+    expect(found?.input).toBe("World")
+
+    const notFound = result.current.findByInput("Goodbye")
+    expect(notFound).toBeUndefined()
+  })
+
+  it("finds entry by input text with whitespace trimming", () => {
+    const existingHistory = [createMockEntry("1", "Hello")]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    const found = result.current.findByInput("  Hello  ")
+    expect(found?.id).toBe("1")
+    expect(found?.input).toBe("Hello")
+  })
 })

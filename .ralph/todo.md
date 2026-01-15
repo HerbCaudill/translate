@@ -1,12 +1,13 @@
 ### To do
 
 - [ ] show the most recent request and response on first load
-- [ ] If the text entry matches a previous translation, just use that without going to the api
 - [ ] make the input text smaller
 - [ ] show the icon in the header
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] If the text entry matches a previous translation, just use that without going to the api
 
 - [x] get rid of the focus ring on the input
 

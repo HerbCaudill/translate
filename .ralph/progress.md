@@ -2,6 +2,38 @@
 
 ## 2025-01-15
 
+### Use cached translations from history
+
+When the user enters text that matches a previous translation from history, the app now uses the cached result instead of calling the API. This saves API calls and provides instant results for repeated queries.
+
+**Key changes:**
+
+1. **Added `findByInput` function to `useHistory` hook** (`src/hooks/useHistory.ts`):
+   - Searches history for an entry matching the given input text
+   - Trims whitespace before comparing
+   - Returns the matching `HistoryEntry` or `undefined` if not found
+
+2. **Updated `handleSubmit` in `App.tsx`**:
+   - Before calling the API, checks if the text exists in history via `findByInput`
+   - If found, uses the cached result by setting `selectedHistoryEntry` (same flow as selecting from history dialog)
+   - If not found, proceeds with API call as before
+
+**Modified files:**
+
+- `src/hooks/useHistory.ts` - Added `findByInput` function and exported it
+- `src/App.tsx` - Updated `handleSubmit` to check for cached translations
+
+**Test files updated:**
+
+- `src/hooks/useHistory.test.ts` - Added 2 tests:
+  - "finds entry by input text"
+  - "finds entry by input text with whitespace trimming"
+- `src/App.test.tsx` - Added new test suite "App translation caching" with 2 tests:
+  - "uses cached result from history instead of calling API"
+  - "calls API when input does not match any cached entry"
+
+## 2025-01-15
+
 ### Remove focus ring from input field
 
 Removed the focus ring (blue outline) from the translation input field to provide a cleaner appearance against the blue header background.

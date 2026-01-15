@@ -220,3 +220,111 @@ describe("App error toasts", () => {
     })
   })
 })
+
+describe("App translation caching", () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+  })
+
+  it("uses cached result from history instead of calling API", async () => {
+    // Set up existing history with a cached translation
+    localStorage.setItem(
+      STORAGE_KEYS.HISTORY,
+      JSON.stringify([
+        {
+          id: "cached-1",
+          input: "hello",
+          translation: {
+            input: "hello",
+            results: [
+              {
+                language: { code: "es", name: "Spanish" },
+                options: [{ text: "hola (cached)", explanation: "cached greeting" }],
+              },
+            ],
+            timestamp: Date.now(),
+          },
+          createdAt: Date.now(),
+        },
+      ]),
+    )
+
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+      }),
+    )
+
+    const user = userEvent.setup()
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.type(input, "hello{Enter}")
+
+    // Should show cached result
+    await waitFor(() => {
+      expect(screen.getByText("hola (cached)")).toBeInTheDocument()
+    })
+
+    // API should NOT have been called since we used cached result
+    expect(anthropic.translateAll).not.toHaveBeenCalled()
+  })
+
+  it("calls API when input does not match any cached entry", async () => {
+    // Set up existing history with a different translation
+    localStorage.setItem(
+      STORAGE_KEYS.HISTORY,
+      JSON.stringify([
+        {
+          id: "cached-1",
+          input: "goodbye",
+          translation: {
+            input: "goodbye",
+            results: [
+              {
+                language: { code: "es", name: "Spanish" },
+                options: [{ text: "adiós", explanation: "farewell" }],
+              },
+            ],
+            timestamp: Date.now(),
+          },
+          createdAt: Date.now(),
+        },
+      ]),
+    )
+
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+      }),
+    )
+
+    vi.mocked(anthropic.translateAll).mockResolvedValue({
+      success: true,
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          options: [{ text: "hola", explanation: "greeting" }],
+        },
+      ],
+    })
+
+    const user = userEvent.setup()
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.type(input, "hello{Enter}")
+
+    // API should be called since "hello" is not in history
+    await waitFor(() => {
+      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
+        { code: "es", name: "Spanish" },
+      ])
+    })
+  })
+})

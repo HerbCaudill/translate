@@ -51,12 +51,21 @@ export const useHistory = () => {
     [history],
   )
 
+  const findByInput = useCallback(
+    (input: string): HistoryEntry | undefined => {
+      const trimmedInput = input.trim()
+      return history.find(entry => entry.input === trimmedInput)
+    },
+    [history],
+  )
+
   return {
     history,
     addEntry,
     removeEntry,
     clearHistory,
     findEntry,
+    findByInput,
   }
 }
 

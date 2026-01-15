@@ -14,7 +14,7 @@ import { HistoryEntry } from "@/types"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
-  const { history, addEntry, clearHistory } = useHistory()
+  const { history, addEntry, clearHistory, findByInput } = useHistory()
   const { canInstall, promptInstall } = useInstallPrompt()
   const [inputText, setInputText] = useState("")
   const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(null)
@@ -40,10 +40,20 @@ export function App() {
     const text = inputText.trim()
     if (text && text !== translatedTextRef.current) {
       translatedTextRef.current = text
-      setSelectedHistoryEntry(null)
-      translate(text)
+
+      // Check if we have this translation cached in history
+      const cachedEntry = findByInput(text)
+      if (cachedEntry) {
+        // Use cached result instead of calling the API
+        setSelectedHistoryEntry(cachedEntry)
+        savedTranslationRef.current = text
+      } else {
+        // No cached result, call the API
+        setSelectedHistoryEntry(null)
+        translate(text)
+      }
     }
-  }, [inputText, translate])
+  }, [inputText, translate, findByInput])
 
   // Reset translation when input is cleared
   useEffect(() => {
