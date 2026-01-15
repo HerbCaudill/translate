@@ -2,6 +2,22 @@
 
 ## 2025-01-15
 
+### Remove gray backdrop on tabs
+
+Removed the gray background from the tabs component and updated the styling for a cleaner appearance. The language tabs now appear as individual buttons with a bordered style, with the active tab highlighted using the primary color (blue).
+
+**The change:**
+- Removed `bg-muted` background and `rounded-lg p-1` padding from `TabsList`
+- Updated `TabsTrigger` styling to use bordered buttons (`border border-input bg-background`)
+- Active tab now uses primary color (`data-[state=active]:bg-primary data-[state=active]:text-primary-foreground`)
+- Added hover state for inactive tabs
+
+**Modified files:**
+
+- `src/components/ui/tabs.tsx` - Updated TabsList and TabsTrigger styling
+
+## 2025-01-15
+
 ### Show languages in the order defined in settings
 
 Fixed a bug where translation results were displayed in whatever order the API returned them, instead of respecting the user's preferred language order from settings.

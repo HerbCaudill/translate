@@ -1,11 +1,11 @@
 ### To do
 
-- [ ] remember the last selected tab
-- [ ] get rid of the gray backdrop on the tabs
 - [ ] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
 
 ### Done
 
+- [x] get rid of the gray backdrop on the tabs
+- [x] remember the last selected tab (already implemented)
 - [x] Show languages in the order defined in settings, not in the order they come in
 
 - [x] Add logging for API requests, responses, and retries
