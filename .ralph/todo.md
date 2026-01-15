@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] add a refresh button for results
-
 ### Done
+
+- [x] add a refresh button for results
 
 - [x] make the input text smaller
 

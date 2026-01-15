@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
+import { IconRefresh } from "@tabler/icons-react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
 import type { LanguageTranslation } from "@/types"
 
-export function TranslationResults({ results }: Props) {
+export function TranslationResults({ results, onRefresh, isRefreshing = false }: Props) {
   // Get initial tab from storage, fallback to first available result
   const [selectedTab, setSelectedTab] = useState<string>(() => {
     const stored = getItem<string>(STORAGE_KEYS.SELECTED_TAB)
@@ -44,13 +46,27 @@ export function TranslationResults({ results }: Props) {
 
   return (
     <Tabs value={selectedTab} onValueChange={handleTabChange}>
-      <TabsList className="flex-wrap">
-        {results.map(result => (
-          <TabsTrigger key={result.language.code} value={result.language.code}>
-            {result.language.name}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      <div className="flex items-center justify-between gap-2">
+        <TabsList className="flex-wrap">
+          {results.map(result => (
+            <TabsTrigger key={result.language.code} value={result.language.code}>
+              {result.language.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {onRefresh && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            aria-label="Refresh translation"
+            className="text-muted-foreground hover:text-foreground h-7 w-7 shrink-0"
+          >
+            <IconRefresh className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          </Button>
+        )}
+      </div>
       {results.map(result => (
         <TabsContent key={result.language.code} value={result.language.code}>
           <TranslationContent translation={result} />
@@ -79,4 +95,6 @@ function TranslationContent({ translation }: { translation: LanguageTranslation 
 
 type Props = {
   results: LanguageTranslation[]
+  onRefresh?: () => void
+  isRefreshing?: boolean
 }

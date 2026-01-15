@@ -60,6 +60,17 @@ export function App() {
     }
   }, [inputText, translate, findByInput])
 
+  const handleRefresh = useCallback(() => {
+    const text = inputText.trim()
+    if (text) {
+      // Force a fresh translation, bypassing cache
+      translatedTextRef.current = text
+      savedTranslationRef.current = "" // Reset so new results get saved
+      setSelectedHistoryEntry(null)
+      translate(text)
+    }
+  }, [inputText, translate])
+
   // Reset translation when input is cleared
   useEffect(() => {
     if (!inputText.trim()) {
@@ -180,7 +191,13 @@ export function App() {
 
       {/* Content area */}
       <div className="mx-auto w-full max-w-2xl flex-1 p-4 sm:p-6">
-        {displayResults.length > 0 && <TranslationResults results={displayResults} />}
+        {displayResults.length > 0 && (
+          <TranslationResults
+            results={displayResults}
+            onRefresh={handleRefresh}
+            isRefreshing={translationStatus === "translating"}
+          />
+        )}
       </div>
     </div>
   )

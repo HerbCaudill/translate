@@ -2,6 +2,38 @@
 
 ## 2026-01-15
 
+### Add refresh button for results
+
+Added a refresh button to the translation results that allows users to force a fresh translation from the API, bypassing the history cache. The button appears next to the language tabs and shows a spinner while refreshing.
+
+**Key changes:**
+
+1. **Updated `TranslationResults.tsx`:**
+   - Added `onRefresh` and `isRefreshing` props to the component
+   - Added refresh button (`IconRefresh`) next to the tabs list
+   - Button is conditionally rendered only when `onRefresh` is provided
+   - Button is disabled and shows spinner animation when `isRefreshing` is true
+   - Used ghost variant with muted styling for subtle appearance
+
+2. **Updated `App.tsx`:**
+   - Added `handleRefresh` callback that forces a fresh translation bypassing cache
+   - Resets `savedTranslationRef` so new results get saved to history
+   - Clears `selectedHistoryEntry` to show live translation results
+   - Passed `handleRefresh` and `isRefreshing` state to `TranslationResults`
+
+**Modified files:**
+
+- `src/components/TranslationResults.tsx` - Added refresh button and new props
+- `src/App.tsx` - Added `handleRefresh` handler and connected to TranslationResults
+
+**Test files updated:**
+
+- `src/components/TranslationResults.test.tsx` - Added 4 tests:
+  - "renders refresh button when onRefresh is provided"
+  - "does not render refresh button when onRefresh is not provided"
+  - "calls onRefresh when refresh button is clicked"
+  - "disables refresh button and shows spinner when isRefreshing is true"
+
 ### Make input text smaller
 
 Reduced the font size of the translation input field from `text-lg` (18px) to `text-sm` (14px) for a more compact appearance that better fits the header area.

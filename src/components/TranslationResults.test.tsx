@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, it, expect, beforeEach } from "vitest"
+import { describe, it, expect, beforeEach, vi } from "vitest"
 import { TranslationResults } from "./TranslationResults"
 import { STORAGE_KEYS } from "@/lib/storage"
 import type { LanguageTranslation } from "@/types"
@@ -104,5 +104,36 @@ describe("TranslationResults", () => {
     render(<TranslationResults results={mockResults} />)
     const translationText = screen.getByText("Hola")
     expect(translationText).toHaveClass("font-mono")
+  })
+
+  it("renders refresh button when onRefresh is provided", () => {
+    const onRefresh = vi.fn()
+    render(<TranslationResults results={mockResults} onRefresh={onRefresh} />)
+    expect(screen.getByRole("button", { name: "Refresh translation" })).toBeInTheDocument()
+  })
+
+  it("does not render refresh button when onRefresh is not provided", () => {
+    render(<TranslationResults results={mockResults} />)
+    expect(screen.queryByRole("button", { name: "Refresh translation" })).not.toBeInTheDocument()
+  })
+
+  it("calls onRefresh when refresh button is clicked", async () => {
+    const user = userEvent.setup()
+    const onRefresh = vi.fn()
+    render(<TranslationResults results={mockResults} onRefresh={onRefresh} />)
+
+    await user.click(screen.getByRole("button", { name: "Refresh translation" }))
+    expect(onRefresh).toHaveBeenCalledOnce()
+  })
+
+  it("disables refresh button and shows spinner when isRefreshing is true", () => {
+    const onRefresh = vi.fn()
+    render(<TranslationResults results={mockResults} onRefresh={onRefresh} isRefreshing={true} />)
+
+    const refreshButton = screen.getByRole("button", { name: "Refresh translation" })
+    expect(refreshButton).toBeDisabled()
+    // Check for the animate-spin class on the icon
+    const icon = refreshButton.querySelector("svg")
+    expect(icon).toHaveClass("animate-spin")
   })
 })
