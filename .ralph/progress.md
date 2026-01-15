@@ -2,6 +2,22 @@
 
 ## 2025-01-15
 
+### Remove subtitle from history dialog
+
+Removed the "View your past translations." subtitle/description from the history dialog to simplify the UI. The dialog title "History" is self-explanatory and the description was redundant.
+
+**Key changes:**
+
+1. **Updated `HistoryDialog.tsx`:**
+   - Removed `DialogDescription` component and its import
+   - Added `aria-describedby={undefined}` to `DialogContent` to suppress Radix UI accessibility warning for missing description
+
+**Modified files:**
+
+- `src/components/HistoryDialog.tsx` - Removed subtitle and added aria-describedby attribute
+
+## 2025-01-15
+
 ### Remove "clear all history" button
 
 Removed the trash icon button that cleared all history entries. Since users can already delete individual items, a "clear all" button is redundant and poses a risk of accidental data loss.

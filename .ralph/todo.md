@@ -1,12 +1,13 @@
 ### To do
 
-- [ ] remove the subtitle from the history dialog
 - [ ] when typing in the input and more than 3 characters have been entered, show any matching text from history and let me just tap on those results if I want
 - [ ] make the input text smaller
 - [ ] show the icon in the header
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] remove the subtitle from the history dialog
 
 - [x] get rid of the delete button that clears all history
 

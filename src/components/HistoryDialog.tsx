@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -32,10 +31,9 @@ export const HistoryDialog = ({
           <IconHistory className="size-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>History</DialogTitle>
-          <DialogDescription>View your past translations.</DialogDescription>
         </DialogHeader>
         <HistoryView
           history={history}
