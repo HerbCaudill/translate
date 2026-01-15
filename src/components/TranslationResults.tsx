@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef, useCallback } from "react"
 import { IconRefresh } from "@tabler/icons-react"
 import { useDrag } from "@use-gesture/react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
 import { cx } from "@/lib/utils"
 import type { Language, LanguageTranslation } from "@/types"
 
@@ -12,90 +11,14 @@ export function TranslationResults({
   results,
   languages,
   sourceLanguage,
+  selectedTab,
+  onTabChange,
   isLoading = false,
   onRefresh,
   isRefreshing = false,
 }: Props) {
   const tabsContainerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-
-  // Get selectable languages (non-source)
-  const selectableLanguages = languages.filter(l => l.code !== sourceLanguage)
-
-  // Get initial tab from storage, fallback to first non-source language
-  const [selectedTab, setSelectedTab] = useState<string>(() => {
-    const stored = getItem<string>(STORAGE_KEYS.SELECTED_TAB)
-    // Only use stored value if it's in the languages and not the source
-    if (stored && languages.some(l => l.code === stored) && stored !== sourceLanguage) {
-      return stored
-    }
-    // Find first non-source language
-    const firstNonSource = languages.find(l => l.code !== sourceLanguage)
-    return firstNonSource?.code ?? languages[0]?.code ?? ""
-  })
-
-  // When languages change, ensure selected tab is valid
-  useEffect(() => {
-    if (languages.length === 0) return
-
-    const isSelectedTabValid = languages.some(l => l.code === selectedTab)
-    const isSourceSelected = selectedTab === sourceLanguage
-    if (!isSelectedTabValid || isSourceSelected) {
-      // Try to restore from storage first
-      const stored = getItem<string>(STORAGE_KEYS.SELECTED_TAB)
-      if (stored && languages.some(l => l.code === stored) && stored !== sourceLanguage) {
-        setSelectedTab(stored)
-      } else {
-        // Fallback to first non-source language
-        const firstNonSource = languages.find(l => l.code !== sourceLanguage)
-        setSelectedTab(firstNonSource?.code ?? languages[0]?.code)
-      }
-    }
-  }, [languages, selectedTab, sourceLanguage])
-
-  // Navigate to next/previous tab
-  const navigateTab = useCallback(
-    (direction: "next" | "prev") => {
-      const currentIndex = selectableLanguages.findIndex(l => l.code === selectedTab)
-      if (currentIndex === -1) return
-
-      let newIndex: number
-      if (direction === "next") {
-        newIndex = (currentIndex + 1) % selectableLanguages.length
-      } else {
-        newIndex = (currentIndex - 1 + selectableLanguages.length) % selectableLanguages.length
-      }
-
-      const newTab = selectableLanguages[newIndex].code
-      setSelectedTab(newTab)
-      setItem(STORAGE_KEYS.SELECTED_TAB, newTab)
-    },
-    [selectableLanguages, selectedTab],
-  )
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle arrow keys when focus is in the tabs area or content area
-      const activeElement = document.activeElement
-      const isInTabsArea =
-        tabsContainerRef.current?.contains(activeElement) ||
-        contentRef.current?.contains(activeElement)
-
-      if (!isInTabsArea) return
-
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-        e.preventDefault()
-        navigateTab("next")
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-        e.preventDefault()
-        navigateTab("prev")
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [navigateTab])
 
   // Focus tabs container when results first appear
   useEffect(() => {
@@ -104,13 +27,29 @@ export function TranslationResults({
     }
   }, [results.length > 0]) // Only trigger when we go from no results to having results
 
-  // Save selected tab to storage when it changes
-  const handleTabChange = (value: string) => {
-    // Don't allow selecting the source language
-    if (value === sourceLanguage) return
-    setSelectedTab(value)
-    setItem(STORAGE_KEYS.SELECTED_TAB, value)
-  }
+  // Get selectable languages for swipe navigation
+  const selectableLanguages = languages.filter(l => l.code !== sourceLanguage)
+
+  // Navigate to next/previous tab (for swipe gestures)
+  const navigateTab = useCallback(
+    (direction: "next" | "prev") => {
+      const currentIndex = selectableLanguages.findIndex(l => l.code === selectedTab)
+      if (currentIndex === -1 && selectableLanguages.length > 0) {
+        onTabChange(selectableLanguages[0].code)
+        return
+      }
+
+      let newIndex: number
+      if (direction === "next") {
+        newIndex = (currentIndex + 1) % selectableLanguages.length
+      } else {
+        newIndex = (currentIndex - 1 + selectableLanguages.length) % selectableLanguages.length
+      }
+
+      onTabChange(selectableLanguages[newIndex].code)
+    },
+    [selectableLanguages, selectedTab, onTabChange],
+  )
 
   // Swipe gesture handler
   const bind = useDrag(
@@ -134,7 +73,7 @@ export function TranslationResults({
   const selectedResult = results.find(r => r.language.code === selectedTab)
 
   return (
-    <Tabs value={selectedTab} onValueChange={handleTabChange} className="flex flex-1 flex-col">
+    <Tabs value={selectedTab} onValueChange={onTabChange} className="flex flex-1 flex-col">
       <div
         ref={tabsContainerRef}
         tabIndex={0}
@@ -223,6 +162,8 @@ type Props = {
   results: LanguageTranslation[]
   languages: Language[]
   sourceLanguage?: string
+  selectedTab: string
+  onTabChange: (value: string) => void
   isLoading?: boolean
   onRefresh?: () => void
   isRefreshing?: boolean

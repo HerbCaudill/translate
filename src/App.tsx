@@ -10,6 +10,7 @@ import { TranslationResults } from "@/components/TranslationResults"
 import { SettingsDialog } from "@/components/SettingsDialog"
 import { HistoryDialog } from "@/components/HistoryDialog"
 import { InstallPrompt } from "@/components/InstallPrompt"
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage"
 import { HistoryEntry } from "@/types"
 
 export function App() {
@@ -152,6 +153,102 @@ export function App() {
     return missingLanguage?.code
   }, [displayResults, settings.languages])
 
+  // Selected tab state (lifted from TranslationResults for global keyboard control)
+  const [selectedTab, setSelectedTab] = useState<string>(() => {
+    const stored = getItem<string>(STORAGE_KEYS.SELECTED_TAB)
+    if (stored && settings.languages.some(l => l.code === stored) && stored !== sourceLanguage) {
+      return stored
+    }
+    const firstNonSource = settings.languages.find(l => l.code !== sourceLanguage)
+    return firstNonSource?.code ?? settings.languages[0]?.code ?? ""
+  })
+
+  // Get selectable languages (non-source)
+  const selectableLanguages = useMemo(
+    () => settings.languages.filter(l => l.code !== sourceLanguage),
+    [settings.languages, sourceLanguage],
+  )
+
+  // Navigate to next/previous tab
+  const navigateTab = useCallback(
+    (direction: "next" | "prev") => {
+      const currentIndex = selectableLanguages.findIndex(l => l.code === selectedTab)
+      if (currentIndex === -1 && selectableLanguages.length > 0) {
+        // If current tab not found, select first selectable language
+        const newTab = selectableLanguages[0].code
+        setSelectedTab(newTab)
+        setItem(STORAGE_KEYS.SELECTED_TAB, newTab)
+        return
+      }
+
+      let newIndex: number
+      if (direction === "next") {
+        newIndex = (currentIndex + 1) % selectableLanguages.length
+      } else {
+        newIndex = (currentIndex - 1 + selectableLanguages.length) % selectableLanguages.length
+      }
+
+      const newTab = selectableLanguages[newIndex].code
+      setSelectedTab(newTab)
+      setItem(STORAGE_KEYS.SELECTED_TAB, newTab)
+    },
+    [selectableLanguages, selectedTab],
+  )
+
+  // Handle tab change from TranslationResults
+  const handleTabChange = useCallback(
+    (value: string) => {
+      if (value === sourceLanguage) return
+      setSelectedTab(value)
+      setItem(STORAGE_KEYS.SELECTED_TAB, value)
+    },
+    [sourceLanguage],
+  )
+
+  // Global keyboard handler for left/right arrows to switch languages
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if focused on an input element
+      const activeElement = document.activeElement
+      const isInputFocused =
+        activeElement instanceof HTMLInputElement ||
+        activeElement instanceof HTMLTextAreaElement ||
+        activeElement?.getAttribute("contenteditable") === "true"
+
+      if (isInputFocused) return
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        navigateTab("next")
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault()
+        navigateTab("prev")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [navigateTab])
+
+  // Update selected tab when languages change
+  useEffect(() => {
+    if (settings.languages.length === 0) return
+
+    const isSelectedTabValid = settings.languages.some(l => l.code === selectedTab)
+    const isSourceSelected = selectedTab === sourceLanguage
+    if (!isSelectedTabValid || isSourceSelected) {
+      const stored = getItem<string>(STORAGE_KEYS.SELECTED_TAB)
+      if (stored && settings.languages.some(l => l.code === stored) && stored !== sourceLanguage) {
+        setSelectedTab(stored)
+      } else {
+        const firstNonSource = settings.languages.find(l => l.code !== sourceLanguage)
+        if (firstNonSource) {
+          setSelectedTab(firstNonSource.code)
+        }
+      }
+    }
+  }, [settings.languages, selectedTab, sourceLanguage])
+
   if (!settings.apiKey) {
     return <ApiKeyPrompt onSubmit={handleApiKeySubmit} />
   }
@@ -205,6 +302,8 @@ export function App() {
               results={displayResults}
               languages={settings.languages}
               sourceLanguage={sourceLanguage}
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
               isLoading={translationStatus === "translating"}
               onRefresh={handleRefresh}
               isRefreshing={translationStatus === "translating"}

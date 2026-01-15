@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, it, expect, beforeEach, vi } from "vitest"
 import { TranslationResults } from "./TranslationResults"
-import { STORAGE_KEYS } from "@/lib/storage"
 import type { Language, LanguageTranslation } from "@/types"
 
 describe("TranslationResults", () => {
@@ -38,14 +37,21 @@ describe("TranslationResults", () => {
     },
   ]
 
+  const defaultProps = {
+    results: mockResults,
+    languages: mockLanguages,
+    sourceLanguage: "en",
+    selectedTab: "es",
+    onTabChange: vi.fn(),
+  }
+
   beforeEach(() => {
     localStorage.clear()
+    vi.clearAllMocks()
   })
 
   it("renders all language tabs including source language", () => {
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    render(<TranslationResults {...defaultProps} />)
     expect(screen.getByRole("tab", { name: "English" })).toBeInTheDocument()
     expect(screen.getByRole("tab", { name: "Spanish" })).toBeInTheDocument()
     expect(screen.getByRole("tab", { name: "French" })).toBeInTheDocument()
@@ -53,121 +59,59 @@ describe("TranslationResults", () => {
   })
 
   it("disables source language tab", () => {
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    render(<TranslationResults {...defaultProps} />)
     expect(screen.getByRole("tab", { name: "English" })).toBeDisabled()
   })
 
-  it("shows first non-source language content by default", () => {
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
-    // Spanish (first non-source) should be selected and its content visible
+  it("shows selected tab content", () => {
+    render(<TranslationResults {...defaultProps} selectedTab="es" />)
+    // Spanish should be selected and its content visible
     expect(screen.getByRole("tab", { name: "Spanish" })).toHaveAttribute("data-state", "active")
     expect(screen.getByText("Hola")).toBeInTheDocument()
     expect(screen.getByText("Common greeting")).toBeInTheDocument()
     expect(screen.getByText("Buenos días")).toBeInTheDocument()
   })
 
-  it("switches tab content when clicking different tab", async () => {
+  it("calls onTabChange when clicking different tab", async () => {
     const user = userEvent.setup()
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    const onTabChange = vi.fn()
+    render(<TranslationResults {...defaultProps} onTabChange={onTabChange} />)
 
     // Click on French tab
     await user.click(screen.getByRole("tab", { name: "French" }))
 
-    // French content should now be visible
-    expect(screen.getByText("Bonjour")).toBeInTheDocument()
-    expect(screen.getByText("Hello")).toBeInTheDocument()
+    // onTabChange should be called with the French language code
+    expect(onTabChange).toHaveBeenCalledWith("fr")
   })
 
-  it("returns null when no results", () => {
-    const { container } = render(<TranslationResults results={[]} languages={[]} />)
+  it("returns null when no languages", () => {
+    const { container } = render(
+      <TranslationResults {...defaultProps} results={[]} languages={[]} />,
+    )
     expect(container.firstChild).toBeNull()
   })
 
-  it("remembers selected tab in localStorage", async () => {
-    const user = userEvent.setup()
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
-
-    // Click on German tab
-    await user.click(screen.getByRole("tab", { name: "German" }))
-
-    // Check localStorage was updated
-    expect(localStorage.getItem(STORAGE_KEYS.SELECTED_TAB)).toBe('"de"')
-  })
-
-  it("restores selected tab from localStorage", () => {
-    // Set up localStorage before rendering
-    localStorage.setItem(STORAGE_KEYS.SELECTED_TAB, JSON.stringify("fr"))
-
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
-
-    // French tab should be selected
-    expect(screen.getByRole("tab", { name: "French" })).toHaveAttribute("data-state", "active")
-    // French content should be visible
-    expect(screen.getByText("Bonjour")).toBeInTheDocument()
-  })
-
-  it("falls back to first non-source tab when stored tab is not in languages", () => {
-    // Set up localStorage with a language not in languages
-    localStorage.setItem(STORAGE_KEYS.SELECTED_TAB, JSON.stringify("pt"))
-
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
-
-    // First non-source tab (Spanish) should be selected
-    expect(screen.getByRole("tab", { name: "Spanish" })).toHaveAttribute("data-state", "active")
-    expect(screen.getByText("Hola")).toBeInTheDocument()
-  })
-
   it("applies mono font to translation text", () => {
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    render(<TranslationResults {...defaultProps} />)
     const translationText = screen.getByText("Hola")
     expect(translationText).toHaveClass("font-mono")
   })
 
   it("renders refresh button when onRefresh is provided", () => {
     const onRefresh = vi.fn()
-    render(
-      <TranslationResults
-        results={mockResults}
-        languages={mockLanguages}
-        sourceLanguage="en"
-        onRefresh={onRefresh}
-      />,
-    )
+    render(<TranslationResults {...defaultProps} onRefresh={onRefresh} />)
     expect(screen.getByRole("button", { name: "Refresh translation" })).toBeInTheDocument()
   })
 
   it("does not render refresh button when onRefresh is not provided", () => {
-    render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    render(<TranslationResults {...defaultProps} />)
     expect(screen.queryByRole("button", { name: "Refresh translation" })).not.toBeInTheDocument()
   })
 
   it("calls onRefresh when refresh button is clicked", async () => {
     const user = userEvent.setup()
     const onRefresh = vi.fn()
-    render(
-      <TranslationResults
-        results={mockResults}
-        languages={mockLanguages}
-        sourceLanguage="en"
-        onRefresh={onRefresh}
-      />,
-    )
+    render(<TranslationResults {...defaultProps} onRefresh={onRefresh} />)
 
     await user.click(screen.getByRole("button", { name: "Refresh translation" }))
     expect(onRefresh).toHaveBeenCalledOnce()
@@ -175,15 +119,7 @@ describe("TranslationResults", () => {
 
   it("disables refresh button and shows spinner when isRefreshing is true", () => {
     const onRefresh = vi.fn()
-    render(
-      <TranslationResults
-        results={mockResults}
-        languages={mockLanguages}
-        sourceLanguage="en"
-        onRefresh={onRefresh}
-        isRefreshing={true}
-      />,
-    )
+    render(<TranslationResults {...defaultProps} onRefresh={onRefresh} isRefreshing={true} />)
 
     const refreshButton = screen.getByRole("button", { name: "Refresh translation" })
     expect(refreshButton).toBeDisabled()
@@ -193,23 +129,14 @@ describe("TranslationResults", () => {
   })
 
   it("renders three skeleton option placeholders when loading", () => {
-    const { container } = render(
-      <TranslationResults
-        results={[]}
-        languages={mockLanguages}
-        sourceLanguage="en"
-        isLoading={true}
-      />,
-    )
+    const { container } = render(<TranslationResults {...defaultProps} results={[]} isLoading />)
     // Each option has 2 skeletons (text + explanation), 3 options = 6 skeletons
     const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
     expect(skeletons.length).toBe(6)
   })
 
   it("uses flex layout to fill available vertical space for swipe target", () => {
-    const { container } = render(
-      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
-    )
+    const { container } = render(<TranslationResults {...defaultProps} />)
 
     // The root Tabs element should have flex-1 to fill available space
     const tabsRoot = container.querySelector('[data-slot="tabs"]')
