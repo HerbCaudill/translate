@@ -11,7 +11,7 @@ vi.mock("@/lib/validateApiKey", () => ({
 }))
 
 vi.mock("@/lib/anthropic", () => ({
-  translate: vi.fn(),
+  translateAll: vi.fn(),
 }))
 
 vi.mock("sonner", () => ({
@@ -74,9 +74,14 @@ describe("App", () => {
       }),
     )
 
-    vi.mocked(anthropic.translate).mockResolvedValue({
+    vi.mocked(anthropic.translateAll).mockResolvedValue({
       success: true,
-      options: [{ text: "hola", explanation: "greeting" }],
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          options: [{ text: "hola", explanation: "greeting" }],
+        },
+      ],
     })
 
     const user = userEvent.setup()
@@ -90,11 +95,9 @@ describe("App", () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledWith(
-        "sk-ant-test123",
-        "hello",
+      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
         { code: "es", name: "Spanish" },
-      )
+      ])
     })
   })
 
@@ -107,9 +110,14 @@ describe("App", () => {
       }),
     )
 
-    vi.mocked(anthropic.translate).mockResolvedValue({
+    vi.mocked(anthropic.translateAll).mockResolvedValue({
       success: true,
-      options: [{ text: "hola", explanation: "greeting" }],
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          options: [{ text: "hola", explanation: "greeting" }],
+        },
+      ],
     })
 
     const user = userEvent.setup()
@@ -119,11 +127,9 @@ describe("App", () => {
     await user.type(input, "hello{Enter}")
 
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledWith(
-        "sk-ant-test123",
-        "hello",
+      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
         { code: "es", name: "Spanish" },
-      )
+      ])
     })
   })
 })
@@ -143,9 +149,14 @@ describe("App history saving", () => {
       }),
     )
 
-    vi.mocked(anthropic.translate).mockResolvedValue({
+    vi.mocked(anthropic.translateAll).mockResolvedValue({
       success: true,
-      options: [{ text: "hola", explanation: "greeting" }],
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          options: [{ text: "hola", explanation: "greeting" }],
+        },
+      ],
     })
 
     const user = userEvent.setup()
@@ -155,7 +166,7 @@ describe("App history saving", () => {
     await user.type(input, "hello{Enter}")
 
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalled()
+      expect(anthropic.translateAll).toHaveBeenCalled()
     })
 
     // Check history was saved
@@ -166,50 +177,6 @@ describe("App history saving", () => {
       expect(history[0].translation.results).toHaveLength(1)
       expect(history[0].translation.results[0].language.code).toBe("es")
       expect(history[0].translation.results[0].options[0].text).toBe("hola")
-    })
-  })
-
-  it("saves partial translations to history", async () => {
-    localStorage.setItem(
-      STORAGE_KEYS.SETTINGS,
-      JSON.stringify({
-        apiKey: "sk-ant-test123",
-        languages: [
-          { code: "es", name: "Spanish" },
-          { code: "fr", name: "French" },
-        ],
-      }),
-    )
-
-    // One succeeds, one fails - partial result
-    vi.mocked(anthropic.translate)
-      .mockResolvedValueOnce({
-        success: true,
-        options: [{ text: "hola", explanation: "greeting" }],
-      })
-      .mockResolvedValueOnce({
-        success: false,
-        error: "API error",
-      })
-
-    const user = userEvent.setup()
-    render(<App />)
-
-    const input = screen.getByPlaceholderText(/enter text to translate/i)
-    await user.type(input, "hello{Enter}")
-
-    await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledTimes(2)
-    })
-
-    // Check history was saved even with partial results
-    await waitFor(() => {
-      const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]")
-      expect(history).toHaveLength(1)
-      expect(history[0].input).toBe("hello")
-      // Should only have the successful translation
-      expect(history[0].translation.results).toHaveLength(1)
-      expect(history[0].translation.results[0].language.code).toBe("es")
     })
   })
 })
@@ -229,7 +196,7 @@ describe("App error toasts", () => {
       }),
     )
 
-    vi.mocked(anthropic.translate).mockResolvedValue({
+    vi.mocked(anthropic.translateAll).mockResolvedValue({
       success: false,
       error: "API rate limit exceeded",
     })
@@ -248,44 +215,6 @@ describe("App error toasts", () => {
           action: expect.objectContaining({
             label: "Retry",
           }),
-        }),
-      )
-    })
-  })
-
-  it("shows toast when partial translation fails", async () => {
-    localStorage.setItem(
-      STORAGE_KEYS.SETTINGS,
-      JSON.stringify({
-        apiKey: "sk-ant-test123",
-        languages: [
-          { code: "es", name: "Spanish" },
-          { code: "fr", name: "French" },
-        ],
-      }),
-    )
-
-    vi.mocked(anthropic.translate)
-      .mockResolvedValueOnce({
-        success: true,
-        options: [{ text: "hola", explanation: "greeting" }],
-      })
-      .mockResolvedValueOnce({
-        success: false,
-        error: "French translation failed",
-      })
-
-    const user = userEvent.setup()
-    render(<App />)
-
-    const input = screen.getByPlaceholderText(/enter text to translate/i)
-    await user.type(input, "hello{Enter}")
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Translation failed",
-        expect.objectContaining({
-          description: "French translation failed",
         }),
       )
     })
