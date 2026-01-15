@@ -12,7 +12,6 @@ vi.mock("@/lib/validateApiKey", () => ({
 
 vi.mock("@/lib/anthropic", () => ({
   translate: vi.fn(),
-  detectLanguage: vi.fn(),
 }))
 
 vi.mock("sonner", () => ({
@@ -25,11 +24,6 @@ describe("App", () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
-    // Default: detect English so no target languages are filtered out
-    vi.mocked(anthropic.detectLanguage).mockResolvedValue({
-      success: true,
-      language: { code: "en", name: "English" },
-    })
   })
 
   it("shows ApiKeyPrompt when no API key is stored", () => {
@@ -100,7 +94,6 @@ describe("App", () => {
         "sk-ant-test123",
         "hello",
         { code: "es", name: "Spanish" },
-        "",
       )
     })
   })
@@ -130,7 +123,6 @@ describe("App", () => {
         "sk-ant-test123",
         "hello",
         { code: "es", name: "Spanish" },
-        "",
       )
     })
   })
@@ -140,11 +132,6 @@ describe("App history saving", () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
-    // Default: detect English so no target languages are filtered out
-    vi.mocked(anthropic.detectLanguage).mockResolvedValue({
-      success: true,
-      language: { code: "en", name: "English" },
-    })
   })
 
   it("saves translation to history when translation completes", async () => {
@@ -231,11 +218,6 @@ describe("App error toasts", () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
-    // Default: detect English so no target languages are filtered out
-    vi.mocked(anthropic.detectLanguage).mockResolvedValue({
-      success: true,
-      language: { code: "en", name: "English" },
-    })
   })
 
   it("shows toast when translation fails", async () => {
