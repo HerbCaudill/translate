@@ -2,6 +2,27 @@
 
 ## 2026-01-15
 
+### Make delete button always visible in history dialog
+
+Fixed an issue where the delete button for history items was only visible on hover (using `opacity-0` + `group-hover:opacity-100`). This made the delete functionality invisible on touch devices and could confuse users who didn't know about the hover behavior. The button is now always visible with muted styling that changes to red on hover.
+
+**Key changes:**
+
+1. **Updated `HistoryView.tsx`:**
+   - Removed `opacity-0` and `group-hover:opacity-100` classes from the delete button
+   - Added `text-muted-foreground hover:text-destructive` for visible but subtle styling
+   - Button is now always visible, not just on hover
+
+**Modified files:**
+
+- `src/components/HistoryView.tsx` - Made delete button always visible
+
+**Test files updated:**
+
+- `src/components/HistoryView.test.tsx` - Updated test "shows delete button for each entry" to:
+  - Renamed from "shows delete button for each entry on hover" since hover is no longer relevant
+  - Added `toBeVisible()` assertion to verify the button is actually visible
+
 ### Exclude exact matches from history autocomplete suggestions
 
 Fixed an issue where after typing something and getting translation results, the history autocomplete would show the same item as a suggestion. This was confusing because the user is already viewing that translation. The fix ensures that entries which exactly match the input text are excluded from the autocomplete dropdown.

@@ -1,6 +1,10 @@
 ### To do
 
+(empty)
+
 ### Done
+
+- [x] allow deleting history items (this was marked done but I don't see it in the UI)
 
 - [x] when I type something in and I get results, it's added to history and the history autocomplete shows up with the same item that is being shown. One solution might be to not include in the autocomplete any items that exactly match the input
 
@@ -10,7 +14,6 @@
 - [x] when typing in the input and more than 3 characters have been entered, show any matching text from history and let me just tap on those results if I want
 - [x] remove the subtitle from the history dialog
 - [x] get rid of the delete button that clears all history
-- [x] allow deleting history items
 - [x] history results need to be in a scrolling container
 - [x] show the most recent request and response on first load
 - [x] If the text entry matches a previous translation, just use that without going to the api

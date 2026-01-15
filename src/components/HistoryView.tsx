@@ -72,7 +72,7 @@ export const HistoryView = ({ history, onSelectEntry, onRemoveEntry }: Props) =>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-1/2 right-1 h-8 w-8 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100"
+                  className="text-muted-foreground hover:text-destructive absolute top-1/2 right-1 h-8 w-8 -translate-y-1/2"
                   onClick={e => {
                     e.stopPropagation()
                     onRemoveEntry(entry.id)

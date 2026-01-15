@@ -165,7 +165,7 @@ describe("HistoryView", () => {
     expect(scrollContainer).toHaveClass("max-h-80")
   })
 
-  it("shows delete button for each entry on hover", () => {
+  it("shows delete button for each entry", () => {
     const history = [createMockEntry("1", "Hello world", Date.now())]
 
     render(
@@ -176,9 +176,10 @@ describe("HistoryView", () => {
       />,
     )
 
-    // Delete button should be in the DOM (hidden initially via CSS opacity-0)
+    // Delete button should be visible in the DOM
     const deleteButton = screen.getByRole("button", { name: /delete "Hello world"/i })
     expect(deleteButton).toBeInTheDocument()
+    expect(deleteButton).toBeVisible()
   })
 
   it("calls onRemoveEntry when clicking delete button", async () => {
