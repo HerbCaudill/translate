@@ -1,5 +1,16 @@
 # Progress Log
 
+## 2025-01-18
+
+### Fix broken App tests
+
+The `App.test.tsx` file was mocking a `detectLanguage` function that no longer exists and expecting a 4th argument to `translate()` that was removed. This was leftover from a previous implementation that was later replaced with a simpler approach (integrated language detection in the translation prompt itself).
+
+**Changes:**
+- Removed `detectLanguage` from the mock in `App.test.tsx`
+- Updated `translate()` call expectations from 4 arguments to 3
+- Added `vi.stubEnv("VITE_ANTHROPIC_API_KEY", "")` in `src/test/setup.ts` to ensure predictable test behavior
+
 ## 2025-01-17
 
 ### Add language detection and skip translating to detected language
