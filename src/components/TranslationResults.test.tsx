@@ -205,4 +205,22 @@ describe("TranslationResults", () => {
     const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
     expect(skeletons.length).toBe(6)
   })
+
+  it("uses flex layout to fill available vertical space for swipe target", () => {
+    const { container } = render(
+      <TranslationResults results={mockResults} languages={mockLanguages} sourceLanguage="en" />,
+    )
+
+    // The root Tabs element should have flex-1 to fill available space
+    const tabsRoot = container.querySelector('[data-slot="tabs"]')
+    expect(tabsRoot).toHaveClass("flex-1", "flex", "flex-col")
+
+    // The TabsContent should also use flex-1 to stretch
+    const tabsContent = container.querySelector('[data-slot="tabs-content"]')
+    expect(tabsContent).toHaveClass("flex-1", "flex", "flex-col")
+
+    // The inner swipe target div should have flex-1 to fill remaining space
+    const swipeTarget = tabsContent?.querySelector(".touch-pan-y")
+    expect(swipeTarget).toHaveClass("flex-1")
+  })
 })

@@ -134,7 +134,7 @@ export function TranslationResults({
   const selectedResult = results.find(r => r.language.code === selectedTab)
 
   return (
-    <Tabs value={selectedTab} onValueChange={handleTabChange}>
+    <Tabs value={selectedTab} onValueChange={handleTabChange} className="flex flex-1 flex-col">
       <div
         ref={tabsContainerRef}
         tabIndex={0}
@@ -168,8 +168,8 @@ export function TranslationResults({
           </Button>
         )}
       </div>
-      <TabsContent value={selectedTab}>
-        <div ref={contentRef} {...bind()} className="touch-pan-y">
+      <TabsContent value={selectedTab} className="flex flex-1 flex-col">
+        <div ref={contentRef} {...bind()} className="flex-1 touch-pan-y">
           {isLoading ?
             <TranslationSkeleton />
           : selectedResult ?

@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] The results container should occupy the remaining vertical space on the page, so that the white space below it is still part of the swipe left/right target
-
 ### Done
+
+- [x] The results container should occupy the remaining vertical space on the page, so that the white space below it is still part of the swipe left/right target
 
 - [x] The check button on the ios floating toolbar should submit
 

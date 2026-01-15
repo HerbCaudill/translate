@@ -2,6 +2,32 @@
 
 ## 2026-01-15
 
+### Results container fills remaining vertical space for swipe target
+
+Made the translation results container fill all remaining vertical space on the page, so that even empty white space below the actual translation content is part of the swipe left/right target area. Previously, the swipe gesture was only detected on the content itself, making it harder to navigate between languages on short translations.
+
+**Key changes:**
+
+1. **Updated `App.tsx`:**
+   - Added `flex flex-col` to the scrollable container div
+   - Added `flex flex-1 flex-col` to the inner wrapper div to make it stretch vertically
+
+2. **Updated `TranslationResults.tsx`:**
+   - Added `className="flex flex-1 flex-col"` to the Tabs root component
+   - Added `className="flex flex-1 flex-col"` to the TabsContent component
+   - Added `flex-1` to the swipe target div (the touch-pan-y element)
+
+**Modified files:**
+
+- `src/App.tsx` - Made content containers use flex layout to fill space
+- `src/components/TranslationResults.tsx` - Made Tabs components stretch to fill available height
+
+**Test files updated:**
+
+- `src/components/TranslationResults.test.tsx` - Added test "uses flex layout to fill available vertical space for swipe target" verifying the flex-1 classes are applied to Tabs, TabsContent, and the swipe target div
+
+
+
 ### iOS floating toolbar "Go" button submits form
 
 Fixed an issue where tapping the check/done button on the iOS floating keyboard toolbar didn't submit the translation form. On iOS, this toolbar button triggers a form submit event rather than an Enter key event.

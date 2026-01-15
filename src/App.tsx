@@ -198,8 +198,8 @@ export function App() {
       </div>
 
       {/* Content area - scrollable container for results */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="mx-auto w-full max-w-2xl p-4 sm:p-6">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
+        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col p-4 sm:p-6">
           {(inputText.trim() || displayResults.length > 0) && (
             <TranslationResults
               results={displayResults}
