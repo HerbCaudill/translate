@@ -114,7 +114,7 @@ export function TranslationResults({
 
   // Swipe gesture handler
   const bind = useDrag(
-    ({ swipe: [swipeX], direction: [dx] }) => {
+    ({ swipe: [swipeX] }) => {
       if (swipeX !== 0) {
         // Swipe left = next, swipe right = prev
         navigateTab(swipeX > 0 ? "prev" : "next")

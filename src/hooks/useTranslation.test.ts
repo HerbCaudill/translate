@@ -38,11 +38,15 @@ describe("useTranslation", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "Hola mundo", explanation: "Common greeting" }],
+          meanings: [
+            { sense: "", options: [{ text: "Hola mundo", explanation: "Common greeting" }] },
+          ],
         },
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour le monde", explanation: "Common greeting" }],
+          meanings: [
+            { sense: "", options: [{ text: "Bonjour le monde", explanation: "Common greeting" }] },
+          ],
         },
       ],
     })
@@ -111,7 +115,7 @@ describe("useTranslation", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "Hola", explanation: "Greeting" }],
+          meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Greeting" }] }],
         },
       ],
     })
@@ -146,7 +150,7 @@ describe("useTranslation", () => {
       success: true,
       translations: threeLanguages.map(lang => ({
         language: lang,
-        options: [{ text: "Translated", explanation: "Explanation" }],
+        meanings: [{ sense: "", options: [{ text: "Translated", explanation: "Explanation" }] }],
       })),
     })
 
@@ -171,11 +175,11 @@ describe("useTranslation", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "Hola", explanation: "Common" }],
+          meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Common" }] }],
         },
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour", explanation: "Common" }],
+          meanings: [{ sense: "", options: [{ text: "Bonjour", explanation: "Common" }] }],
         },
       ],
     })
@@ -201,7 +205,7 @@ describe("useTranslation", () => {
       translations: [
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour", explanation: "French greeting" }],
+          meanings: [{ sense: "", options: [{ text: "Bonjour", explanation: "French greeting" }] }],
         },
       ],
     })

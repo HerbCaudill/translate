@@ -8,7 +8,7 @@ const createMockTranslation = (input: string): Translation => ({
   results: [
     {
       language: { code: "es", name: "Spanish" },
-      options: [{ text: "Hola", explanation: "Standard greeting" }],
+      meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Standard greeting" }] }],
     },
   ],
   timestamp: Date.now(),
@@ -232,7 +232,9 @@ describe("useHistory", () => {
       results: [
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour", explanation: "Updated greeting" }],
+          meanings: [
+            { sense: "", options: [{ text: "Bonjour", explanation: "Updated greeting" }] },
+          ],
         },
       ],
       timestamp: Date.now(),
@@ -249,7 +251,7 @@ describe("useHistory", () => {
     const helloEntry = result.current.history.find(e => e.input === "Hello")
     expect(helloEntry).toBeDefined()
     expect(helloEntry!.translation.results[0].language.code).toBe("fr")
-    expect(helloEntry!.translation.results[0].options[0].text).toBe("Bonjour")
+    expect(helloEntry!.translation.results[0].meanings[0].options[0].text).toBe("Bonjour")
 
     // The updated entry should keep its original ID
     expect(helloEntry!.id).toBe("1")
@@ -270,7 +272,7 @@ describe("useHistory", () => {
       results: [
         {
           language: { code: "de", name: "German" },
-          options: [{ text: "Hallo", explanation: "German greeting" }],
+          meanings: [{ sense: "", options: [{ text: "Hallo", explanation: "German greeting" }] }],
         },
       ],
       timestamp: Date.now(),

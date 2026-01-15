@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk"
-import { Language, LanguageTranslation, Meaning, TranslationOption } from "../types"
+import { Language, LanguageTranslation, Meaning } from "../types"
 import { MULTI_LANGUAGE_SYSTEM_PROMPT, SYSTEM_PROMPT } from "./prompts"
 import { apiLogger } from "./logger"
 
