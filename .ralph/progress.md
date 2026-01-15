@@ -1,5 +1,16 @@
 # Progress Log
 
+## 2025-01-19
+
+### Add more spacing between language cards in results
+
+Increased the gap between translation cards in the results grid from `gap-3` (12px) to `gap-4` (16px) for better visual separation.
+
+**Modified files:**
+
+- `src/components/TranslationResults.tsx` - Changed grid gap from `gap-3` to `gap-4`
+- `src/components/TranslationResultsSkeleton.tsx` - Changed grid gap from `gap-3` to `gap-4` (consistency with results)
+
 ## 2025-01-18
 
 ### Fix broken App tests

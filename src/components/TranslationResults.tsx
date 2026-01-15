@@ -7,7 +7,7 @@ export function TranslationResults({ results }: Props) {
   }
 
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       {results.map(result => (
         <TranslationCard key={result.language.code} translation={result} />
       ))}

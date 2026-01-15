@@ -1,10 +1,11 @@
 ### To do
 
-- [ ] add a bit more spacing between language cards in results
 - [ ] use Plex Serif for the translations
 - [ ] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
 
 ### Done
+
+- [x] add a bit more spacing between language cards in results
 
 - [x] English should be one of the default languages and if what I type isn't in English then it should translate it to Engish and not into the language it's already in. so there needs to be a separate step of identifying the language
 
