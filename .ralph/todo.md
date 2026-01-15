@@ -1,9 +1,10 @@
 ### To do
 
 - [ ] make the tab buttons smaller and left-align them
-- [ ] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
 
 ### Done
+
+- [x] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest
 
 - [x] get rid of the gray backdrop on the tabs
 - [x] remember the last selected tab (already implemented)

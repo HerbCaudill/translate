@@ -2,6 +2,40 @@
 
 ## 2025-01-15
 
+### Blue header with input
+
+Applied a solid blue background (#3b82f6 / `bg-blue-600`) to the header area, matching the app icon's gradient. The header now contains both the title/toolbar and the translation input field, creating a prominent branded header bar.
+
+**Key changes:**
+
+1. **Updated `App.tsx` layout:**
+   - Split the app into two sections: blue header and white content area
+   - Header section uses `bg-blue-600` background with full-width coverage
+   - Content area (results) sits below on a white background
+   - Title text changed to white (`text-white`)
+   - Added `className` prop to toolbar buttons for white icon styling
+
+2. **Updated header button components** to accept `className` prop:
+   - `InstallPrompt.tsx` - Added `className` prop passed to Button
+   - `HistoryDialog.tsx` - Added `className` prop passed to DialogTrigger Button
+   - `SettingsDialog.tsx` - Added `className` prop passed to DialogTrigger Button
+
+3. **Updated `TranslateInput.tsx`** for blue background:
+   - Input now has white background (`bg-white`) with subtle border (`border-white/20`)
+   - Submit button inverted: white background with blue icon (`bg-white text-blue-600 hover:bg-blue-50`)
+
+**Note:** The manifest already had `theme_color: "#3b82f6"` and `index.html` already had `<meta name="theme-color" content="#3b82f6">` - no changes needed there.
+
+**Modified files:**
+
+- `src/App.tsx` - Restructured layout with blue header wrapper
+- `src/components/TranslateInput.tsx` - Updated input and button styling for blue background
+- `src/components/InstallPrompt.tsx` - Added className prop
+- `src/components/HistoryDialog.tsx` - Added className prop
+- `src/components/SettingsDialog.tsx` - Added className prop
+
+## 2025-01-15
+
 ### Remove gray backdrop on tabs
 
 Removed the gray background from the tabs component and updated the styling for a cleaner appearance. The language tabs now appear as individual buttons with a bordered style, with the active tab highlighted using the primary color (blue).

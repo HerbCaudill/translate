@@ -12,7 +12,7 @@ import {
 import { HistoryView } from "@/components/HistoryView"
 import { HistoryEntry } from "@/types"
 
-export const HistoryDialog = ({ history, onSelectEntry, onClearHistory }: Props) => {
+export const HistoryDialog = ({ history, onSelectEntry, onClearHistory, className }: Props) => {
   const [open, setOpen] = useState(false)
 
   const handleSelectEntry = (entry: HistoryEntry) => {
@@ -23,7 +23,7 @@ export const HistoryDialog = ({ history, onSelectEntry, onClearHistory }: Props)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="History">
+        <Button variant="ghost" size="icon" aria-label="History" className={className}>
           <IconHistory className="size-5" />
         </Button>
       </DialogTrigger>
@@ -46,4 +46,5 @@ type Props = {
   history: HistoryEntry[]
   onSelectEntry: (entry: HistoryEntry) => void
   onClearHistory: () => void
+  className?: string
 }

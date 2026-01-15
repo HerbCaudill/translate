@@ -118,31 +118,45 @@ export function App() {
   const displayResults = selectedHistoryEntry?.translation.results ?? results
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Translate</h1>
-        <div className="flex items-center gap-1">
-          <InstallPrompt canInstall={canInstall} onInstall={promptInstall} />
-          <HistoryDialog
-            history={history}
-            onSelectEntry={handleSelectHistoryEntry}
-            onClearHistory={clearHistory}
-          />
-          <SettingsDialog
-            languages={settings.languages}
-            onLanguagesChange={languages => updateSettings({ languages })}
+    <div className="flex min-h-screen flex-col">
+      {/* Blue header area */}
+      <div className="bg-blue-600">
+        <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+          <header className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-white">Translate</h1>
+            <div className="flex items-center gap-1">
+              <InstallPrompt
+                canInstall={canInstall}
+                onInstall={promptInstall}
+                className="text-white hover:bg-white/20"
+              />
+              <HistoryDialog
+                history={history}
+                onSelectEntry={handleSelectHistoryEntry}
+                onClearHistory={clearHistory}
+                className="text-white hover:bg-white/20"
+              />
+              <SettingsDialog
+                languages={settings.languages}
+                onLanguagesChange={languages => updateSettings({ languages })}
+                className="text-white hover:bg-white/20"
+              />
+            </div>
+          </header>
+          <TranslateInput
+            value={inputText}
+            onChange={setInputText}
+            onSubmit={handleSubmit}
+            onEscape={() => setInputText("")}
+            loading={translationStatus === "translating"}
           />
         </div>
-      </header>
-      <TranslateInput
-        value={inputText}
-        onChange={setInputText}
-        onSubmit={handleSubmit}
-        onEscape={() => setInputText("")}
-        loading={translationStatus === "translating"}
-      />
+      </div>
 
-      {displayResults.length > 0 && <TranslationResults results={displayResults} />}
+      {/* Content area */}
+      <div className="mx-auto w-full max-w-2xl flex-1 p-4 sm:p-6">
+        {displayResults.length > 0 && <TranslationResults results={displayResults} />}
+      </div>
     </div>
   )
 }

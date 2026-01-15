@@ -13,14 +13,14 @@ import { Label } from "@/components/ui/label"
 import { LanguageList } from "@/components/LanguageList"
 import { Language } from "@/types"
 
-export const SettingsDialog = ({ languages, onLanguagesChange, children }: Props) => {
+export const SettingsDialog = ({ languages, onLanguagesChange, children, className }: Props) => {
   const [open, setOpen] = useState(false)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children ?? (
-          <Button variant="ghost" size="icon" aria-label="Settings">
+          <Button variant="ghost" size="icon" aria-label="Settings" className={className}>
             <IconSettings className="size-5" />
           </Button>
         )}
@@ -45,4 +45,5 @@ type Props = {
   languages: Language[]
   onLanguagesChange: (languages: Language[]) => void
   children?: React.ReactNode
+  className?: string
 }

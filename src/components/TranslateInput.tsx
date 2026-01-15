@@ -47,14 +47,14 @@ export const TranslateInput = ({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="text-lg"
+        className="border-white/20 bg-white text-lg"
       />
       <Button
         onClick={handleSubmit}
         disabled={disabled || !value.trim() || loading}
         size="icon"
         className={cn(
-          "shrink-0 bg-blue-600 text-white hover:bg-blue-500",
+          "shrink-0 bg-white text-blue-600 hover:bg-blue-50",
           loading && "pointer-events-none",
         )}
       >
