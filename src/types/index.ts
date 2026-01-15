@@ -16,10 +16,16 @@ export type TranslationOption = {
   explanation: string
 }
 
+/** A meaning/sense of the source text with its translation options */
+export type Meaning = {
+  sense: string
+  options: TranslationOption[]
+}
+
 /** Translation result for a single target language */
 export type LanguageTranslation = {
   language: Language
-  options: TranslationOption[]
+  meanings: Meaning[]
 }
 
 /** Complete translation result for all target languages */

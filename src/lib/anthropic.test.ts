@@ -43,17 +43,22 @@ describe("translate", () => {
     expect(mockCreate).not.toHaveBeenCalled()
   })
 
-  it("returns translation options on success", async () => {
-    const options = [
-      { text: "Hola mundo", explanation: "Standard greeting" },
-      { text: "Hola a todos", explanation: "More formal" },
+  it("returns translation meanings on success", async () => {
+    const meanings = [
+      {
+        sense: "greeting",
+        options: [
+          { text: "Hola mundo", explanation: "Standard greeting" },
+          { text: "Hola a todos", explanation: "More formal" },
+        ],
+      },
     ]
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ options }) }],
+      content: [{ type: "text", text: JSON.stringify({ meanings }) }],
     })
 
     const result = await translate("test-key", "Hello world", language)
-    expect(result).toEqual({ success: true, options })
+    expect(result).toEqual({ success: true, meanings })
   })
 
   it("handles JSON parse error", async () => {
@@ -104,22 +109,24 @@ describe("translate", () => {
   })
 
   it("succeeds after rate limit retry", async () => {
-    const options = [{ text: "Hola", explanation: "Standard greeting" }]
+    const meanings = [
+      { sense: "greeting", options: [{ text: "Hola", explanation: "Standard greeting" }] },
+    ]
     mockCreate
       .mockRejectedValueOnce(createRateLimitError())
-      .mockResolvedValueOnce({ content: [{ type: "text", text: JSON.stringify({ options }) }] })
+      .mockResolvedValueOnce({ content: [{ type: "text", text: JSON.stringify({ meanings }) }] })
 
     const resultPromise = translate("test-key", "Hello", language)
     await flushRetries()
     const result = await resultPromise
 
     expect(mockCreate).toHaveBeenCalledTimes(2)
-    expect(result).toEqual({ success: true, options })
+    expect(result).toEqual({ success: true, meanings })
   })
 
   it("replaces language placeholder in prompt", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ options: [] }) }],
+      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
     })
 
     await translate("test-key", "Hello", language)
@@ -132,7 +139,7 @@ describe("translate", () => {
 
   it("includes JSON format instructions in prompt", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ options: [] }) }],
+      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
     })
 
     await translate("test-key", "Hello", language)
@@ -145,7 +152,7 @@ describe("translate", () => {
 
   it("includes SAME_LANGUAGE instruction in prompt", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ options: [] }) }],
+      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
     })
 
     await translate("test-key", "Hello", language)
@@ -190,12 +197,22 @@ describe("translateAll", () => {
         {
           languageCode: "es",
           sourceLanguage: false,
-          options: [{ text: "Hola mundo", explanation: "Standard greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Hola mundo", explanation: "Standard greeting" }],
+            },
+          ],
         },
         {
           languageCode: "fr",
           sourceLanguage: false,
-          options: [{ text: "Bonjour le monde", explanation: "Standard greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Bonjour le monde", explanation: "Standard greeting" }],
+            },
+          ],
         },
       ],
     }
@@ -211,11 +228,21 @@ describe("translateAll", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "Hola mundo", explanation: "Standard greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Hola mundo", explanation: "Standard greeting" }],
+            },
+          ],
         },
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour le monde", explanation: "Standard greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Bonjour le monde", explanation: "Standard greeting" }],
+            },
+          ],
         },
       ],
     })
@@ -231,7 +258,9 @@ describe("translateAll", () => {
         {
           languageCode: "fr",
           sourceLanguage: false,
-          options: [{ text: "Bonjour", explanation: "French greeting" }],
+          meanings: [
+            { sense: "greeting", options: [{ text: "Bonjour", explanation: "French greeting" }] },
+          ],
         },
       ],
     }
@@ -246,7 +275,9 @@ describe("translateAll", () => {
       translations: [
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour", explanation: "French greeting" }],
+          meanings: [
+            { sense: "greeting", options: [{ text: "Bonjour", explanation: "French greeting" }] },
+          ],
         },
       ],
     })
@@ -305,12 +336,22 @@ describe("translateAll", () => {
         {
           languageCode: "fr",
           sourceLanguage: false,
-          options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+            },
+          ],
         },
         {
           languageCode: "es",
           sourceLanguage: false,
-          options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+            },
+          ],
         },
       ],
     }
@@ -332,11 +373,21 @@ describe("translateAll", () => {
         // Should be in settings order (es, fr), not API order (fr, es)
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Hola mundo", explanation: "Spanish greeting" }],
+            },
+          ],
         },
         {
           language: { code: "fr", name: "French" },
-          options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "Bonjour le monde", explanation: "French greeting" }],
+            },
+          ],
         },
       ],
     })

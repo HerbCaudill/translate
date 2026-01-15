@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk"
-import { Language, LanguageTranslation, TranslationOption } from "../types"
+import { Language, LanguageTranslation, Meaning, TranslationOption } from "../types"
 import { MULTI_LANGUAGE_SYSTEM_PROMPT, SYSTEM_PROMPT } from "./prompts"
 import { apiLogger } from "./logger"
 
@@ -31,7 +31,7 @@ const getRetryAfterMs = (error: InstanceType<typeof Anthropic.APIError>): number
 }
 
 export type TranslationResult =
-  | { success: true; options: TranslationOption[] }
+  | { success: true; meanings: Meaning[] }
   | { success: true; sourceLanguage: true }
   | { success: false; error: string }
 
@@ -111,20 +111,20 @@ export const translate = async (
         }
       }
 
-      const parsed = JSON.parse(jsonText) as { options: TranslationOption[] }
-      if (!parsed.options || !Array.isArray(parsed.options)) {
+      const parsed = JSON.parse(jsonText) as { meanings: Meaning[] }
+      if (!parsed.meanings || !Array.isArray(parsed.meanings)) {
         apiLogger.error("messages.create", "Invalid response format", {
           targetLanguage: language.name,
-          hasOptions: "options" in parsed,
+          hasMeanings: "meanings" in parsed,
         })
         return { success: false, error: "Invalid response format" }
       }
 
       apiLogger.response("messages.create", {
         targetLanguage: language.name,
-        optionsCount: parsed.options.length,
+        meaningsCount: parsed.meanings.length,
       })
-      return { success: true, options: parsed.options }
+      return { success: true, meanings: parsed.meanings }
     } catch (error) {
       lastError = error as Error
 
@@ -180,7 +180,7 @@ export type MultiTranslationResult =
 type ApiTranslationEntry = {
   languageCode: string
   sourceLanguage?: boolean
-  options?: TranslationOption[]
+  meanings?: Meaning[]
 }
 
 export const translateAll = async (
@@ -260,10 +260,10 @@ export const translateAll = async (
         const entry = parsed.translations.find(t => t.languageCode === language.code)
         if (!entry || entry.sourceLanguage) continue
 
-        if (entry.options) {
+        if (entry.meanings) {
           translations.push({
             language,
-            options: entry.options,
+            meanings: entry.meanings,
           })
         }
       }

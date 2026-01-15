@@ -4,17 +4,37 @@ First, identify what language the given text is written in.
 
 If the text is written in {{language}}, respond with exactly: SAME_LANGUAGE
 
-Otherwise, translate the text into {{language}} and provide 1-3 translation options, each with a brief explanation of when to use it or its nuance.
+Otherwise, translate the text into {{language}}. Consider whether the source text has multiple distinct meanings or senses (e.g. "fast" can mean "quick" or "immobile"; "la leche" can mean "the milk" or be an expression of anger).
+
+For each distinct meaning:
+- Provide a brief description of that sense/meaning
+- Provide 1-3 translation options with explanations of usage or nuance
 
 Respond in JSON format:
 {
-  "options": [
+  "meanings": [
     {
-      "text": "translated text",
-      "explanation": "brief explanation of this translation's usage or nuance"
+      "sense": "quick, rapid",
+      "options": [
+        {
+          "text": "translated text",
+          "explanation": "brief explanation of this translation's usage or nuance"
+        }
+      ]
+    },
+    {
+      "sense": "immobile, fixed in place",
+      "options": [
+        {
+          "text": "different translated text",
+          "explanation": "explanation"
+        }
+      ]
     }
   ]
 }
+
+If the text has only one meaning, still use this format with a single meaning entry.
 
 Only output the JSON, no other text.`
 
@@ -24,9 +44,13 @@ First, identify what language the given text is written in.
 
 Then translate the text into each of the following target languages: {{languages}}
 
+Consider whether the source text has multiple distinct meanings or senses (e.g. "fast" can mean "quick" or "immobile"; "la leche" can mean "the milk" or be an expression of anger).
+
 For each target language:
 - If the text is already in that language, set "sourceLanguage": true for that entry
-- Otherwise, provide 1-3 translation options, each with a brief explanation of when to use it or its nuance
+- Otherwise, for each distinct meaning of the source text:
+  - Provide a brief description of that sense/meaning
+  - Provide 1-3 translation options with explanations of usage or nuance
 
 Respond in JSON format:
 {
@@ -34,10 +58,24 @@ Respond in JSON format:
     {
       "languageCode": "es",
       "sourceLanguage": false,
-      "options": [
+      "meanings": [
         {
-          "text": "translated text",
-          "explanation": "brief explanation of this translation's usage or nuance"
+          "sense": "quick, rapid",
+          "options": [
+            {
+              "text": "translated text",
+              "explanation": "brief explanation of this translation's usage or nuance"
+            }
+          ]
+        },
+        {
+          "sense": "immobile, fixed in place",
+          "options": [
+            {
+              "text": "different translated text",
+              "explanation": "explanation"
+            }
+          ]
         }
       ]
     },
@@ -50,4 +88,5 @@ Respond in JSON format:
 
 Important:
 - Include an entry for EVERY target language in the same order they were listed
+- If the text has only one meaning, still use the meanings array with a single entry
 - Only output the JSON, no other text.`

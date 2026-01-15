@@ -6,9 +6,14 @@ import type { LanguageTranslation } from "@/types"
 describe("TranslationCard", () => {
   const mockTranslation: LanguageTranslation = {
     language: { code: "es", name: "Spanish" },
-    options: [
-      { text: "Hola", explanation: "Common greeting" },
-      { text: "Buenos días", explanation: "Formal morning greeting" },
+    meanings: [
+      {
+        sense: "greeting",
+        options: [
+          { text: "Hola", explanation: "Common greeting" },
+          { text: "Buenos días", explanation: "Formal morning greeting" },
+        ],
+      },
     ],
   }
 
@@ -38,7 +43,7 @@ describe("TranslationCard", () => {
   it("handles single option", () => {
     const singleOption: LanguageTranslation = {
       language: { code: "fr", name: "French" },
-      options: [{ text: "Bonjour", explanation: "Hello" }],
+      meanings: [{ sense: "greeting", options: [{ text: "Bonjour", explanation: "Hello" }] }],
     }
     render(<TranslationCard translation={singleOption} />)
     expect(screen.getByText("French")).toBeInTheDocument()
@@ -46,12 +51,12 @@ describe("TranslationCard", () => {
     expect(screen.getByText("Hello")).toBeInTheDocument()
   })
 
-  it("handles empty options array", () => {
-    const emptyOptions: LanguageTranslation = {
+  it("handles empty meanings array", () => {
+    const emptyMeanings: LanguageTranslation = {
       language: { code: "de", name: "German" },
-      options: [],
+      meanings: [],
     }
-    render(<TranslationCard translation={emptyOptions} />)
+    render(<TranslationCard translation={emptyMeanings} />)
     expect(screen.getByText("German")).toBeInTheDocument()
   })
 
@@ -59,5 +64,23 @@ describe("TranslationCard", () => {
     render(<TranslationCard translation={mockTranslation} />)
     const translationText = screen.getByText("Hola")
     expect(translationText).toHaveClass("font-mono")
+  })
+
+  it("shows sense labels when there are multiple meanings", () => {
+    const multipleMeanings: LanguageTranslation = {
+      language: { code: "es", name: "Spanish" },
+      meanings: [
+        { sense: "quick, rapid", options: [{ text: "rápido", explanation: "adjective" }] },
+        { sense: "immobile", options: [{ text: "firme", explanation: "held in place" }] },
+      ],
+    }
+    render(<TranslationCard translation={multipleMeanings} />)
+    expect(screen.getByText("quick, rapid")).toBeInTheDocument()
+    expect(screen.getByText("immobile")).toBeInTheDocument()
+  })
+
+  it("hides sense labels when there is only one meaning", () => {
+    render(<TranslationCard translation={mockTranslation} />)
+    expect(screen.queryByText("greeting")).not.toBeInTheDocument()
   })
 })
