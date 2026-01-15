@@ -1,5 +1,49 @@
 # Progress Log
 
+## 2025-01-22
+
+### Display translation results in tabs
+
+Changed the translation results display from a 2-column grid showing all translations at once to a tabbed interface where the user selects which language to view. The selected tab is persisted in localStorage so it's remembered across sessions. The source language tab is automatically hidden because the existing translation logic already skips translations where the text is already in the target language (returns `sameLanguage: true`).
+
+**Key changes:**
+
+1. **Added Tabs UI component** (`src/components/ui/tabs.tsx`):
+   - Created shadcn-style Tabs, TabsList, TabsTrigger, and TabsContent components using `@radix-ui/react-tabs`
+   - Styled to match the existing design system
+
+2. **Added `SELECTED_TAB` storage key** (`src/lib/storage.ts`):
+   - New key for persisting the user's tab selection
+
+3. **Rewrote `TranslationResults.tsx`**:
+   - Changed from grid layout to tabbed layout
+   - Tabs show language names, clicking switches content
+   - Initial tab selection restores from localStorage if valid, otherwise uses first result
+   - Tab changes are persisted to localStorage
+   - Handles dynamic results (streaming translations) by re-validating selected tab when results change
+   - Removed `TranslationCard` component usage - translation content is now rendered inline with simpler structure (no badge needed since language is shown in tab)
+
+**New file:**
+
+- `src/components/ui/tabs.tsx` - Radix-based Tabs components
+
+**Modified files:**
+
+- `src/lib/storage.ts` - Added `SELECTED_TAB` key
+- `src/components/TranslationResults.tsx` - Complete rewrite from grid to tabs
+
+**Test file updated:**
+
+- `src/components/TranslationResults.test.tsx` - Updated tests for tabs interface:
+  - Tests for tab rendering and switching
+  - Tests for localStorage persistence (remembering selection)
+  - Tests for restoring from localStorage
+  - Tests for fallback when stored tab is not available
+
+**Dependencies added:**
+
+- `@radix-ui/react-tabs` - For accessible tab components
+
 ## 2025-01-21
 
 ### Replace skeleton loading cards with progressive results streaming

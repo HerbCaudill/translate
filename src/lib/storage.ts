@@ -1,6 +1,7 @@
 export const STORAGE_KEYS = {
   SETTINGS: "translate:settings",
   HISTORY: "translate:history",
+  SELECTED_TAB: "translate:selected-tab",
 } as const
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]
