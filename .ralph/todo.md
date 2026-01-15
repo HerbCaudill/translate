@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] remove the subtitle from the history dialog
 - [ ] when typing in the input and more than 3 characters have been entered, show any matching text from history and let me just tap on those results if I want
 - [ ] allow deleting history items
 - [ ] make the input text smaller
