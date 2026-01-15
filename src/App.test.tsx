@@ -48,6 +48,22 @@ describe("App", () => {
     expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
   })
 
+  it("shows the app icon in the header", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [],
+      }),
+    )
+
+    render(<App />)
+
+    const icon = document.querySelector('header img[src="/icon.svg"]')
+    expect(icon).toBeInTheDocument()
+    expect(icon).toHaveClass("h-8", "w-8", "rounded-lg")
+  })
+
   it("stores API key and shows main content after submission", async () => {
     const user = userEvent.setup()
     render(<App />)

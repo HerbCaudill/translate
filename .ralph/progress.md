@@ -732,3 +732,25 @@ Added an autocomplete feature that shows matching history entries as suggestions
   - "calls onSelectSuggestion when clicking a suggestion"
   - "navigates suggestions with arrow keys and selects with Enter"
   - "hides suggestions when Escape is pressed"
+
+## 2025-01-15
+
+### Show the icon in the header
+
+Added the app icon (translation speech bubbles) to the header, displayed next to the "Translate" title. This gives the app a stronger visual identity and branding.
+
+**Key changes:**
+
+1. **Updated `App.tsx`:**
+   - Wrapped the h1 title in a flex container to include the icon
+   - Added an `<img>` element referencing `/icon.svg` (the app's existing SVG icon from the public folder)
+   - Applied `h-8 w-8 rounded-lg` classes for sizing and rounded corners
+   - Icon sits to the left of the title with a small gap (`gap-2`)
+
+**Modified files:**
+
+- `src/App.tsx` - Added icon image to header
+
+**Test files updated:**
+
+- `src/App.test.tsx` - Added test "shows the app icon in the header" verifying the icon is rendered with correct source and styling

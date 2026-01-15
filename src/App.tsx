@@ -143,7 +143,10 @@ export function App() {
       <div className="bg-blue-600">
         <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           <header className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Translate</h1>
+            <div className="flex items-center gap-2">
+              <img src="/icon.svg" alt="" className="h-8 w-8 rounded-lg" />
+              <h1 className="text-2xl font-semibold text-white">Translate</h1>
+            </div>
             <div className="flex items-center gap-1">
               <InstallPrompt
                 canInstall={canInstall}
