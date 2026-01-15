@@ -55,6 +55,10 @@ describe("TranslateInput", () => {
     // Now focus it again
     await user.click(input)
 
+    // Wait for requestAnimationFrame to complete (selection is delayed to prevent
+    // macOS from showing system context menu)
+    await new Promise(resolve => requestAnimationFrame(resolve))
+
     // Check that all text is selected
     expect(input.selectionStart).toBe(0)
     expect(input.selectionEnd).toBe(input.value.length)

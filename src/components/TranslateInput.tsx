@@ -93,8 +93,12 @@ export const TranslateInput = ({
   }
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Select all text when focusing
-    e.target.select()
+    // Select all text when focusing, but delay slightly to prevent
+    // macOS from showing the system context menu for selected text
+    const input = e.target
+    requestAnimationFrame(() => {
+      input.select()
+    })
 
     // Prevent iOS from scrolling the page when virtual keyboard opens
     // This works by listening for viewport resize (keyboard open) and resetting scroll
