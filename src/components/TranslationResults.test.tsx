@@ -9,18 +9,25 @@ describe("TranslationResults", () => {
   const mockResults: LanguageTranslation[] = [
     {
       language: { code: "es", name: "Spanish" },
-      options: [
-        { text: "Hola", explanation: "Common greeting" },
-        { text: "Buenos días", explanation: "Formal morning greeting" },
+      meanings: [
+        {
+          sense: "greeting",
+          options: [
+            { text: "Hola", explanation: "Common greeting" },
+            { text: "Buenos días", explanation: "Formal morning greeting" },
+          ],
+        },
       ],
     },
     {
       language: { code: "fr", name: "French" },
-      options: [{ text: "Bonjour", explanation: "Hello" }],
+      meanings: [{ sense: "greeting", options: [{ text: "Bonjour", explanation: "Hello" }] }],
     },
     {
       language: { code: "de", name: "German" },
-      options: [{ text: "Hallo", explanation: "Informal greeting" }],
+      meanings: [
+        { sense: "greeting", options: [{ text: "Hallo", explanation: "Informal greeting" }] },
+      ],
     },
   ]
 

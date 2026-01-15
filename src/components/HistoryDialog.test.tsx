@@ -9,7 +9,9 @@ const createMockTranslation = (input: string): Translation => ({
   results: [
     {
       language: { code: "es", name: "Spanish" },
-      options: [{ text: "Hola", explanation: "Common greeting" }],
+      meanings: [
+        { sense: "greeting", options: [{ text: "Hola", explanation: "Common greeting" }] },
+      ],
     },
   ],
   timestamp: Date.now(),

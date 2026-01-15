@@ -12,7 +12,9 @@ const createMockEntry = (id: string, input: string): HistoryEntry => ({
     results: [
       {
         language: { code: "es", name: "Spanish" },
-        options: [{ text: "Hola", explanation: "Standard greeting" }],
+        meanings: [
+          { sense: "greeting", options: [{ text: "Hola", explanation: "Standard greeting" }] },
+        ],
       },
     ],
     timestamp: Date.now(),

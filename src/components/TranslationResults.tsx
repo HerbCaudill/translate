@@ -77,15 +77,25 @@ export function TranslationResults({ results, onRefresh, isRefreshing = false }:
 }
 
 function TranslationContent({ translation }: { translation: LanguageTranslation }) {
-  const { options } = translation
+  const { meanings } = translation
+  const hasMultipleMeanings = meanings.length > 1
 
   return (
     <Card className="gap-3 py-3">
-      <CardContent className="flex flex-col gap-3 px-4">
-        {options.map((option, index) => (
-          <div key={index} className="flex flex-col gap-0.5">
-            <p className="font-mono text-base">{option.text}</p>
-            <p className="text-muted-foreground text-xs">{option.explanation}</p>
+      <CardContent className="flex flex-col gap-4 px-4">
+        {meanings.map((meaning, meaningIndex) => (
+          <div key={meaningIndex} className="flex flex-col gap-2">
+            {hasMultipleMeanings && (
+              <p className="text-muted-foreground text-xs font-medium italic">{meaning.sense}</p>
+            )}
+            <div className="flex flex-col gap-3">
+              {meaning.options.map((option, optionIndex) => (
+                <div key={optionIndex} className="flex flex-col gap-0.5">
+                  <p className="font-mono text-base">{option.text}</p>
+                  <p className="text-muted-foreground text-xs">{option.explanation}</p>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </CardContent>

@@ -95,7 +95,7 @@ describe("App", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "hola", explanation: "greeting" }],
+          meanings: [{ sense: "greeting", options: [{ text: "hola", explanation: "greeting" }] }],
         },
       ],
     })
@@ -131,7 +131,7 @@ describe("App", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "hola", explanation: "greeting" }],
+          meanings: [{ sense: "greeting", options: [{ text: "hola", explanation: "greeting" }] }],
         },
       ],
     })
@@ -170,7 +170,7 @@ describe("App history saving", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "hola", explanation: "greeting" }],
+          meanings: [{ sense: "greeting", options: [{ text: "hola", explanation: "greeting" }] }],
         },
       ],
     })
@@ -192,7 +192,7 @@ describe("App history saving", () => {
       expect(history[0].input).toBe("hello")
       expect(history[0].translation.results).toHaveLength(1)
       expect(history[0].translation.results[0].language.code).toBe("es")
-      expect(history[0].translation.results[0].options[0].text).toBe("hola")
+      expect(history[0].translation.results[0].meanings[0].options[0].text).toBe("hola")
     })
   })
 })
@@ -256,7 +256,12 @@ describe("App initial state from history", () => {
             results: [
               {
                 language: { code: "es", name: "Spanish" },
-                options: [{ text: "buenos días", explanation: "morning greeting" }],
+                meanings: [
+                  {
+                    sense: "morning greeting",
+                    options: [{ text: "buenos días", explanation: "morning greeting" }],
+                  },
+                ],
               },
             ],
             timestamp: Date.now(),
@@ -324,7 +329,12 @@ describe("App translation caching", () => {
             results: [
               {
                 language: { code: "es", name: "Spanish" },
-                options: [{ text: "hola (cached)", explanation: "cached greeting" }],
+                meanings: [
+                  {
+                    sense: "greeting",
+                    options: [{ text: "hola (cached)", explanation: "cached greeting" }],
+                  },
+                ],
               },
             ],
             timestamp: Date.now(),
@@ -372,7 +382,9 @@ describe("App translation caching", () => {
             results: [
               {
                 language: { code: "es", name: "Spanish" },
-                options: [{ text: "adiós", explanation: "farewell" }],
+                meanings: [
+                  { sense: "farewell", options: [{ text: "adiós", explanation: "farewell" }] },
+                ],
               },
             ],
             timestamp: Date.now(),
@@ -395,7 +407,7 @@ describe("App translation caching", () => {
       translations: [
         {
           language: { code: "es", name: "Spanish" },
-          options: [{ text: "hola", explanation: "greeting" }],
+          meanings: [{ sense: "greeting", options: [{ text: "hola", explanation: "greeting" }] }],
         },
       ],
     })
