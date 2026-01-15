@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
-
 ### Done
+
+- [x] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
 
 - [x] use Plex Serif for the translations
 

@@ -1,5 +1,32 @@
 # Progress Log
 
+## 2025-01-21
+
+### Replace skeleton loading cards with progressive results streaming
+
+Removed the skeleton loading cards that appeared while waiting for all translations. Now translations stream in progressively as they complete - the first translation that finishes appears immediately while others are still in progress. The spinner in the submit button still indicates work is happening.
+
+**Key changes:**
+
+1. **Modified `useTranslation` hook** to update results progressively:
+   - Changed from `Promise.all` waiting for all translations to immediately updating state as each translation completes
+   - Results are added one-by-one using `setResults(prev => [...prev, newResult])` callback pattern
+   - Status tracking counts completed translations and sets final status when all are done
+
+2. **Simplified `App.tsx`**:
+   - Removed `TranslationResultsSkeleton` import and usage
+   - Changed from either/or display (skeleton OR results) to always showing results when available
+   - Results now display during `translating` status, growing as more complete
+
+**Modified files:**
+
+- `src/hooks/useTranslation.ts` - Rewrote translation logic to stream results progressively
+- `src/App.tsx` - Removed skeleton, simplified results display logic
+
+**Test file updated:**
+
+- `src/hooks/useTranslation.test.ts` - Added test verifying progressive streaming: first result appears while second is still pending, status remains "translating" until all complete
+
 ## 2025-01-20
 
 ### Use Plex Serif for translations

@@ -7,7 +7,6 @@ import { useInstallPrompt } from "@/hooks/useInstallPrompt"
 import { ApiKeyPrompt } from "@/components/ApiKeyPrompt"
 import { TranslateInput } from "@/components/TranslateInput"
 import { TranslationResults } from "@/components/TranslationResults"
-import { TranslationResultsSkeleton } from "@/components/TranslationResultsSkeleton"
 import { SettingsDialog } from "@/components/SettingsDialog"
 import { HistoryDialog } from "@/components/HistoryDialog"
 import { InstallPrompt } from "@/components/InstallPrompt"
@@ -143,11 +142,7 @@ export function App() {
         loading={translationStatus === "translating"}
       />
 
-      {translationStatus === "translating" ?
-        <TranslationResultsSkeleton languages={settings.languages} />
-      : displayResults.length > 0 ?
-        <TranslationResults results={displayResults} />
-      : null}
+      {displayResults.length > 0 && <TranslationResults results={displayResults} />}
     </div>
   )
 }

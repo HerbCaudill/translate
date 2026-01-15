@@ -239,4 +239,49 @@ describe("useTranslation", () => {
     expect(mockTranslate).toHaveBeenCalledTimes(2)
     expect(result.current.results).toEqual([])
   })
+
+  it("should stream results progressively as translations complete", async () => {
+    // Create a delayed promise for the second language
+    let resolveSecond: (value: anthropic.TranslationResult) => void
+    const secondPromise = new Promise<anthropic.TranslationResult>(resolve => {
+      resolveSecond = resolve
+    })
+
+    mockTranslate
+      .mockResolvedValueOnce({
+        success: true,
+        options: [{ text: "Hola", explanation: "Spanish" }],
+      })
+      .mockReturnValueOnce(secondPromise)
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("Hello")
+    })
+
+    // Wait for the first result to come in
+    await waitFor(() => {
+      expect(result.current.results).toHaveLength(1)
+    })
+
+    // Status should still be translating since second hasn't completed
+    expect(result.current.status).toBe("translating")
+    expect(result.current.results[0].language.code).toBe("es")
+
+    // Now resolve the second translation
+    await act(async () => {
+      resolveSecond!({
+        success: true,
+        options: [{ text: "Bonjour", explanation: "French" }],
+      })
+    })
+
+    // Wait for completion
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(result.current.results).toHaveLength(2)
+  })
 })

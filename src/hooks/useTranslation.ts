@@ -19,44 +19,47 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
       setResults([])
       setError(undefined)
 
-      const translationPromises = languages.map(
-        async (language): Promise<TranslationResult & { language: Language }> => {
-          const result = await translate(apiKey, text, language)
-          return { ...result, language }
-        },
-      )
-
-      const settled = await Promise.all(translationPromises)
-
-      const successful: LanguageTranslation[] = []
+      let completedCount = 0
+      let errorCount = 0
       let firstError: string | undefined
 
-      for (const result of settled) {
+      // Stream results as they come in - each translation updates state immediately
+      const translationPromises = languages.map(async language => {
+        const result = await translate(apiKey, text, language)
+        completedCount++
+
         if (result.success) {
           // Skip languages where the text is already in that language
-          if ("sameLanguage" in result) {
-            continue
+          if (!("sameLanguage" in result)) {
+            setResults(prev => [
+              ...prev,
+              {
+                language,
+                options: result.options,
+              },
+            ])
           }
-          successful.push({
-            language: result.language,
-            options: result.options,
-          })
-        } else if (!firstError) {
-          firstError = result.error
+        } else {
+          errorCount++
+          if (!firstError) {
+            firstError = result.error
+            setError(result.error)
+          }
         }
-      }
 
-      setResults(successful)
+        // Update status when all translations complete
+        if (completedCount === languages.length) {
+          if (errorCount === languages.length) {
+            setStatus("error")
+          } else if (errorCount > 0) {
+            setStatus("partial")
+          } else {
+            setStatus("success")
+          }
+        }
+      })
 
-      if (successful.length === 0 && firstError) {
-        setStatus("error")
-        setError(firstError)
-      } else if (firstError) {
-        setStatus("partial")
-        setError(firstError)
-      } else {
-        setStatus("success")
-      }
+      await Promise.all(translationPromises)
     },
     [apiKey, languages],
   )
