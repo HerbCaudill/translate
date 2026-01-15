@@ -163,7 +163,7 @@ export function App() {
         <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="/icon.svg" alt="" className="h-12 w-12 rounded-lg opacity-75" />
+              <img src="/icon.svg" alt="" className="h-12 w-12 rounded-lg" />
               <h1 className="text-lg font-semibold text-white">Universal Translator</h1>
             </div>
             <div className="flex items-center gap-1">

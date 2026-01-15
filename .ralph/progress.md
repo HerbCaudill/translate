@@ -26,8 +26,6 @@ Made the translation results container fill all remaining vertical space on the 
 
 - `src/components/TranslationResults.test.tsx` - Added test "uses flex layout to fill available vertical space for swipe target" verifying the flex-1 classes are applied to Tabs, TabsContent, and the swipe target div
 
-
-
 ### iOS floating toolbar "Go" button submits form
 
 Fixed an issue where tapping the check/done button on the iOS floating keyboard toolbar didn't submit the translation form. On iOS, this toolbar button triggers a form submit event rather than an Enter key event.
@@ -84,6 +82,7 @@ Fixed an issue where iOS Safari would automatically zoom in when focusing the tr
 **The fix:**
 
 Changed the input to use `text-base` (16px) on mobile devices and `md:text-sm` (14px) on larger screens using Tailwind's responsive breakpoints. This ensures:
+
 - iOS devices don't zoom when focusing the input (font-size >= 16px)
 - Desktop users still get the more compact 14px text size
 
