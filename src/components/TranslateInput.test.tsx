@@ -153,6 +153,12 @@ describe("TranslateInput", () => {
     expect(input).toHaveClass("focus-visible:ring-0")
   })
 
+  it("applies small text size to input field", () => {
+    render(<TranslateInput value="" onChange={() => {}} onSubmit={() => {}} />)
+    const input = screen.getByRole("textbox")
+    expect(input).toHaveClass("text-sm")
+  })
+
   describe("suggestions", () => {
     it("does not show suggestions when less than 3 characters typed", () => {
       const suggestions = [createMockEntry("1", "Hello world")]

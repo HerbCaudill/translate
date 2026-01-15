@@ -1,5 +1,24 @@
 # Progress Log
 
+## 2026-01-15
+
+### Make input text smaller
+
+Reduced the font size of the translation input field from `text-lg` (18px) to `text-sm` (14px) for a more compact appearance that better fits the header area.
+
+**Key changes:**
+
+1. **Updated `TranslateInput.tsx`:**
+   - Changed input font size class from `text-lg` to `text-sm`
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Reduced input text size
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Added test "applies small text size to input field" verifying the input has the `text-sm` class
+
 ## 2025-01-15
 
 ### Remove subtitle from history dialog

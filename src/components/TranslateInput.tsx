@@ -104,7 +104,7 @@ export const TranslateInput = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="border-white/20 bg-white font-mono text-lg focus-visible:ring-0 focus-visible:border-white/20"
+          className="border-white/20 bg-white font-mono text-sm focus-visible:ring-0 focus-visible:border-white/20"
         />
         {showSuggestions && (
           <ul

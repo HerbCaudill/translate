@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] make the input text smaller
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] make the input text smaller
 
 - [x] show the icon in the header
 
