@@ -2,6 +2,26 @@
 
 ## 2025-01-15
 
+### History results in a scrolling container
+
+Added a scrolling container around the history list in the HistoryView component to prevent overflow when there are many history entries.
+
+**Key changes:**
+
+1. **Updated `HistoryView.tsx`:**
+   - Wrapped the `<ul>` history list in a `<div>` with `max-h-80 overflow-y-auto`
+   - This limits the list height to 320px (20rem) and enables vertical scrolling when content exceeds that height
+
+**Modified files:**
+
+- `src/components/HistoryView.tsx` - Added scrolling container wrapper
+
+**Test files updated:**
+
+- `src/components/HistoryView.test.tsx` - Added test "renders history list in a scrolling container" verifying the container has `overflow-y-auto` and `max-h-80` classes
+
+## 2025-01-15
+
 ### Show most recent translation on first load
 
 When the app loads, it now displays the most recent translation from history instead of showing a blank screen. This improves the user experience by immediately showing the last translation the user was working with.

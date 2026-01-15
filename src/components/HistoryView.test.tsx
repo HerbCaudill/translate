@@ -136,4 +136,16 @@ describe("HistoryView", () => {
     expect(screen.getByText("Hello World")).toBeInTheDocument()
     expect(screen.queryByText("Good morning")).not.toBeInTheDocument()
   })
+
+  it("renders history list in a scrolling container", () => {
+    const history = [createMockEntry("1", "Hello world", Date.now())]
+
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onClearHistory={vi.fn()} />)
+
+    const list = screen.getByRole("list")
+    const scrollContainer = list.parentElement
+
+    expect(scrollContainer).toHaveClass("overflow-y-auto")
+    expect(scrollContainer).toHaveClass("max-h-80")
+  })
 })

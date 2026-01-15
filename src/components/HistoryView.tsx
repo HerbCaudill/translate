@@ -61,21 +61,23 @@ export const HistoryView = ({ history, onSelectEntry, onClearHistory }: Props) =
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <p className="text-muted-foreground">No matching entries</p>
         </div>
-      : <ul className="flex flex-col gap-2">
-          {filteredHistory.map(entry => (
-            <li key={entry.id}>
-              <button
-                onClick={() => onSelectEntry(entry)}
-                className="hover:bg-muted/50 flex w-full flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors"
-              >
-                <span className="line-clamp-2">{entry.input}</span>
-                <span className="text-muted-foreground text-xs">
-                  {formatRelativeTime(entry.createdAt)}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+      : <div className="max-h-80 overflow-y-auto">
+          <ul className="flex flex-col gap-2">
+            {filteredHistory.map(entry => (
+              <li key={entry.id}>
+                <button
+                  onClick={() => onSelectEntry(entry)}
+                  className="hover:bg-muted/50 flex w-full flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors"
+                >
+                  <span className="line-clamp-2">{entry.input}</span>
+                  <span className="text-muted-foreground text-xs">
+                    {formatRelativeTime(entry.createdAt)}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       }
     </div>
   )

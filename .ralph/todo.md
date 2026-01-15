@@ -1,12 +1,13 @@
 ### To do
 
 - [ ] allow deleting history items
-- [ ] history results need to be in a scrolling container
 - [ ] make the input text smaller
 - [ ] show the icon in the header
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] history results need to be in a scrolling container
 
 - [x] show the most recent request and response on first load
 
