@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] get rid of the focus ring on the input
 - [ ] add a refresh button for results
 - [ ] use mono for the input and for the translation in the results
 
