@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] remember the last selected tab
 - [ ] get rid of the gray backdrop on the tabs
 ### Done
 
