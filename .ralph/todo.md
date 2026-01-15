@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] get rid of the gray backdrop on the tabs
 ### Done
 
 - [x] Add logging for API requests, responses, and retries
