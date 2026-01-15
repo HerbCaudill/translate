@@ -1,0 +1,3 @@
+# Universal Translator
+
+A React/TypeScript web app that uses Claude AI to provide intelligent, context-aware translations into multiple user-selected languages simultaneously. Unlike simple word-for-word translators, it identifies when source text has multiple meanings and provides distinct translation options for each sense, along with usage explanations. The app features translation history with search, a mobile-optimized PWA design with swipe gestures, and supports 100+ languages. Built with Vite, Tailwind CSS, and shadcn/ui components, it stores translations locally and handles API rate-limiting gracefully.
