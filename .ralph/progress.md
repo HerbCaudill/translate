@@ -2,6 +2,24 @@
 
 ## 2026-01-15
 
+### Prevent iOS auto-zoom on input focus
+
+Fixed an issue where iOS Safari would automatically zoom in when focusing the translation input field. This happened because the input had a font-size of 14px (`text-sm`), and iOS auto-zooms when inputs have font-size less than 16px.
+
+**The fix:**
+
+Changed the input to use `text-base` (16px) on mobile devices and `md:text-sm` (14px) on larger screens using Tailwind's responsive breakpoints. This ensures:
+- iOS devices don't zoom when focusing the input (font-size >= 16px)
+- Desktop users still get the more compact 14px text size
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Changed `text-sm` to `text-base md:text-sm`
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Updated test "applies small text size to input field" to "uses text-base on mobile and text-sm on larger screens to prevent iOS zoom" verifying both `text-base` and `md:text-sm` classes are present
+
 ### Select all text on input focus
 
 Added functionality to select all text in the translation input field when it receives focus. This improves UX by allowing users to quickly replace the current text without manually selecting or deleting it.

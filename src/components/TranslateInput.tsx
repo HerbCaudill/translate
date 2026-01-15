@@ -109,7 +109,7 @@ export const TranslateInput = ({
           onFocus={handleFocus}
           placeholder={placeholder}
           disabled={disabled}
-          className="border-white/20 bg-white font-mono text-sm focus-visible:border-white/20 focus-visible:ring-0"
+          className="border-white/20 bg-white font-mono text-base focus-visible:border-white/20 focus-visible:ring-0 md:text-sm"
         />
         {showSuggestions && (
           <ul

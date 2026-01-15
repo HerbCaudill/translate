@@ -172,10 +172,13 @@ describe("TranslateInput", () => {
     expect(input).toHaveClass("focus-visible:ring-0")
   })
 
-  it("applies small text size to input field", () => {
+  it("uses text-base on mobile and text-sm on larger screens to prevent iOS zoom", () => {
     render(<TranslateInput value="" onChange={() => {}} onSubmit={() => {}} />)
     const input = screen.getByRole("textbox")
-    expect(input).toHaveClass("text-sm")
+    // text-base (16px) on mobile prevents iOS auto-zoom on focus
+    // md:text-sm (14px) on larger screens for a more compact appearance
+    expect(input).toHaveClass("text-base")
+    expect(input).toHaveClass("md:text-sm")
   })
 
   describe("suggestions", () => {
