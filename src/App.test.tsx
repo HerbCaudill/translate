@@ -61,7 +61,7 @@ describe("App", () => {
 
     const icon = document.querySelector('header img[src="/icon.svg"]')
     expect(icon).toBeInTheDocument()
-    expect(icon).toHaveClass("h-8", "w-8", "rounded-lg")
+    expect(icon).toHaveClass("h-12", "w-12", "rounded-lg", "opacity-75")
   })
 
   it("stores API key and shows main content after submission", async () => {

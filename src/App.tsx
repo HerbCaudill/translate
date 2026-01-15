@@ -141,12 +141,20 @@ export function App() {
     return searchHistory(inputText)
   }, [inputText, searchHistory])
 
+  // Show history results if selected, otherwise show translation results
+  const displayResults = selectedHistoryEntry?.translation.results ?? results
+
+  // Detect source language by finding which configured language is missing from results
+  const sourceLanguage = useMemo(() => {
+    if (displayResults.length === 0) return undefined
+    const resultLanguageCodes = new Set(displayResults.map(r => r.language.code))
+    const missingLanguage = settings.languages.find(l => !resultLanguageCodes.has(l.code))
+    return missingLanguage?.code
+  }, [displayResults, settings.languages])
+
   if (!settings.apiKey) {
     return <ApiKeyPrompt onSubmit={handleApiKeySubmit} />
   }
-
-  // Show history results if selected, otherwise show translation results
-  const displayResults = selectedHistoryEntry?.translation.results ?? results
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -155,7 +163,7 @@ export function App() {
         <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="/icon.svg" alt="" className="h-8 w-8 rounded-lg" />
+              <img src="/icon.svg" alt="" className="h-12 w-12 rounded-lg opacity-75" />
               <h1 className="text-2xl font-semibold text-white">Translate</h1>
             </div>
             <div className="flex items-center gap-1">
@@ -191,9 +199,12 @@ export function App() {
 
       {/* Content area */}
       <div className="mx-auto w-full max-w-2xl flex-1 p-4 sm:p-6">
-        {displayResults.length > 0 && (
+        {(inputText.trim() || displayResults.length > 0) && (
           <TranslationResults
             results={displayResults}
+            languages={settings.languages}
+            sourceLanguage={sourceLanguage}
+            isLoading={translationStatus === "translating"}
             onRefresh={handleRefresh}
             isRefreshing={translationStatus === "translating"}
           />
