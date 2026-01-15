@@ -14,10 +14,10 @@ describe("TranslationCardSkeleton", () => {
     expect(screen.getByText("Spanish")).toBeInTheDocument()
   })
 
-  it("renders two translation option placeholders", () => {
+  it("renders three translation option placeholders", () => {
     const { container } = render(<TranslationCardSkeleton />)
     // Each option has 2 skeletons (text + explanation)
     const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
-    expect(skeletons.length).toBe(4)
+    expect(skeletons.length).toBe(6)
   })
 })

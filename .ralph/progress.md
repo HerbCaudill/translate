@@ -2,6 +2,28 @@
 
 ## 2026-01-15
 
+### Add more lines to the loading skeleton
+
+Increased the number of skeleton placeholder lines in the loading state from 2 to 3 options. This provides a fuller visual preview while translations are loading.
+
+**Key changes:**
+
+1. **Updated `TranslationResults.tsx`:**
+   - Changed `TranslationSkeleton` to show 3 option placeholders instead of 2
+
+2. **Updated `TranslationCardSkeleton.tsx`:**
+   - Changed from 2 to 3 translation option placeholders for consistency
+
+**Modified files:**
+
+- `src/components/TranslationResults.tsx` - Updated `TranslationSkeleton` to render 3 skeleton options
+- `src/components/TranslationCardSkeleton.tsx` - Updated to render 3 skeleton options
+
+**Test files updated:**
+
+- `src/components/TranslationCardSkeleton.test.tsx` - Updated test expectation from 4 to 6 skeleton elements (3 options × 2 skeletons each)
+- `src/components/TranslationResults.test.tsx` - Added test "renders three skeleton option placeholders when loading" to verify the skeleton count
+
 ### Rename heading to "Universal Translator" and make it smaller
 
 Changed the app heading from "Translate" to "Universal Translator" and reduced its size from `text-2xl` to `text-lg` for a more compact header appearance.

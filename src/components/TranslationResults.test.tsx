@@ -191,4 +191,18 @@ describe("TranslationResults", () => {
     const icon = refreshButton.querySelector("svg")
     expect(icon).toHaveClass("animate-spin")
   })
+
+  it("renders three skeleton option placeholders when loading", () => {
+    const { container } = render(
+      <TranslationResults
+        results={[]}
+        languages={mockLanguages}
+        sourceLanguage="en"
+        isLoading={true}
+      />,
+    )
+    // Each option has 2 skeletons (text + explanation), 3 options = 6 skeletons
+    const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
+    expect(skeletons.length).toBe(6)
+  })
 })

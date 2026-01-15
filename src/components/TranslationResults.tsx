@@ -184,7 +184,7 @@ export function TranslationResults({
 function TranslationSkeleton() {
   return (
     <div className="flex flex-col gap-3 py-3">
-      {[0, 1].map(index => (
+      {[0, 1, 2].map(index => (
         <div key={index} className="flex flex-col gap-0.5">
           <Skeleton className="h-5 w-3/4" />
           <Skeleton className="h-3 w-full" />

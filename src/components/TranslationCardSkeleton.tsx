@@ -7,8 +7,8 @@ export function TranslationCardSkeleton({ languageName }: Props) {
     <Card className="relative gap-3 pt-5 pb-3">
       {languageName && <LanguageBadge name={languageName} />}
       <CardContent className="flex flex-col gap-3 px-4">
-        {/* Two translation options */}
-        {[0, 1].map(index => (
+        {/* Three translation options */}
+        {[0, 1, 2].map(index => (
           <div key={index} className="flex flex-col gap-0.5">
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-3 w-full" />
