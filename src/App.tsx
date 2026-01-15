@@ -91,7 +91,7 @@ export function App() {
   // Save translation to history when it completes
   useEffect(() => {
     const hasResults = results.length > 0
-    const isComplete = translationStatus === "success" || translationStatus === "partial"
+    const isComplete = translationStatus === "success"
     const inputToSave = translatedTextRef.current
 
     if (hasResults && isComplete && inputToSave && inputToSave !== savedTranslationRef.current) {

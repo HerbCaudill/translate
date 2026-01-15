@@ -19,68 +19,56 @@ describe("logger", () => {
   describe("logger.debug", () => {
     it("logs debug messages with correct format", () => {
       logger.debug("test", "debug message")
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        "[translate] [DEBUG] [test] debug message",
-      )
+      expect(consoleSpy.log).toHaveBeenCalledWith("[translate] [DEBUG] [test] debug message")
     })
 
     it("logs debug messages with data", () => {
       logger.debug("test", "debug message", { foo: "bar" })
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        "[translate] [DEBUG] [test] debug message",
-        { foo: "bar" },
-      )
+      expect(consoleSpy.log).toHaveBeenCalledWith("[translate] [DEBUG] [test] debug message", {
+        foo: "bar",
+      })
     })
   })
 
   describe("logger.info", () => {
     it("logs info messages with correct format", () => {
       logger.info("test", "info message")
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        "[translate] [INFO] [test] info message",
-      )
+      expect(consoleSpy.log).toHaveBeenCalledWith("[translate] [INFO] [test] info message")
     })
 
     it("logs info messages with data", () => {
       logger.info("test", "info message", { key: "value" })
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        "[translate] [INFO] [test] info message",
-        { key: "value" },
-      )
+      expect(consoleSpy.log).toHaveBeenCalledWith("[translate] [INFO] [test] info message", {
+        key: "value",
+      })
     })
   })
 
   describe("logger.warn", () => {
     it("logs warn messages with correct format", () => {
       logger.warn("test", "warning message")
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        "[translate] [WARN] [test] warning message",
-      )
+      expect(consoleSpy.warn).toHaveBeenCalledWith("[translate] [WARN] [test] warning message")
     })
 
     it("logs warn messages with data", () => {
       logger.warn("test", "warning message", { count: 5 })
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        "[translate] [WARN] [test] warning message",
-        { count: 5 },
-      )
+      expect(consoleSpy.warn).toHaveBeenCalledWith("[translate] [WARN] [test] warning message", {
+        count: 5,
+      })
     })
   })
 
   describe("logger.error", () => {
     it("logs error messages with correct format", () => {
       logger.error("test", "error message")
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        "[translate] [ERROR] [test] error message",
-      )
+      expect(consoleSpy.error).toHaveBeenCalledWith("[translate] [ERROR] [test] error message")
     })
 
     it("logs error messages with data", () => {
       logger.error("test", "error message", { code: 500 })
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        "[translate] [ERROR] [test] error message",
-        { code: 500 },
-      )
+      expect(consoleSpy.error).toHaveBeenCalledWith("[translate] [ERROR] [test] error message", {
+        code: 500,
+      })
     })
   })
 })

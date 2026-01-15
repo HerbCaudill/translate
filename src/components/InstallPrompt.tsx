@@ -7,7 +7,13 @@ export function InstallPrompt({ canInstall, onInstall, className }: Props) {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={onInstall} title="Install app" className={className}>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={onInstall}
+      title="Install app"
+      className={className}
+    >
       <IconDownload className="h-5 w-5" />
     </Button>
   )

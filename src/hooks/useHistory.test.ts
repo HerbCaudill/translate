@@ -206,10 +206,7 @@ describe("useHistory", () => {
   })
 
   it("excludes exact matches case-insensitively", () => {
-    const existingHistory = [
-      createMockEntry("1", "HELLO"),
-      createMockEntry("2", "Hello world"),
-    ]
+    const existingHistory = [createMockEntry("1", "HELLO"), createMockEntry("2", "Hello world")]
     localStorage.setItem("translate:history", JSON.stringify(existingHistory))
 
     const { result } = renderHook(() => useHistory())

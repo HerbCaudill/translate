@@ -11,12 +11,7 @@ import {
 import { HistoryView } from "@/components/HistoryView"
 import { HistoryEntry } from "@/types"
 
-export const HistoryDialog = ({
-  history,
-  onSelectEntry,
-  onRemoveEntry,
-  className,
-}: Props) => {
+export const HistoryDialog = ({ history, onSelectEntry, onRemoveEntry, className }: Props) => {
   const [open, setOpen] = useState(false)
 
   const handleSelectEntry = (entry: HistoryEntry) => {

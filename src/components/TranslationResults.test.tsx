@@ -78,10 +78,7 @@ describe("TranslationResults", () => {
     render(<TranslationResults results={mockResults} />)
 
     // French tab should be selected
-    expect(screen.getByRole("tab", { name: "French" })).toHaveAttribute(
-      "data-state",
-      "active",
-    )
+    expect(screen.getByRole("tab", { name: "French" })).toHaveAttribute("data-state", "active")
     // French content should be visible
     expect(screen.getByText("Bonjour")).toBeInTheDocument()
   })
@@ -93,10 +90,7 @@ describe("TranslationResults", () => {
     render(<TranslationResults results={mockResults} />)
 
     // First tab (Spanish) should be selected
-    expect(screen.getByRole("tab", { name: "Spanish" })).toHaveAttribute(
-      "data-state",
-      "active",
-    )
+    expect(screen.getByRole("tab", { name: "Spanish" })).toHaveAttribute("data-state", "active")
     expect(screen.getByText("Hola")).toBeInTheDocument()
   })
 

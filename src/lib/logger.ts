@@ -34,7 +34,10 @@ const createLogEntry = (
 
 const logWithData = (entry: LogEntry): void => {
   const formatted = formatEntry(entry)
-  const consoleMethod = entry.level === "error" ? "error" : entry.level === "warn" ? "warn" : "log"
+  const consoleMethod =
+    entry.level === "error" ? "error"
+    : entry.level === "warn" ? "warn"
+    : "log"
 
   if (entry.data && Object.keys(entry.data).length > 0) {
     console[consoleMethod](formatted, entry.data)
@@ -71,7 +74,13 @@ export const apiLogger = {
     logger.info("api", `Response: ${endpoint}`, data)
   },
 
-  retry: (endpoint: string, attempt: number, maxRetries: number, delayMs: number, reason: string) => {
+  retry: (
+    endpoint: string,
+    attempt: number,
+    maxRetries: number,
+    delayMs: number,
+    reason: string,
+  ) => {
     logger.warn("api", `Retry: ${endpoint}`, {
       attempt,
       maxRetries,

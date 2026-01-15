@@ -104,12 +104,12 @@ export const TranslateInput = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="border-white/20 bg-white font-mono text-sm focus-visible:ring-0 focus-visible:border-white/20"
+          className="border-white/20 bg-white font-mono text-sm focus-visible:border-white/20 focus-visible:ring-0"
         />
         {showSuggestions && (
           <ul
             ref={suggestionsRef}
-            className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-md border bg-white shadow-lg"
+            className="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-md border bg-white shadow-lg"
             role="listbox"
           >
             {visibleSuggestions.map((entry, index) => (

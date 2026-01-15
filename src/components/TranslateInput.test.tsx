@@ -233,10 +233,7 @@ describe("TranslateInput", () => {
     it("navigates suggestions with arrow keys and selects with Enter", async () => {
       const user = userEvent.setup()
       const onSelectSuggestion = vi.fn()
-      const suggestions = [
-        createMockEntry("1", "Hello one"),
-        createMockEntry("2", "Hello two"),
-      ]
+      const suggestions = [createMockEntry("1", "Hello one"), createMockEntry("2", "Hello two")]
 
       render(
         <TranslateInput

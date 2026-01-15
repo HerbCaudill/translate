@@ -24,9 +24,7 @@ const createMockEntry = (id: string, input: string, createdAt: number): HistoryE
 
 describe("HistoryView", () => {
   it("renders empty state when no history", () => {
-    render(
-      <HistoryView history={[]} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />,
-    )
+    render(<HistoryView history={[]} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     expect(screen.getByText("No history yet")).toBeInTheDocument()
   })
@@ -37,13 +35,7 @@ describe("HistoryView", () => {
       createMockEntry("2", "Good morning", Date.now() - 1000),
     ]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     expect(screen.getByText("Hello world")).toBeInTheDocument()
     expect(screen.getByText("Good morning")).toBeInTheDocument()
@@ -54,13 +46,7 @@ describe("HistoryView", () => {
     const history = [createMockEntry("1", "Hello world", Date.now())]
     const onSelectEntry = vi.fn()
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={onSelectEntry}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={onSelectEntry} onRemoveEntry={vi.fn()} />)
 
     await user.click(screen.getByText("Hello world"))
 
@@ -75,13 +61,7 @@ describe("HistoryView", () => {
       createMockEntry("3", "Hello there", Date.now() - 2000),
     ]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     const searchInput = screen.getByPlaceholderText("Search history...")
     await user.type(searchInput, "Hello")
@@ -95,13 +75,7 @@ describe("HistoryView", () => {
     const user = userEvent.setup()
     const history = [createMockEntry("1", "Hello world", Date.now())]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     const searchInput = screen.getByPlaceholderText("Search history...")
     await user.type(searchInput, "xyz")
@@ -113,13 +87,7 @@ describe("HistoryView", () => {
     const now = Date.now()
     const history = [createMockEntry("1", "Hello world", now)]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     // Should show something like "just now" or similar relative time
     expect(screen.getByText(/now|seconds?|minutes?/i)).toBeInTheDocument()
@@ -132,13 +100,7 @@ describe("HistoryView", () => {
       createMockEntry("2", "Good morning", Date.now() - 1000),
     ]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     const searchInput = screen.getByPlaceholderText("Search history...")
     await user.type(searchInput, "hello")
@@ -150,13 +112,7 @@ describe("HistoryView", () => {
   it("renders history list in a scrolling container", () => {
     const history = [createMockEntry("1", "Hello world", Date.now())]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     const list = screen.getByRole("list")
     const scrollContainer = list.parentElement
@@ -168,13 +124,7 @@ describe("HistoryView", () => {
   it("shows delete button for each entry", () => {
     const history = [createMockEntry("1", "Hello world", Date.now())]
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={vi.fn()}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={vi.fn()} />)
 
     // Delete button should be visible in the DOM
     const deleteButton = screen.getByRole("button", { name: /delete "Hello world"/i })
@@ -187,13 +137,7 @@ describe("HistoryView", () => {
     const history = [createMockEntry("1", "Hello world", Date.now())]
     const onRemoveEntry = vi.fn()
 
-    render(
-      <HistoryView
-        history={history}
-        onSelectEntry={vi.fn()}
-        onRemoveEntry={onRemoveEntry}
-      />,
-    )
+    render(<HistoryView history={history} onSelectEntry={vi.fn()} onRemoveEntry={onRemoveEntry} />)
 
     const deleteButton = screen.getByRole("button", { name: /delete "Hello world"/i })
     await user.click(deleteButton)
@@ -208,11 +152,7 @@ describe("HistoryView", () => {
     const onRemoveEntry = vi.fn()
 
     render(
-      <HistoryView
-        history={history}
-        onSelectEntry={onSelectEntry}
-        onRemoveEntry={onRemoveEntry}
-      />,
+      <HistoryView history={history} onSelectEntry={onSelectEntry} onRemoveEntry={onRemoveEntry} />,
     )
 
     const deleteButton = screen.getByRole("button", { name: /delete "Hello world"/i })
