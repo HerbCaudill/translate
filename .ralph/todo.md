@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] make the input text smaller
 - [ ] show the icon in the header
 - [ ] get rid of the focus ring on the input
 - [ ] add a refresh button for results
