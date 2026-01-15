@@ -1,5 +1,40 @@
 # Progress Log
 
+## 2025-01-15
+
+### Add logging for API requests, responses, and retries
+
+Added a logging system to help debug API interactions. Logs are written to the browser console with structured data including timestamps, log levels, and contextual information.
+
+**Key changes:**
+
+1. **New `logger` module** (`src/lib/logger.ts`):
+   - Generic logger with `debug`, `info`, `warn`, and `error` methods
+   - Each log entry includes timestamp, level, category, and optional data
+   - Uses appropriate console methods (log, warn, error) for each level
+   - Prefixed with `[translate]` for easy filtering in browser console
+
+2. **Specialized `apiLogger`** for consistent API logging:
+   - `request(endpoint, data)` - logs outgoing requests with model, target language, text length, and attempt number
+   - `response(endpoint, data)` - logs successful responses with target language and options count
+   - `retry(endpoint, attempt, maxRetries, delayMs, reason)` - logs retry attempts with full context
+   - `error(endpoint, error, data?)` - logs errors with error message and optional additional data
+
+3. **Integrated logging into `anthropic.ts`**:
+   - Logs each API request before it's made (model, target language, text length, attempt number)
+   - Logs successful responses (target language, options count or "sameLanguage" result)
+   - Logs all error conditions (parse errors, invalid format, auth errors, rate limits, generic API errors)
+   - Logs retry attempts with delay and reason
+
+**New files:**
+
+- `src/lib/logger.ts` - Logger implementation
+- `src/lib/logger.test.ts` - 13 tests covering both generic logger and apiLogger
+
+**Modified files:**
+
+- `src/lib/anthropic.ts` - Added logging calls throughout the translate function
+
 ## 2025-01-22
 
 ### Display translation results in tabs

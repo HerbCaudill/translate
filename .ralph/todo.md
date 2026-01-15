@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Add logging for API requests, responses, and retries
-
 ### Done
+
+- [x] Add logging for API requests, responses, and retries
 
 - [x] Show the results in tabs. Remember the last tab the user selected. Hide the tab for the source language
 

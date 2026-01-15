@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { Language, TranslationOption } from "../types"
 import { SYSTEM_PROMPT } from "./prompts"
+import { apiLogger } from "./logger"
 
 const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
 
@@ -60,6 +61,13 @@ export const translate = async (
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
+      apiLogger.request("messages.create", {
+        model: TRANSLATION_MODEL,
+        targetLanguage: language.name,
+        textLength: text.length,
+        attempt: attempt + 1,
+      })
+
       const response = await client.messages.create({
         model: TRANSLATION_MODEL,
         max_tokens: 1024,
@@ -69,6 +77,9 @@ export const translate = async (
 
       const content = response.content[0]
       if (content.type !== "text") {
+        apiLogger.error("messages.create", "Unexpected response format", {
+          contentType: content.type,
+        })
         return { success: false, error: "Unexpected response format" }
       }
 
@@ -76,6 +87,10 @@ export const translate = async (
 
       // Check if the text is already in the target language
       if (responseText === "SAME_LANGUAGE") {
+        apiLogger.response("messages.create", {
+          targetLanguage: language.name,
+          result: "sameLanguage",
+        })
         return { success: true, sameLanguage: true }
       }
 
@@ -98,18 +113,30 @@ export const translate = async (
 
       const parsed = JSON.parse(jsonText) as { options: TranslationOption[] }
       if (!parsed.options || !Array.isArray(parsed.options)) {
+        apiLogger.error("messages.create", "Invalid response format", {
+          targetLanguage: language.name,
+          hasOptions: "options" in parsed,
+        })
         return { success: false, error: "Invalid response format" }
       }
 
+      apiLogger.response("messages.create", {
+        targetLanguage: language.name,
+        optionsCount: parsed.options.length,
+      })
       return { success: true, options: parsed.options }
     } catch (error) {
       lastError = error as Error
 
       if (error instanceof SyntaxError) {
+        apiLogger.error("messages.create", "Failed to parse translation response", {
+          targetLanguage: language.name,
+        })
         return { success: false, error: "Failed to parse translation response" }
       }
 
       if (error instanceof Anthropic.AuthenticationError) {
+        apiLogger.error("messages.create", "Invalid API key")
         return { success: false, error: "Invalid API key" }
       }
 
@@ -117,17 +144,31 @@ export const translate = async (
         if (attempt < MAX_RETRIES) {
           const retryAfterMs = getRetryAfterMs(error)
           const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
+          apiLogger.retry(
+            "messages.create",
+            attempt + 1,
+            MAX_RETRIES,
+            delayMs,
+            "Rate limit exceeded",
+          )
           await sleep(delayMs)
           continue
         }
+        apiLogger.error("messages.create", "Rate limit exceeded - max retries reached", {
+          attempts: attempt + 1,
+        })
         return { success: false, error: "Rate limit exceeded. Please try again later." }
       }
 
       if (error instanceof Anthropic.APIError) {
+        apiLogger.error("messages.create", error.message, {
+          status: error.status,
+        })
         return { success: false, error: `API error: ${error.message}` }
       }
     }
   }
 
+  apiLogger.error("messages.create", lastError?.message ?? "Failed to translate")
   return { success: false, error: lastError?.message ?? "Failed to translate" }
 }
