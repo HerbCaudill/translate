@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] add a refresh button for results
 - [ ] use mono for the input and for the translation in the results
 - [ ] make the tab buttons smaller and left-align them
 
