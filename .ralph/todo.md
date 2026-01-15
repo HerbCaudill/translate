@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] allow deleting history items
 - [ ] history results need to be in a scrolling container
 - [ ] show the most recent request and response on first load
 - [ ] make the input text smaller
