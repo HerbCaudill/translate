@@ -16,8 +16,13 @@ export function App() {
   const { settings, updateSettings } = useSettings()
   const { history, addEntry, clearHistory, findByInput } = useHistory()
   const { canInstall, promptInstall } = useInstallPrompt()
-  const [inputText, setInputText] = useState("")
-  const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(null)
+
+  // Initialize from most recent history entry if available
+  const mostRecentEntry = history[0] ?? null
+  const [inputText, setInputText] = useState(() => mostRecentEntry?.input ?? "")
+  const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<HistoryEntry | null>(
+    () => mostRecentEntry,
+  )
 
   const {
     status: translationStatus,
@@ -31,10 +36,10 @@ export function App() {
   })
 
   // Track which text we've already translated to avoid re-translating
-  const translatedTextRef = useRef<string>("")
+  const translatedTextRef = useRef<string>(mostRecentEntry?.input ?? "")
 
   // Track which translation we've saved to avoid duplicates
-  const savedTranslationRef = useRef<string>("")
+  const savedTranslationRef = useRef<string>(mostRecentEntry?.input ?? "")
 
   const handleSubmit = useCallback(() => {
     const text = inputText.trim()

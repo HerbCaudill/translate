@@ -2,12 +2,13 @@
 
 - [ ] allow deleting history items
 - [ ] history results need to be in a scrolling container
-- [ ] show the most recent request and response on first load
 - [ ] make the input text smaller
 - [ ] show the icon in the header
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] show the most recent request and response on first load
 
 - [x] If the text entry matches a previous translation, just use that without going to the api
 

@@ -221,6 +221,74 @@ describe("App error toasts", () => {
   })
 })
 
+describe("App initial state from history", () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+  })
+
+  it("shows most recent translation on first load", async () => {
+    // Set up existing history with a recent translation
+    localStorage.setItem(
+      STORAGE_KEYS.HISTORY,
+      JSON.stringify([
+        {
+          id: "recent-1",
+          input: "good morning",
+          translation: {
+            input: "good morning",
+            results: [
+              {
+                language: { code: "es", name: "Spanish" },
+                options: [{ text: "buenos días", explanation: "morning greeting" }],
+              },
+            ],
+            timestamp: Date.now(),
+          },
+          createdAt: Date.now(),
+        },
+      ]),
+    )
+
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+      }),
+    )
+
+    render(<App />)
+
+    // Input should be pre-populated with the most recent translation's input
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    expect(input).toHaveValue("good morning")
+
+    // Results should be displayed immediately
+    expect(screen.getByText("buenos días")).toBeInTheDocument()
+    expect(screen.getByText("morning greeting")).toBeInTheDocument()
+  })
+
+  it("shows empty state when there is no history", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [{ code: "es", name: "Spanish" }],
+      }),
+    )
+
+    render(<App />)
+
+    // Input should be empty
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    expect(input).toHaveValue("")
+
+    // No results should be shown
+    expect(screen.queryByRole("tabpanel")).not.toBeInTheDocument()
+  })
+})
+
 describe("App translation caching", () => {
   beforeEach(() => {
     localStorage.clear()
@@ -261,7 +329,9 @@ describe("App translation caching", () => {
     const user = userEvent.setup()
     render(<App />)
 
+    // Clear the pre-populated input first (from most recent history entry)
     const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.clear(input)
     await user.type(input, "hello{Enter}")
 
     // Should show cached result
@@ -317,7 +387,9 @@ describe("App translation caching", () => {
     const user = userEvent.setup()
     render(<App />)
 
+    // Clear the pre-populated input first (from most recent history entry)
     const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.clear(input)
     await user.type(input, "hello{Enter}")
 
     // API should be called since "hello" is not in history

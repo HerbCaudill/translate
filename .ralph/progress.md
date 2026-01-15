@@ -2,6 +2,32 @@
 
 ## 2025-01-15
 
+### Show most recent translation on first load
+
+When the app loads, it now displays the most recent translation from history instead of showing a blank screen. This improves the user experience by immediately showing the last translation the user was working with.
+
+**Key changes:**
+
+1. **Updated `App.tsx` initialization:**
+   - Gets the most recent history entry (`history[0]`) on mount
+   - Initializes `inputText` state with the most recent entry's input text (or empty string if no history)
+   - Initializes `selectedHistoryEntry` state with the most recent entry (or null if no history)
+   - Initializes `translatedTextRef` and `savedTranslationRef` with the entry's input to prevent re-translating
+
+**Modified files:**
+
+- `src/App.tsx` - Initialize state from most recent history entry
+
+**Test files updated:**
+
+- `src/App.test.tsx`:
+  - Added new test suite "App initial state from history" with 2 tests:
+    - "shows most recent translation on first load"
+    - "shows empty state when there is no history"
+  - Updated existing caching tests to clear pre-populated input before typing
+
+## 2025-01-15
+
 ### Use cached translations from history
 
 When the user enters text that matches a previous translation from history, the app now uses the cached result instead of calling the API. This saves API calls and provides instant results for repeated queries.
