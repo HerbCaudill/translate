@@ -164,7 +164,7 @@ export function App() {
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img src="/icon.svg" alt="" className="h-12 w-12 rounded-lg opacity-75" />
-              <h1 className="text-2xl font-semibold text-white">Translate</h1>
+              <h1 className="text-lg font-semibold text-white">Universal Translator</h1>
             </div>
             <div className="flex items-center gap-1">
               <InstallPrompt

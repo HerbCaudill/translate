@@ -2,6 +2,24 @@
 
 ## 2026-01-15
 
+### Rename heading to "Universal Translator" and make it smaller
+
+Changed the app heading from "Translate" to "Universal Translator" and reduced its size from `text-2xl` to `text-lg` for a more compact header appearance.
+
+**Key changes:**
+
+1. **Updated `App.tsx`:**
+   - Changed h1 text from "Translate" to "Universal Translator"
+   - Reduced heading size class from `text-2xl` to `text-lg`
+
+**Modified files:**
+
+- `src/App.tsx` - Updated heading text and size
+
+**Test files updated:**
+
+- `src/App.test.tsx` - Updated 2 tests that referenced the heading text "Translate" to use "Universal Translator" instead
+
 ### Replace existing history entries when refreshing results
 
 Fixed an issue where refreshing translation results would create duplicate history entries for the same input text. Now when a translation is added to history, if an entry with the same input already exists, it updates that entry's results instead of creating a new one. This ensures there's only ever one set of results for any given string.

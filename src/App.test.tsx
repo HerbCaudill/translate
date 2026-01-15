@@ -44,7 +44,7 @@ describe("App", () => {
     render(<App />)
 
     expect(screen.queryByText("API key required")).not.toBeInTheDocument()
-    expect(screen.getByText("Translate")).toBeInTheDocument()
+    expect(screen.getByText("Universal Translator")).toBeInTheDocument()
     expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
   })
 
@@ -72,7 +72,7 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /save api key/i }))
 
     await waitFor(() => {
-      expect(screen.getByText("Translate")).toBeInTheDocument()
+      expect(screen.getByText("Universal Translator")).toBeInTheDocument()
     })
     expect(screen.queryByText("API key required")).not.toBeInTheDocument()
     expect(screen.getByPlaceholderText(/enter text to translate/i)).toBeInTheDocument()
