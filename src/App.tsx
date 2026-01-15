@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { toast } from "sonner"
 import { useSettings } from "@/hooks/useSettings"
 import { useTranslation } from "@/hooks/useTranslation"
@@ -14,7 +14,7 @@ import { HistoryEntry } from "@/types"
 
 export function App() {
   const { settings, updateSettings } = useSettings()
-  const { history, addEntry, removeEntry, findByInput } = useHistory()
+  const { history, addEntry, removeEntry, findByInput, searchHistory } = useHistory()
   const { canInstall, promptInstall } = useInstallPrompt()
 
   // Initialize from most recent history entry if available
@@ -125,6 +125,11 @@ export function App() {
     savedTranslationRef.current = entry.input
   }
 
+  // Compute suggestions from history based on current input
+  const historySuggestions = useMemo(() => {
+    return searchHistory(inputText)
+  }, [inputText, searchHistory])
+
   if (!settings.apiKey) {
     return <ApiKeyPrompt onSubmit={handleApiKeySubmit} />
   }
@@ -163,6 +168,8 @@ export function App() {
             onChange={setInputText}
             onSubmit={handleSubmit}
             onEscape={() => setInputText("")}
+            onSelectSuggestion={handleSelectHistoryEntry}
+            suggestions={historySuggestions}
             loading={translationStatus === "translating"}
           />
         </div>

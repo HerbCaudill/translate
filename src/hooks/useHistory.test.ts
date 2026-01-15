@@ -147,4 +147,43 @@ describe("useHistory", () => {
     expect(found?.id).toBe("1")
     expect(found?.input).toBe("Hello")
   })
+
+  it("searches history for matching entries", () => {
+    const existingHistory = [
+      createMockEntry("1", "Hello world"),
+      createMockEntry("2", "Hello there"),
+      createMockEntry("3", "Goodbye world"),
+    ]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    const found = result.current.searchHistory("Hello")
+    expect(found).toHaveLength(2)
+    expect(found[0].input).toBe("Hello world")
+    expect(found[1].input).toBe("Hello there")
+  })
+
+  it("searches history case-insensitively", () => {
+    const existingHistory = [
+      createMockEntry("1", "Hello World"),
+      createMockEntry("2", "HELLO THERE"),
+    ]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    const found = result.current.searchHistory("hello")
+    expect(found).toHaveLength(2)
+  })
+
+  it("returns empty array for empty search query", () => {
+    const existingHistory = [createMockEntry("1", "Hello")]
+    localStorage.setItem("translate:history", JSON.stringify(existingHistory))
+
+    const { result } = renderHook(() => useHistory())
+
+    expect(result.current.searchHistory("")).toEqual([])
+    expect(result.current.searchHistory("   ")).toEqual([])
+  })
 })

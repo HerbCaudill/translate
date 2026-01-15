@@ -59,6 +59,15 @@ export const useHistory = () => {
     [history],
   )
 
+  const searchHistory = useCallback(
+    (query: string): HistoryEntry[] => {
+      const trimmedQuery = query.trim().toLowerCase()
+      if (!trimmedQuery) return []
+      return history.filter(entry => entry.input.toLowerCase().includes(trimmedQuery))
+    },
+    [history],
+  )
+
   return {
     history,
     addEntry,
@@ -66,6 +75,7 @@ export const useHistory = () => {
     clearHistory,
     findEntry,
     findByInput,
+    searchHistory,
   }
 }
 

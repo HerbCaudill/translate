@@ -686,3 +686,49 @@ Added the ability to delete individual history entries from the history dialog. 
   - "does not call onSelectEntry when clicking delete button"
   - Updated all existing tests to include the new `onRemoveEntry` prop
 - `src/components/HistoryDialog.test.tsx` - Updated all tests to include `onRemoveEntry` prop
+
+## 2025-01-15
+
+### History autocomplete suggestions while typing
+
+Added an autocomplete feature that shows matching history entries as suggestions when the user types 3 or more characters in the input field. Users can click on a suggestion or navigate with arrow keys and Enter to select, instantly loading the cached translation.
+
+**Key changes:**
+
+1. **Added `searchHistory` function to `useHistory` hook** (`src/hooks/useHistory.ts`):
+   - Case-insensitive substring search across history entries
+   - Returns entries where input text contains the search query
+   - Returns empty array for empty or whitespace-only queries
+
+2. **Updated `TranslateInput.tsx`** with suggestion dropdown:
+   - Added `suggestions` and `onSelectSuggestion` props
+   - Shows dropdown with matching history entries when 3+ characters typed
+   - Limits display to 5 suggestions maximum
+   - Supports keyboard navigation (ArrowDown/ArrowUp, Enter to select, Escape to dismiss)
+   - Shows history icon next to each suggestion
+   - Highlights selected item with blue background
+
+3. **Updated `App.tsx`** to wire up the feature:
+   - Added `searchHistory` from useHistory hook
+   - Computed `historySuggestions` using useMemo based on input text
+   - Passed suggestions and `handleSelectHistoryEntry` to TranslateInput
+
+**Modified files:**
+
+- `src/hooks/useHistory.ts` - Added `searchHistory` function
+- `src/components/TranslateInput.tsx` - Added suggestion dropdown UI with keyboard navigation
+- `src/App.tsx` - Connected history search to TranslateInput
+
+**Test files updated:**
+
+- `src/hooks/useHistory.test.ts` - Added 3 tests:
+  - "searches history for matching entries"
+  - "searches history case-insensitively"
+  - "returns empty array for empty search query"
+- `src/components/TranslateInput.test.tsx` - Added 6 tests in new "suggestions" describe block:
+  - "does not show suggestions when less than 3 characters typed"
+  - "shows suggestions when 3 or more characters match"
+  - "limits suggestions to 5 items"
+  - "calls onSelectSuggestion when clicking a suggestion"
+  - "navigates suggestions with arrow keys and selects with Enter"
+  - "hides suggestions when Escape is pressed"
