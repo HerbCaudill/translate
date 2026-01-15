@@ -52,7 +52,7 @@ const SortableLanguageItem = ({
       >
         <IconGripVertical className="h-4 w-4" />
       </button>
-      <span className="bg-muted text-muted-foreground w-10 rounded px-2 py-1 text-center text-xs font-medium">
+      <span className="text-muted-foreground w-10 rounded bg-gray-100 px-2 py-1 text-center text-xs font-medium">
         {language.code}
       </span>
       <span className="flex-1 text-sm">{language.name}</span>

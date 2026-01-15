@@ -138,11 +138,11 @@ function TranslationContent({ translation }: { translation: LanguageTranslation 
   const hasMultipleMeanings = meanings.length > 1
 
   return (
-    <div className="flex flex-col gap-4 py-3">
+    <div className="flex flex-col gap-8 py-3">
       {meanings.map((meaning, meaningIndex) => (
         <div key={meaningIndex} className="flex flex-col gap-2">
           {hasMultipleMeanings && (
-            <p className="text-muted-foreground text-xs font-medium italic">{meaning.sense}</p>
+            <p className="text-sm font-bold text-gray-700">{meaning.sense}</p>
           )}
           <div className="flex flex-col gap-3">
             {meaning.options.map((option, optionIndex) => (

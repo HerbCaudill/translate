@@ -27,12 +27,10 @@ export const SettingsDialog = ({ languages, onLanguagesChange, children, classNa
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Configure your translation preferences.</DialogDescription>
+          <DialogTitle>Languages</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label>Target languages</Label>
             <LanguageList languages={languages} onChange={onLanguagesChange} />
           </div>
         </div>
