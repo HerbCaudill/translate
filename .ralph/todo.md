@@ -1,5 +1,6 @@
 ### To do
 
+- [ ] the input should select all on focus
 - [ ] add more lines to the loading skeleton
 
 ### Done
