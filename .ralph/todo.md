@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] use Plex Serif for the translations
 - [ ] get rid of the loading cards - just show a spinner while it's working, and show results as they come in
 
 ### Done
+
+- [x] use Plex Serif for the translations
 
 - [x] add a bit more spacing between language cards in results
 

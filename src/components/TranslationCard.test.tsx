@@ -54,4 +54,10 @@ describe("TranslationCard", () => {
     render(<TranslationCard translation={emptyOptions} />)
     expect(screen.getByText("German")).toBeInTheDocument()
   })
+
+  it("applies serif font to translation text", () => {
+    render(<TranslationCard translation={mockTranslation} />)
+    const translationText = screen.getByText("Hola")
+    expect(translationText).toHaveClass("font-serif")
+  })
 })

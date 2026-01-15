@@ -1,5 +1,19 @@
 # Progress Log
 
+## 2025-01-20
+
+### Use Plex Serif for translations
+
+Added `font-serif` class to the translation text in `TranslationCard.tsx` so translations are displayed using IBM Plex Serif instead of the default sans-serif font. The IBM Plex Serif font was already being loaded from Google Fonts and configured in `index.css` as `--font-serif`.
+
+**Modified files:**
+
+- `src/components/TranslationCard.tsx` - Added `font-serif` class to the `<p>` element displaying translation text
+
+**Test file updated:**
+
+- `src/components/TranslationCard.test.tsx` - Added test to verify serif font is applied to translation text
+
 ## 2025-01-19
 
 ### Add more spacing between language cards in results
