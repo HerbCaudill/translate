@@ -2,6 +2,29 @@
 
 ## 2026-01-15
 
+### iOS floating toolbar "Go" button submits form
+
+Fixed an issue where tapping the check/done button on the iOS floating keyboard toolbar didn't submit the translation form. On iOS, this toolbar button triggers a form submit event rather than an Enter key event.
+
+**Key changes:**
+
+1. **Updated `TranslateInput.tsx`:**
+   - Wrapped input and submit button in a `<form>` element
+   - Added `handleFormSubmit` handler that prevents default and calls the submit logic
+   - Changed submit button to `type="submit"` for proper form semantics
+   - Added `enterKeyHint="go"` attribute to the input, which displays "Go" on iOS keyboard (more appropriate for a search/submit action than the default "return")
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Wrapped in form, added enterKeyHint
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Added 3 tests:
+  - "wraps input in a form for iOS keyboard submit support"
+  - "sets enterKeyHint to 'go' for iOS keyboard button"
+  - "calls onSubmit when form is submitted"
+
 ### Mobile scroll container for results
 
 Made the translation results display in a scrollable container on mobile, preventing the entire page from scrolling or zooming. The header (with input) stays fixed while only the results area scrolls.

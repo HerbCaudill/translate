@@ -181,6 +181,31 @@ describe("TranslateInput", () => {
     expect(input).toHaveClass("md:text-sm")
   })
 
+  it("wraps input in a form for iOS keyboard submit support", () => {
+    render(<TranslateInput value="Hello" onChange={() => {}} onSubmit={() => {}} />)
+    const input = screen.getByRole("textbox")
+    // Input should be wrapped in a form element
+    expect(input.closest("form")).toBeInTheDocument()
+  })
+
+  it("sets enterKeyHint to 'go' for iOS keyboard button", () => {
+    render(<TranslateInput value="" onChange={() => {}} onSubmit={() => {}} />)
+    const input = screen.getByRole("textbox")
+    expect(input).toHaveAttribute("enterKeyHint", "go")
+  })
+
+  it("calls onSubmit when form is submitted", async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    render(<TranslateInput value="Hello" onChange={() => {}} onSubmit={onSubmit} />)
+
+    // Submit the form by clicking the submit button
+    const button = screen.getByRole("button")
+    await user.click(button)
+
+    expect(onSubmit).toHaveBeenCalledTimes(1)
+  })
+
   describe("suggestions", () => {
     it("does not show suggestions when less than 3 characters typed", () => {
       const suggestions = [createMockEntry("1", "Hello world")]

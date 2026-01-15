@@ -1,9 +1,10 @@
 ### To do
 
-- [ ] The check button on the ios floating toolbar should submit
 - [ ] The results container should occupy the remaining vertical space on the page, so that the white space below it is still part of the swipe left/right target
 
 ### Done
+
+- [x] The check button on the ios floating toolbar should submit
 
 - [x] the input should select all on focus
 - [x] add more lines to the loading skeleton

@@ -97,8 +97,13 @@ export const TranslateInput = ({
     inputRef.current?.select()
   }
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSubmit()
+  }
+
   return (
-    <div className="relative flex gap-2">
+    <form onSubmit={handleFormSubmit} className="relative flex gap-2">
       <div className="relative flex-1">
         <Input
           ref={inputRef}
@@ -109,6 +114,7 @@ export const TranslateInput = ({
           onFocus={handleFocus}
           placeholder={placeholder}
           disabled={disabled}
+          enterKeyHint="go"
           className="border-white/20 bg-white font-mono text-base focus-visible:border-white/20 focus-visible:ring-0 md:text-sm"
         />
         {showSuggestions && (
@@ -137,7 +143,7 @@ export const TranslateInput = ({
         )}
       </div>
       <Button
-        onClick={handleSubmit}
+        type="submit"
         disabled={disabled || !value.trim() || loading}
         size="icon"
         className={cn(
@@ -149,7 +155,7 @@ export const TranslateInput = ({
           <IconLoader2 className="h-5 w-5 animate-spin" />
         : <IconArrowRight className="h-5 w-5" />}
       </Button>
-    </div>
+    </form>
   )
 }
 
