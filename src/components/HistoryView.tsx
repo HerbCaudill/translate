@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { IconSearch, IconX } from "@tabler/icons-react"
+import { IconSearch, IconTrash } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { HistoryEntry } from "@/types"
@@ -79,7 +79,7 @@ export const HistoryView = ({ history, onSelectEntry, onRemoveEntry }: Props) =>
                   }}
                   aria-label={`Delete "${entry.input}"`}
                 >
-                  <IconX className="size-4" />
+                  <IconTrash className="size-4" />
                 </Button>
               </li>
             ))}

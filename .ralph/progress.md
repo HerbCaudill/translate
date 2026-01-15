@@ -2,6 +2,22 @@
 
 ## 2026-01-15
 
+### Use trash icon for deleting history items
+
+Changed the delete button icon in the history dialog from an X icon (`IconX`) to a trash icon (`IconTrash`) for clearer visual communication of the delete action.
+
+**Key changes:**
+
+1. **Updated `HistoryView.tsx`:**
+   - Changed import from `IconX` to `IconTrash`
+   - Replaced `<IconX>` with `<IconTrash>` in the delete button
+
+**Modified files:**
+
+- `src/components/HistoryView.tsx` - Changed delete button icon from X to trash
+
+**No test changes needed** - existing tests verify functionality via aria-label, not icon class names.
+
 ### Make delete button always visible in history dialog
 
 Fixed an issue where the delete button for history items was only visible on hover (using `opacity-0` + `group-hover:opacity-100`). This made the delete functionality invisible on touch devices and could confuse users who didn't know about the hover behavior. The button is now always visible with muted styling that changes to red on hover.

@@ -1,8 +1,8 @@
 ### To do
 
-- [ ] Use a trash icon for deleting history items
-
 ### Done
+
+- [x] Use a trash icon for deleting history items
 
 - [x] allow deleting history items (this was marked done but I don't see it in the UI)
 
