@@ -29,9 +29,8 @@ export const TranslateInput = ({
     return suggestions.slice(0, 5) // Limit to 5 suggestions
   }, [value, suggestions])
 
-  useEffect(() => {
-    inputRef.current?.focus({ preventScroll: true })
-  }, [])
+  // Autofocus on mount - use autoFocus prop instead of useEffect for better mobile support
+  // The actual autofocus is handled by the autoFocus prop on the Input component
 
   // Show suggestions when there are matches, hide when empty
   useEffect(() => {
@@ -93,13 +92,30 @@ export const TranslateInput = ({
     setTimeout(() => setShowSuggestions(false), 150)
   }
 
-  const handleFocus = () => {
-    // Prevent mobile browsers from scrolling when focusing input
-    const scrollY = window.scrollY
-    requestAnimationFrame(() => {
-      window.scrollTo(0, scrollY)
-    })
-    inputRef.current?.select()
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Select all text when focusing
+    e.target.select()
+
+    // Prevent iOS from scrolling the page when virtual keyboard opens
+    // This works by listening for viewport resize (keyboard open) and resetting scroll
+    const resetScroll = () => {
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+
+    // Reset scroll immediately and on viewport resize
+    resetScroll()
+
+    const viewport = window.visualViewport
+    if (viewport) {
+      const handleResize = () => resetScroll()
+      viewport.addEventListener("resize", handleResize)
+      // Clean up after keyboard is likely done animating
+      setTimeout(() => {
+        viewport.removeEventListener("resize", handleResize)
+      }, 500)
+    }
   }
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -119,6 +135,7 @@ export const TranslateInput = ({
           onFocus={handleFocus}
           placeholder={placeholder}
           disabled={disabled}
+          autoFocus
           enterKeyHint="go"
           className="border-white/20 bg-white font-mono text-base focus-visible:border-white/20 focus-visible:ring-0 md:text-sm"
         />

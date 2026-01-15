@@ -135,4 +135,9 @@
     height: 100%;
     overflow: hidden;
   }
+  /* Prevent iOS from scrolling input into view when virtual keyboard opens */
+  input,
+  textarea {
+    scroll-margin: 0;
+  }
 }
