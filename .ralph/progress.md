@@ -2,6 +2,32 @@
 
 ## 2026-01-15
 
+### Mobile scroll container for results
+
+Made the translation results display in a scrollable container on mobile, preventing the entire page from scrolling or zooming. The header (with input) stays fixed while only the results area scrolls.
+
+**Key changes:**
+
+1. **Updated `index.html`:**
+   - Added `maximum-scale=1.0, user-scalable=no` to the viewport meta tag to prevent pinch-to-zoom
+
+2. **Updated `src/index.css`:**
+   - Set `html`, `body` to `overflow: hidden`, `position: fixed`, and full viewport dimensions
+   - Added `overscroll-behavior: none` to prevent pull-to-refresh and rubber-banding
+   - Made `#root` fill the height and hide overflow
+
+3. **Updated `src/App.tsx`:**
+   - Changed outer container from `min-h-screen` to `h-full overflow-hidden`
+   - Added `shrink-0` to the header to prevent it from shrinking
+   - Wrapped results area in a scrollable container with `flex-1 min-h-0 overflow-y-auto overscroll-contain`
+   - The `min-h-0` is critical for flexbox to allow the container to shrink below content size
+
+**Modified files:**
+
+- `index.html` - Updated viewport meta tag
+- `src/index.css` - Added CSS to prevent page scrolling
+- `src/App.tsx` - Restructured layout with fixed header and scrollable results
+
 ### Prevent iOS auto-zoom on input focus
 
 Fixed an issue where iOS Safari would automatically zoom in when focusing the translation input field. This happened because the input had a font-size of 14px (`text-sm`), and iOS auto-zooms when inputs have font-size less than 16px.

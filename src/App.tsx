@@ -157,9 +157,9 @@ export function App() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Blue header area */}
-      <div className="bg-blue-600">
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* Blue header area - fixed, non-scrollable */}
+      <div className="shrink-0 bg-blue-600">
         <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -197,18 +197,20 @@ export function App() {
         </div>
       </div>
 
-      {/* Content area */}
-      <div className="mx-auto w-full max-w-2xl flex-1 p-4 sm:p-6">
-        {(inputText.trim() || displayResults.length > 0) && (
-          <TranslationResults
-            results={displayResults}
-            languages={settings.languages}
-            sourceLanguage={sourceLanguage}
-            isLoading={translationStatus === "translating"}
-            onRefresh={handleRefresh}
-            isRefreshing={translationStatus === "translating"}
-          />
-        )}
+      {/* Content area - scrollable container for results */}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="mx-auto w-full max-w-2xl p-4 sm:p-6">
+          {(inputText.trim() || displayResults.length > 0) && (
+            <TranslationResults
+              results={displayResults}
+              languages={settings.languages}
+              sourceLanguage={sourceLanguage}
+              isLoading={translationStatus === "translating"}
+              onRefresh={handleRefresh}
+              isRefreshing={translationStatus === "translating"}
+            />
+          )}
+        </div>
       </div>
     </div>
   )
