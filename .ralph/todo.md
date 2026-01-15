@@ -1,6 +1,6 @@
 ### To do
 
-(empty)
+- [ ] Use a trash icon for deleting history items
 
 ### Done
 
