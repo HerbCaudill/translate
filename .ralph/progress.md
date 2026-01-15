@@ -2,6 +2,35 @@
 
 ## 2025-01-15
 
+### Use monospace font for input and translations
+
+Changed the typography from serif to monospace for both the input field and translation results. IBM Plex Mono was already being loaded from Google Fonts and configured in `index.css` as `--font-mono`.
+
+**Key changes:**
+
+1. **Updated `TranslateInput.tsx`:**
+   - Added `font-mono` class to the Input component
+
+2. **Updated `TranslationResults.tsx`:**
+   - Changed translation text from `font-serif` to `font-mono`
+
+3. **Updated `TranslationCard.tsx`:**
+   - Changed translation text from `font-serif` to `font-mono` (for consistency)
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Added `font-mono` to input
+- `src/components/TranslationResults.tsx` - Changed to `font-mono` for translation text
+- `src/components/TranslationCard.tsx` - Changed to `font-mono` for translation text
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Added test "applies mono font to input field"
+- `src/components/TranslationResults.test.tsx` - Changed test from `font-serif` to `font-mono`
+- `src/components/TranslationCard.test.tsx` - Changed test from `font-serif` to `font-mono`
+
+## 2025-01-15
+
 ### Smaller and left-aligned tab buttons
 
 Made the language tabs more compact and left-aligned to improve visual appearance.

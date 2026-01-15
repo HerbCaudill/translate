@@ -11,7 +11,7 @@ export function TranslationCard({ translation }: Props) {
       <CardContent className="flex flex-col gap-3 px-4">
         {options.map((option, index) => (
           <div key={index} className="flex flex-col gap-0.5">
-            <p className="font-serif text-base">{option.text}</p>
+            <p className="font-mono text-base">{option.text}</p>
             <p className="text-muted-foreground text-xs">{option.explanation}</p>
           </div>
         ))}

@@ -123,4 +123,10 @@ describe("TranslateInput", () => {
     const button = screen.getByRole("button")
     expect(button.querySelector("svg")).toBeInTheDocument()
   })
+
+  it("applies mono font to input field", () => {
+    render(<TranslateInput value="" onChange={() => {}} onSubmit={() => {}} />)
+    const input = screen.getByRole("textbox")
+    expect(input).toHaveClass("font-mono")
+  })
 })

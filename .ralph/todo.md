@@ -4,9 +4,10 @@
 - [ ] show the icon in the header
 - [ ] get rid of the focus ring on the input
 - [ ] add a refresh button for results
-- [ ] use mono for the input and for the translation in the results
 
 ### Done
+
+- [x] use mono for the input and for the translation in the results
 
 - [x] make the tab buttons smaller and left-align them
 - [x] Give the header, including input a solid blue background - same color as the icon. Make that the app color in the manifest

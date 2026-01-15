@@ -100,9 +100,9 @@ describe("TranslationResults", () => {
     expect(screen.getByText("Hola")).toBeInTheDocument()
   })
 
-  it("applies serif font to translation text", () => {
+  it("applies mono font to translation text", () => {
     render(<TranslationResults results={mockResults} />)
     const translationText = screen.getByText("Hola")
-    expect(translationText).toHaveClass("font-serif")
+    expect(translationText).toHaveClass("font-mono")
   })
 })
