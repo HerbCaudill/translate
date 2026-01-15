@@ -129,4 +129,10 @@ describe("TranslateInput", () => {
     const input = screen.getByRole("textbox")
     expect(input).toHaveClass("font-mono")
   })
+
+  it("removes focus ring from input field", () => {
+    render(<TranslateInput value="" onChange={() => {}} onSubmit={() => {}} />)
+    const input = screen.getByRole("textbox")
+    expect(input).toHaveClass("focus-visible:ring-0")
+  })
 })

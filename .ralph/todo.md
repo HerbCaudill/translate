@@ -3,10 +3,11 @@
 - [ ] If the text entry matches a previous translation, just use that without going to the api
 - [ ] make the input text smaller
 - [ ] show the icon in the header
-- [ ] get rid of the focus ring on the input
 - [ ] add a refresh button for results
 
 ### Done
+
+- [x] get rid of the focus ring on the input
 
 - [x] use mono for the input and for the translation in the results
 

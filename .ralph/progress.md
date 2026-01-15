@@ -2,6 +2,26 @@
 
 ## 2025-01-15
 
+### Remove focus ring from input field
+
+Removed the focus ring (blue outline) from the translation input field to provide a cleaner appearance against the blue header background.
+
+**Key changes:**
+
+1. **Updated `TranslateInput.tsx`:**
+   - Added `focus-visible:ring-0` to remove the ring shadow
+   - Added `focus-visible:border-white/20` to maintain the existing border style on focus (instead of changing to the default ring border color)
+
+**Modified files:**
+
+- `src/components/TranslateInput.tsx` - Added focus ring override classes
+
+**Test files updated:**
+
+- `src/components/TranslateInput.test.tsx` - Added test "removes focus ring from input field"
+
+## 2025-01-15
+
 ### Use monospace font for input and translations
 
 Changed the typography from serif to monospace for both the input field and translation results. IBM Plex Mono was already being loaded from Google Fonts and configured in `index.css` as `--font-mono`.

@@ -47,7 +47,7 @@ export const TranslateInput = ({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="border-white/20 bg-white font-mono text-lg"
+        className="border-white/20 bg-white font-mono text-lg focus-visible:ring-0 focus-visible:border-white/20"
       />
       <Button
         onClick={handleSubmit}
