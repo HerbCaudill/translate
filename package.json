@@ -12,7 +12,7 @@
     "test:e2e": "playwright test",
     "format": "prettier --write .",
     "icons": "node scripts/generate-icons.mjs",
-    "encrypt-key": "npx tsx scripts/encrypt-key.ts"
+    "encrypt-key": "pnpm exec tsx scripts/encrypt-key.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
