@@ -22,6 +22,9 @@ importers:
       "@dnd-kit/utilities":
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.3)
+      "@herbcaudill/easy-api-key":
+        specifier: github:HerbCaudill/easy-api-key
+        version: https://codeload.github.com/HerbCaudill/easy-api-key/tar.gz/b5a00cb68a56c802888683be8427493d517140bd
       "@radix-ui/react-dialog":
         specifier: ^1.1.4
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1537,6 +1540,14 @@ packages:
       {
         integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==,
       }
+
+  "@herbcaudill/easy-api-key@https://codeload.github.com/HerbCaudill/easy-api-key/tar.gz/b5a00cb68a56c802888683be8427493d517140bd":
+    resolution:
+      {
+        tarball: https://codeload.github.com/HerbCaudill/easy-api-key/tar.gz/b5a00cb68a56c802888683be8427493d517140bd,
+      }
+    version: 0.2.0
+    hasBin: true
 
   "@img/colour@1.0.0":
     resolution:
@@ -6437,6 +6448,9 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   "@floating-ui/utils@0.2.10": {}
+
+  "@herbcaudill/easy-api-key@https://codeload.github.com/HerbCaudill/easy-api-key/tar.gz/b5a00cb68a56c802888683be8427493d517140bd":
+    {}
 
   "@img/colour@1.0.0": {}
 

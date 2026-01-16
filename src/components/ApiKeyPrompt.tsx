@@ -11,7 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { validateApiKey } from "@/lib/validateApiKey"
-import { decryptApiKey, hasEncryptedKey } from "@/lib/crypto"
+import { decryptSecret, type EncryptedData } from "@herbcaudill/easy-api-key"
+
+const loadEncryptedKey = async (): Promise<EncryptedData | null> => {
+  try {
+    return await import("@/encrypted-key.json")
+  } catch {
+    return null
+  }
+}
 
 // Check if a string looks like an Anthropic API key format
 const looksLikeApiKey = (text: string): boolean => {
@@ -22,10 +30,10 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
   const [input, setInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [encryptedKeyAvailable, setEncryptedKeyAvailable] = useState(false)
+  const [encryptedKey, setEncryptedKey] = useState<EncryptedData | null>(null)
 
   useEffect(() => {
-    hasEncryptedKey().then(setEncryptedKeyAvailable)
+    loadEncryptedKey().then(setEncryptedKey)
   }, [])
 
   const submitInput = async (value: string) => {
@@ -39,9 +47,9 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
     // If it looks like an API key, use it directly; otherwise try to decrypt
     if (looksLikeApiKey(value)) {
       apiKey = value.trim()
-    } else if (encryptedKeyAvailable) {
+    } else if (encryptedKey) {
       try {
-        apiKey = await decryptApiKey(value)
+        apiKey = await decryptSecret(value, encryptedKey)
       } catch {
         setError("Invalid password")
         setIsSubmitting(false)
