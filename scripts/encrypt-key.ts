@@ -4,6 +4,15 @@ import * as path from "path"
 import * as readline from "readline"
 
 const ITERATIONS = 100_000
+
+const loadEnvApiKey = (): string | undefined => {
+  const envPath = path.join(import.meta.dirname, "..", ".env")
+  if (!fs.existsSync(envPath)) return undefined
+
+  const envContent = fs.readFileSync(envPath, "utf8")
+  const match = envContent.match(/VITE_ANTHROPIC_API_KEY=["']?([^"'\n]+)["']?/)
+  return match?.[1]
+}
 const KEY_LENGTH = 32 // 256 bits for AES-256
 const SALT_LENGTH = 16
 const IV_LENGTH = 12 // 96 bits for GCM
@@ -47,10 +56,18 @@ const main = async () => {
   })
 
   try {
-    const apiKey = await question(rl, "Enter your Anthropic API key: ")
-    if (!apiKey.trim()) {
-      console.error("API key is required")
-      process.exit(1)
+    const envApiKey = loadEnvApiKey()
+    let apiKey: string
+
+    if (envApiKey) {
+      console.log(`Using API key from .env (${envApiKey.slice(0, 15)}...)`)
+      apiKey = envApiKey
+    } else {
+      apiKey = await question(rl, "Enter your Anthropic API key: ")
+      if (!apiKey.trim()) {
+        console.error("API key is required")
+        process.exit(1)
+      }
     }
 
     const password = await question(rl, "Enter encryption password: ")
@@ -64,7 +81,7 @@ const main = async () => {
       process.exit(1)
     }
 
-    const encrypted = encrypt(apiKey.trim(), password)
+    const encrypted = encrypt(apiKey.trim(), password.trim())
 
     const outputPath = path.join(import.meta.dirname, "..", "src", "encrypted-key.json")
     fs.writeFileSync(outputPath, JSON.stringify(encrypted, null, 2) + "\n")
