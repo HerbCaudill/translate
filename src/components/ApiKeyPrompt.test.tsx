@@ -7,6 +7,11 @@ vi.mock("@/lib/validateApiKey", () => ({
   validateApiKey: vi.fn(),
 }))
 
+vi.mock("@/lib/crypto", () => ({
+  decryptApiKey: vi.fn(),
+  hasEncryptedKey: vi.fn().mockResolvedValue(false),
+}))
+
 import { validateApiKey } from "@/lib/validateApiKey"
 
 const mockValidateApiKey = validateApiKey as ReturnType<typeof vi.fn>

@@ -10,6 +10,11 @@ vi.mock("@/lib/validateApiKey", () => ({
   validateApiKey: vi.fn().mockResolvedValue({ valid: true }),
 }))
 
+vi.mock("@/lib/crypto", () => ({
+  decryptApiKey: vi.fn(),
+  hasEncryptedKey: vi.fn().mockResolvedValue(false),
+}))
+
 vi.mock("@/lib/anthropic", () => ({
   translateAll: vi.fn(),
 }))

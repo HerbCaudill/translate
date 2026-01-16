@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { IconKey, IconExternalLink } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { validateApiKey } from "@/lib/validateApiKey"
+import { decryptApiKey, hasEncryptedKey } from "@/lib/crypto"
 
 // Check if a string looks like an Anthropic API key format
 const looksLikeApiKey = (text: string): boolean => {
@@ -18,17 +19,41 @@ const looksLikeApiKey = (text: string): boolean => {
 }
 
 export const ApiKeyPrompt = ({ onSubmit }: Props) => {
-  const [apiKey, setApiKey] = useState("")
+  const [input, setInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [encryptedKeyAvailable, setEncryptedKeyAvailable] = useState(false)
 
-  const submitApiKey = async (key: string) => {
-    if (!key.trim()) return
+  useEffect(() => {
+    hasEncryptedKey().then(setEncryptedKeyAvailable)
+  }, [])
+
+  const submitInput = async (value: string) => {
+    if (!value.trim()) return
 
     setIsSubmitting(true)
     setError(null)
 
-    const result = await validateApiKey(key.trim())
+    let apiKey: string
+
+    // If it looks like an API key, use it directly; otherwise try to decrypt
+    if (looksLikeApiKey(value)) {
+      apiKey = value.trim()
+    } else if (encryptedKeyAvailable) {
+      try {
+        apiKey = await decryptApiKey(value)
+      } catch {
+        setError("Invalid password")
+        setIsSubmitting(false)
+        return
+      }
+    } else {
+      setError("Invalid API key format")
+      setIsSubmitting(false)
+      return
+    }
+
+    const result = await validateApiKey(apiKey)
 
     if (!result.valid) {
       setError(result.error)
@@ -36,13 +61,13 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
       return
     }
 
-    await onSubmit(key.trim())
+    await onSubmit(apiKey)
     setIsSubmitting(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await submitApiKey(apiKey)
+    await submitInput(input)
   }
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -50,8 +75,8 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
     if (looksLikeApiKey(pastedText)) {
       // Prevent default paste so we can handle it ourselves
       e.preventDefault()
-      setApiKey(pastedText.trim())
-      await submitApiKey(pastedText)
+      setInput(pastedText.trim())
+      await submitInput(pastedText)
     }
     // Otherwise, let the default paste behavior happen
   }
@@ -75,14 +100,14 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
                 id="api-key"
                 type="text"
                 placeholder="sk-ant-..."
-                value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
+                value={input}
+                onChange={e => setInput(e.target.value)}
                 onPaste={handlePaste}
                 autoFocus
                 disabled={isSubmitting}
                 aria-label="API key"
               />
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground my-3 text-sm">
                 Get your API key from the{" "}
                 <a
                   href="https://console.anthropic.com/settings/keys"
@@ -98,7 +123,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={!apiKey.trim() || isSubmitting}>
+            <Button type="submit" className="w-full" disabled={!input.trim() || isSubmitting}>
               {isSubmitting ? "Validating..." : "Save API key"}
             </Button>
           </CardFooter>
