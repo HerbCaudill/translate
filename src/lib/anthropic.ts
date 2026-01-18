@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk"
+import { betaJSONSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/beta/json-schema.mjs"
 import { Language, LanguageTranslation, Meaning } from "../types"
-import { SYSTEM_PROMPT } from "./prompts"
+import systemPromptRaw from "./system-prompt.md?raw"
 import { apiLogger } from "./logger"
 
 const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
@@ -43,15 +44,8 @@ const createClient = (apiKey: string): Anthropic => {
 
 type ApiTranslationEntry = {
   languageCode: string
-  sourceLanguage?: boolean
-  meanings?: Meaning[]
-}
-
-type ApiResponse = {
-  input: string
-  source: string
-  alternateSources?: string[]
-  translations: ApiTranslationEntry[]
+  sourceLanguage: boolean
+  meanings: Meaning[]
 }
 
 const TRANSLATION_SCHEMA = {
@@ -110,6 +104,13 @@ const TRANSLATION_SCHEMA = {
   additionalProperties: false,
 } as const
 
+type ApiResponse = {
+  input: string
+  source: string
+  alternateSources?: string[]
+  translations: ApiTranslationEntry[]
+}
+
 export const translate = async (
   apiKey: string,
   text: string,
@@ -125,42 +126,32 @@ export const translate = async (
 
   const client = createClient(apiKey)
   const languageList = languages.map(l => `${l.name} (${l.code})`).join(", ")
-  const systemPrompt = SYSTEM_PROMPT.replace(/\{\{languages\}\}/g, languageList)
+  const systemPrompt = systemPromptRaw.replace(/\{\{languages\}\}/g, languageList)
 
   let lastError: Error | undefined
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
-      apiLogger.request("messages.create", {
+      apiLogger.request("messages.parse", {
         model: TRANSLATION_MODEL,
         targetLanguages: languages.map(l => l.name),
         textLength: text.length,
         attempt: attempt + 1,
       })
 
-      const response = await client.messages.create({
+      const response = await client.beta.messages.parse({
         model: TRANSLATION_MODEL,
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{ role: "user", content: text }],
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "translation_response",
-            schema: TRANSLATION_SCHEMA,
-          },
-        },
+        output_format: betaJSONSchemaOutputFormat<typeof TRANSLATION_SCHEMA>(TRANSLATION_SCHEMA),
       })
 
-      const content = response.content[0]
-      if (content.type !== "text") {
-        apiLogger.error("messages.create", "Unexpected response format", {
-          contentType: content.type,
-        })
-        return { success: false, error: "Unexpected response format" }
+      const parsed = response.parsed_output as ApiResponse | undefined
+      if (!parsed) {
+        apiLogger.error("messages.parse", "No parsed output in response")
+        return { success: false, error: "Failed to parse translation response" }
       }
-
-      const parsed = JSON.parse(content.text) as ApiResponse
 
       // Map the API response back to our types, maintaining the order from settings
       // and filtering out same-language entries
@@ -177,7 +168,7 @@ export const translate = async (
         }
       }
 
-      apiLogger.response("messages.create", {
+      apiLogger.response("messages.parse", {
         targetLanguages: languages.map(l => l.name),
         translationsCount: translations.length,
       })
@@ -186,14 +177,14 @@ export const translate = async (
       lastError = error as Error
 
       if (error instanceof SyntaxError) {
-        apiLogger.error("messages.create", "Failed to parse translation response", {
+        apiLogger.error("messages.parse", "Failed to parse translation response", {
           targetLanguages: languages.map(l => l.name),
         })
         return { success: false, error: "Failed to parse translation response" }
       }
 
       if (error instanceof Anthropic.AuthenticationError) {
-        apiLogger.error("messages.create", "Invalid API key")
+        apiLogger.error("messages.parse", "Invalid API key")
         return { success: false, error: "Invalid API key" }
       }
 
@@ -202,7 +193,7 @@ export const translate = async (
           const retryAfterMs = getRetryAfterMs(error)
           const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
           apiLogger.retry(
-            "messages.create",
+            "messages.parse",
             attempt + 1,
             MAX_RETRIES,
             delayMs,
@@ -211,14 +202,14 @@ export const translate = async (
           await sleep(delayMs)
           continue
         }
-        apiLogger.error("messages.create", "Rate limit exceeded - max retries reached", {
+        apiLogger.error("messages.parse", "Rate limit exceeded - max retries reached", {
           attempts: attempt + 1,
         })
         return { success: false, error: "Rate limit exceeded. Please try again later." }
       }
 
       if (error instanceof Anthropic.APIError) {
-        apiLogger.error("messages.create", error.message, {
+        apiLogger.error("messages.parse", error.message, {
           status: error.status,
         })
         return { success: false, error: `API error: ${error.message}` }
@@ -226,6 +217,6 @@ export const translate = async (
     }
   }
 
-  apiLogger.error("messages.create", lastError?.message ?? "Failed to translate")
+  apiLogger.error("messages.parse", lastError?.message ?? "Failed to translate")
   return { success: false, error: lastError?.message ?? "Failed to translate" }
 }

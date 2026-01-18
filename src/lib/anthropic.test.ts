@@ -4,13 +4,15 @@ import Anthropic from "@anthropic-ai/sdk"
 
 vi.mock("@anthropic-ai/sdk")
 
-const mockCreate = vi.fn()
+const mockParse = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
   vi.useFakeTimers()
   ;(Anthropic as unknown as Mock).mockImplementation(() => ({
-    messages: { create: mockCreate },
+    beta: {
+      messages: { parse: mockParse },
+    },
   }))
 })
 
@@ -43,17 +45,19 @@ describe("translate", () => {
   it("returns error for empty text", async () => {
     const result = await translate("test-key", "", languages)
     expect(result).toEqual({ success: false, error: "No text to translate" })
-    expect(mockCreate).not.toHaveBeenCalled()
+    expect(mockParse).not.toHaveBeenCalled()
   })
 
   it("returns empty translations for empty languages array", async () => {
     const result = await translate("test-key", "Hello", [])
     expect(result).toEqual({ success: true, translations: [] })
-    expect(mockCreate).not.toHaveBeenCalled()
+    expect(mockParse).not.toHaveBeenCalled()
   })
 
   it("returns translations for all languages in a single request", async () => {
-    const apiResponse = {
+    const parsedOutput = {
+      input: "Hello world",
+      source: "en",
       translations: [
         {
           languageCode: "es",
@@ -77,13 +81,11 @@ describe("translate", () => {
         },
       ],
     }
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify(apiResponse) }],
-    })
+    mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
     const result = await translate("test-key", "Hello world", languages)
 
-    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(mockParse).toHaveBeenCalledTimes(1)
     expect(result).toEqual({
       success: true,
       translations: [
@@ -110,11 +112,14 @@ describe("translate", () => {
   })
 
   it("filters out same-language entries", async () => {
-    const apiResponse = {
+    const parsedOutput = {
+      input: "Hola",
+      source: "es",
       translations: [
         {
           languageCode: "es",
           sourceLanguage: true,
+          meanings: [],
         },
         {
           languageCode: "fr",
@@ -125,9 +130,7 @@ describe("translate", () => {
         },
       ],
     }
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify(apiResponse) }],
-    })
+    mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
     const result = await translate("test-key", "Hola", languages)
 
@@ -145,17 +148,17 @@ describe("translate", () => {
   })
 
   it("includes all languages in system prompt", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ translations: [] }) }],
+    mockParse.mockResolvedValue({
+      parsed_output: { input: "Hello", source: "en", translations: [] },
     })
 
     await translate("test-key", "Hello", languages)
-    expect(mockCreate).toHaveBeenCalledWith(
+    expect(mockParse).toHaveBeenCalledWith(
       expect.objectContaining({
         system: expect.stringContaining("Spanish (es)"),
       }),
     )
-    expect(mockCreate).toHaveBeenCalledWith(
+    expect(mockParse).toHaveBeenCalledWith(
       expect.objectContaining({
         system: expect.stringContaining("French (fr)"),
       }),
@@ -163,13 +166,13 @@ describe("translate", () => {
   })
 
   it("handles rate limit with retries", async () => {
-    mockCreate.mockRejectedValue(createRateLimitError())
+    mockParse.mockRejectedValue(createRateLimitError())
 
     const resultPromise = translate("test-key", "Hello", languages)
     await flushRetries()
     const result = await resultPromise
 
-    expect(mockCreate).toHaveBeenCalledTimes(4)
+    expect(mockParse).toHaveBeenCalledTimes(4)
     expect(result).toEqual({
       success: false,
       error: "Rate limit exceeded. Please try again later.",
@@ -177,7 +180,7 @@ describe("translate", () => {
   })
 
   it("handles authentication error", async () => {
-    mockCreate.mockRejectedValue(
+    mockParse.mockRejectedValue(
       new Anthropic.AuthenticationError(
         401,
         { type: "error", error: { type: "authentication_error", message: "Invalid" } },
@@ -192,7 +195,9 @@ describe("translate", () => {
 
   it("returns translations in the order defined in settings, not API response order", async () => {
     // API returns French before Spanish (different from settings order)
-    const apiResponse = {
+    const parsedOutput = {
+      input: "Hello world",
+      source: "en",
       translations: [
         {
           languageCode: "fr",
@@ -216,9 +221,7 @@ describe("translate", () => {
         },
       ],
     }
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify(apiResponse) }],
-    })
+    mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
     // Settings order: Spanish first, then French
     const settingsLanguages = [

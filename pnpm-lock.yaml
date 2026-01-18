@@ -11,8 +11,8 @@ importers:
   .:
     dependencies:
       "@anthropic-ai/sdk":
-        specifier: ^0.52.0
-        version: 0.52.0
+        specifier: ^0.71.2
+        version: 0.71.2
       "@dnd-kit/core":
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -154,12 +154,17 @@ packages:
         integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==,
       }
 
-  "@anthropic-ai/sdk@0.52.0":
+  "@anthropic-ai/sdk@0.71.2":
     resolution:
       {
-        integrity: sha512-d4c+fg+xy9e46c8+YnrrgIQR45CZlAi7PwdzIfDXDM6ACxEZli1/fxhURsq30ZpMZy6LvSkr41jGq5aF5TD7rQ==,
+        integrity: sha512-TGNDEUuEstk/DKu0/TflXAEt+p+p/WhTlFzEnoosvbaDU2LTjm42igSdlL0VijrKpWejtOKxX0b8A7uc+XiSAQ==,
       }
     hasBin: true
+    peerDependencies:
+      zod: ^3.25.0 || ^4.0.0
+    peerDependenciesMeta:
+      zod:
+        optional: true
 
   "@apideck/better-ajv-errors@0.3.6":
     resolution:
@@ -3963,6 +3968,13 @@ packages:
     engines: { node: ">=6" }
     hasBin: true
 
+  json-schema-to-ts@3.1.1:
+    resolution:
+      {
+        integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==,
+      }
+    engines: { node: ">=16" }
+
   json-schema-traverse@1.0.0:
     resolution:
       {
@@ -5032,6 +5044,12 @@ packages:
       }
     engines: { node: ">=20" }
 
+  ts-algebra@2.0.0:
+    resolution:
+      {
+        integrity: sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==,
+      }
+
   tslib@2.8.1:
     resolution:
       {
@@ -5546,7 +5564,9 @@ snapshots:
 
   "@adobe/css-tools@4.4.4": {}
 
-  "@anthropic-ai/sdk@0.52.0": {}
+  "@anthropic-ai/sdk@0.71.2":
+    dependencies:
+      json-schema-to-ts: 3.1.1
 
   "@apideck/better-ajv-errors@0.3.6(ajv@8.17.1)":
     dependencies:
@@ -7970,6 +7990,11 @@ snapshots:
 
   jsesc@3.1.0: {}
 
+  json-schema-to-ts@3.1.1:
+    dependencies:
+      "@babel/runtime": 7.28.6
+      ts-algebra: 2.0.0
+
   json-schema-traverse@1.0.0: {}
 
   json-schema@0.4.0: {}
@@ -8582,6 +8607,8 @@ snapshots:
   tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
+
+  ts-algebra@2.0.0: {}
 
   tslib@2.8.1: {}
 
