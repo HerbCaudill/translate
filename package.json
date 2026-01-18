@@ -39,7 +39,7 @@
     "workbox-window": "^7.4.0"
   },
   "devDependencies": {
-    "@herbcaudill/ralph": "^0.5.1",
+    "@herbcaudill/ralph": "link:../ralph",
     "@playwright/test": "^1.49.1",
     "@tailwindcss/vite": "^4.1.18",
     "@testing-library/jest-dom": "^6.9.1",
