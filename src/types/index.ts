@@ -42,3 +42,20 @@ export type HistoryEntry = {
   translation: Translation
   createdAt: number
 }
+
+export type TranslationResult =
+  | { success: true; translations: LanguageTranslation[] }
+  | { success: false; error: string }
+
+export type ApiTranslationEntry = {
+  languageCode: string
+  sourceLanguage: boolean
+  meanings: Meaning[]
+}
+
+export type ApiResponse = {
+  input: string
+  source: string
+  alternateSources?: string[]
+  translations: ApiTranslationEntry[]
+}

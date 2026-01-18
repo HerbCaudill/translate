@@ -1,114 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { betaJSONSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/beta/json-schema.mjs"
-import { Language, LanguageTranslation, Meaning } from "../types"
+import { Language, LanguageTranslation } from "../types"
 import systemPromptRaw from "./system-prompt.md?raw"
 import { apiLogger } from "./logger"
-
-const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
-
-const MAX_RETRIES = 3
-const INITIAL_RETRY_DELAY_MS = 1000
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
-const getRetryAfterMs = (error: InstanceType<typeof Anthropic.APIError>): number | undefined => {
-  const headers = error.headers as Headers | undefined
-  const retryAfter = headers?.get("retry-after")
-  if (!retryAfter) return undefined
-
-  // retry-after can be seconds (number) or HTTP-date
-  const seconds = parseInt(retryAfter, 10)
-  if (!isNaN(seconds)) {
-    return seconds * 1000
-  }
-
-  // Try parsing as HTTP-date
-  const date = Date.parse(retryAfter)
-  if (!isNaN(date)) {
-    return Math.max(0, date - Date.now())
-  }
-
-  return undefined
-}
-
-export type TranslationResult =
-  | { success: true; translations: LanguageTranslation[] }
-  | { success: false; error: string }
+import { getRetryAfterMs } from "./getRetryAfterMs"
+import { MAX_RETRIES, TRANSLATION_MODEL, INITIAL_RETRY_DELAY_MS } from "./constants"
+import type { ApiResponse, TranslationResult } from "@/types"
+import { TRANSLATION_SCHEMA } from "./response-schema"
 
 const createClient = (apiKey: string): Anthropic => {
   return new Anthropic({
     apiKey,
     dangerouslyAllowBrowser: true,
   })
-}
-
-type ApiTranslationEntry = {
-  languageCode: string
-  sourceLanguage: boolean
-  meanings: Meaning[]
-}
-
-const TRANSLATION_SCHEMA = {
-  type: "object",
-  properties: {
-    input: { type: "string", description: "The original input text" },
-    source: { type: "string", description: "Primary source language code" },
-    alternateSources: {
-      type: "array",
-      items: { type: "string" },
-      description: "Other languages in which the input is a valid term",
-    },
-    translations: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          languageCode: { type: "string" },
-          sourceLanguage: { type: "boolean" },
-          meanings: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                sense: {
-                  type: "string",
-                  description: "Description of this sense/meaning in the target language",
-                },
-                options: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      text: { type: "string", description: "The translated text" },
-                      explanation: {
-                        type: "string",
-                        description: "Explanation in the target language of usage or nuance",
-                      },
-                    },
-                    required: ["text", "explanation"],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ["sense", "options"],
-              additionalProperties: false,
-            },
-          },
-        },
-        required: ["languageCode", "sourceLanguage", "meanings"],
-        additionalProperties: false,
-      },
-    },
-  },
-  required: ["input", "source", "translations"],
-  additionalProperties: false,
-} as const
-
-type ApiResponse = {
-  input: string
-  source: string
-  alternateSources?: string[]
-  translations: ApiTranslationEntry[]
 }
 
 export const translate = async (
@@ -199,7 +103,7 @@ export const translate = async (
             delayMs,
             "Rate limit exceeded",
           )
-          await sleep(delayMs)
+          await ((ms: number) => new Promise(resolve => setTimeout(resolve, ms)))(delayMs)
           continue
         }
         apiLogger.error("messages.parse", "Rate limit exceeded - max retries reached", {
