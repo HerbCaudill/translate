@@ -27,8 +27,11 @@ export function TranslationResults({
     }
   }, [results.length > 0]) // Only trigger when we go from no results to having results
 
-  // Get selectable languages for swipe navigation
+  // Get selectable languages for swipe navigation (exclude source language)
   const selectableLanguages = languages.filter(l => l.code !== sourceLanguage)
+
+  // Get source language name for display
+  const sourceLanguageName = languages.find(l => l.code === sourceLanguage)?.name
 
   // Navigate to next/previous tab (for swipe gestures)
   const navigateTab = useCallback(
@@ -74,39 +77,42 @@ export function TranslationResults({
 
   return (
     <Tabs value={selectedTab} onValueChange={onTabChange} className="flex flex-1 flex-col">
-      <div
-        ref={tabsContainerRef}
-        tabIndex={0}
-        className="flex items-center justify-between gap-2 outline-none"
-      >
-        <TabsList className="flex-wrap">
-          {languages.map(language => {
-            const isSource = language.code === sourceLanguage
-            return (
-              <TabsTrigger
-                key={language.code}
-                value={language.code}
-                disabled={isSource}
-                className={cx(isSource && "cursor-not-allowed opacity-40")}
-              >
+      {/* Translated from banner and tabs - hidden while loading */}
+      {!isLoading && sourceLanguageName && (
+        <div className="mb-2 flex items-center justify-between rounded-md bg-blue-50 px-3 py-1.5">
+          <p className="text-sm text-blue-700">
+            Translated from <span className="font-medium italic">{sourceLanguageName}</span>
+          </p>
+          {onRefresh && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              aria-label="Refresh translation"
+              className="text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+            >
+              <IconRefresh className={cx("mr-1 h-4 w-4", isRefreshing && "animate-spin")} />
+              Retry
+            </Button>
+          )}
+        </div>
+      )}
+      {!isLoading && (
+        <div
+          ref={tabsContainerRef}
+          tabIndex={0}
+          className="flex items-center justify-between gap-2 outline-none"
+        >
+          <TabsList className="flex-wrap">
+            {selectableLanguages.map(language => (
+              <TabsTrigger key={language.code} value={language.code}>
                 {language.name}
               </TabsTrigger>
-            )
-          })}
-        </TabsList>
-        {onRefresh && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            aria-label="Refresh translation"
-            className="text-muted-foreground hover:text-foreground h-7 w-7 shrink-0"
-          >
-            <IconRefresh className={cx("h-4 w-4", isRefreshing && "animate-spin")} />
-          </Button>
-        )}
-      </div>
+            ))}
+          </TabsList>
+        </div>
+      )}
       <TabsContent value={selectedTab} className="flex flex-1 flex-col">
         <div ref={contentRef} {...bind()} className="flex-1 touch-pan-y">
           {isLoading ?
