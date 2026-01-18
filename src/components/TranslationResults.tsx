@@ -92,19 +92,21 @@ export function TranslationResults({
                 <>
                   <span className="text-xs text-gray-500">·</span>
                   <span className="text-xs text-gray-500">Could be</span>
-                  {alternateSources.map(code => {
+                  {alternateSources.map((code, index) => {
                     const langName = languages.find(l => l.code === code)?.name ?? code
                     return (
-                      <Button
-                        key={code}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onAlternateSourceSelect(code)}
-                        className="h-5 px-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-800"
-                        aria-label={`Translate as ${langName}`}
-                      >
-                        {langName}
-                      </Button>
+                      <span key={code}>
+                        <button
+                          onClick={() => onAlternateSourceSelect(code)}
+                          className="text-xs font-medium text-blue-600 underline hover:text-blue-800"
+                          aria-label={`Translate as ${langName}`}
+                        >
+                          {langName}
+                        </button>
+                        {index < alternateSources.length - 1 && (
+                          <span className="text-xs text-gray-500">, </span>
+                        )}
+                      </span>
                     )
                   })}
                 </>
