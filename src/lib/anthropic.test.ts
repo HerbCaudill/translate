@@ -61,7 +61,6 @@ describe("translate", () => {
       translations: [
         {
           languageCode: "es",
-          sourceLanguage: false,
           meanings: [
             {
               sense: "greeting",
@@ -71,7 +70,6 @@ describe("translate", () => {
         },
         {
           languageCode: "fr",
-          sourceLanguage: false,
           meanings: [
             {
               sense: "greeting",
@@ -120,12 +118,10 @@ describe("translate", () => {
       translations: [
         {
           languageCode: "es",
-          sourceLanguage: true,
           meanings: [],
         },
         {
           languageCode: "fr",
-          sourceLanguage: false,
           meanings: [
             { sense: "greeting", options: [{ text: "Bonjour", explanation: "French greeting" }] },
           ],
@@ -205,7 +201,6 @@ describe("translate", () => {
       translations: [
         {
           languageCode: "fr",
-          sourceLanguage: false,
           meanings: [
             {
               sense: "greeting",
@@ -215,7 +210,6 @@ describe("translate", () => {
         },
         {
           languageCode: "es",
-          sourceLanguage: false,
           meanings: [
             {
               sense: "greeting",

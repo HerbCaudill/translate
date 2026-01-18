@@ -14,10 +14,6 @@ export const TRANSLATION_SCHEMA = {
         type: "object",
         properties: {
           languageCode: { type: "string" },
-          sourceLanguage: {
-            type: "boolean",
-            description: "True if this is the detected source language",
-          },
           meanings: {
             type: "array",
             items: {
@@ -48,7 +44,7 @@ export const TRANSLATION_SCHEMA = {
             },
           },
         },
-        required: ["languageCode", "sourceLanguage", "meanings"],
+        required: ["languageCode", "meanings"],
         additionalProperties: false,
       },
     },

@@ -58,11 +58,11 @@ export const translate = async (
       }
 
       // Map the API response back to our types, maintaining the order from settings
-      // and filtering out same-language entries
+      // and filtering out the source language
       const translations: LanguageTranslation[] = []
       for (const language of languages) {
         const entry = parsed.translations.find(t => t.languageCode === language.code)
-        if (!entry || entry.sourceLanguage) continue
+        if (!entry || language.code === parsed.source) continue
 
         if (entry.meanings) {
           translations.push({

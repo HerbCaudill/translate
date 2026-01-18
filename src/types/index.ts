@@ -60,7 +60,6 @@ export type TranslationResult =
 
 export type ApiTranslationEntry = {
   languageCode: string
-  sourceLanguage: boolean
   meanings: Meaning[]
 }
 

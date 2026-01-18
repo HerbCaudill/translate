@@ -14,8 +14,7 @@ For each target language:
 
 Important:
 
-- Include an entry for EVERY target language in the same order they were listed
-- Set `sourceLanguage: true` for the detected source language, `false` for all others
+- Include an entry for every language in the target list except for the source language
 - If the text has only one meaning, still use the meanings array with a single entry
 
 ## Examples
