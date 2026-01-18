@@ -47,6 +47,69 @@ type ApiTranslationEntry = {
   meanings?: Meaning[]
 }
 
+type ApiResponse = {
+  input: string
+  source: string
+  alternateSources?: string[]
+  translations: ApiTranslationEntry[]
+}
+
+const TRANSLATION_SCHEMA = {
+  type: "object",
+  properties: {
+    input: { type: "string", description: "The original input text" },
+    source: { type: "string", description: "Primary source language code" },
+    alternateSources: {
+      type: "array",
+      items: { type: "string" },
+      description: "Other languages in which the input is a valid term",
+    },
+    translations: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          languageCode: { type: "string" },
+          sourceLanguage: { type: "boolean" },
+          meanings: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                sense: {
+                  type: "string",
+                  description: "Description of this sense/meaning in the target language",
+                },
+                options: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      text: { type: "string", description: "The translated text" },
+                      explanation: {
+                        type: "string",
+                        description: "Explanation in the target language of usage or nuance",
+                      },
+                    },
+                    required: ["text", "explanation"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ["sense", "options"],
+              additionalProperties: false,
+            },
+          },
+        },
+        required: ["languageCode", "sourceLanguage", "meanings"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["input", "source", "translations"],
+  additionalProperties: false,
+} as const
+
 export const translate = async (
   apiKey: string,
   text: string,
@@ -80,6 +143,13 @@ export const translate = async (
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{ role: "user", content: text }],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "translation_response",
+            schema: TRANSLATION_SCHEMA,
+          },
+        },
       })
 
       const content = response.content[0]
@@ -90,32 +160,7 @@ export const translate = async (
         return { success: false, error: "Unexpected response format" }
       }
 
-      const responseText = content.text.trim()
-
-      // Extract JSON from potential markdown code blocks or surrounding text
-      let jsonText = responseText
-
-      // Try extracting from markdown code blocks first
-      const codeBlockMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/)
-      if (codeBlockMatch) {
-        jsonText = codeBlockMatch[1].trim()
-      }
-
-      // If still not valid JSON, try to find a JSON object in the text
-      if (!jsonText.startsWith("{")) {
-        const jsonObjectMatch = jsonText.match(/\{[\s\S]*\}/)
-        if (jsonObjectMatch) {
-          jsonText = jsonObjectMatch[0]
-        }
-      }
-
-      const parsed = JSON.parse(jsonText) as { translations: ApiTranslationEntry[] }
-      if (!parsed.translations || !Array.isArray(parsed.translations)) {
-        apiLogger.error("messages.create", "Invalid response format", {
-          hasTranslations: "translations" in parsed,
-        })
-        return { success: false, error: "Invalid response format" }
-      }
+      const parsed = JSON.parse(content.text) as ApiResponse
 
       // Map the API response back to our types, maintaining the order from settings
       // and filtering out same-language entries
