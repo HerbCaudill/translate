@@ -35,6 +35,7 @@ describe("useTranslation", () => {
   it("should translate when translate() is called", async () => {
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -112,6 +113,7 @@ describe("useTranslation", () => {
   it("should reset state with reset()", async () => {
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -148,6 +150,7 @@ describe("useTranslation", () => {
 
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "en",
       translations: threeLanguages.map(lang => ({
         language: lang,
         meanings: [{ sense: "", options: [{ text: "Translated", explanation: "Explanation" }] }],
@@ -172,6 +175,7 @@ describe("useTranslation", () => {
   it("should include language info in results", async () => {
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -202,6 +206,7 @@ describe("useTranslation", () => {
     // translate already filters same-language results
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "es",
       translations: [
         {
           language: { code: "fr", name: "French" },
@@ -229,6 +234,7 @@ describe("useTranslation", () => {
   it("should return success with empty results when all languages are same language", async () => {
     mockTranslate.mockResolvedValue({
       success: true,
+      source: "en",
       translations: [],
     })
 

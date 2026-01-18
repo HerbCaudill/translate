@@ -6,6 +6,7 @@ import { HistoryEntry, Translation } from "@/types"
 
 const createMockTranslation = (input: string): Translation => ({
   input,
+  source: "en",
   results: [
     {
       language: { code: "es", name: "Spanish" },

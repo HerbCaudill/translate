@@ -50,7 +50,7 @@ describe("translate", () => {
 
   it("returns empty translations for empty languages array", async () => {
     const result = await translate("test-key", "Hello", [])
-    expect(result).toEqual({ success: true, translations: [] })
+    expect(result).toEqual({ success: true, translations: [], source: "Unknown" })
     expect(mockParse).not.toHaveBeenCalled()
   })
 
@@ -88,6 +88,8 @@ describe("translate", () => {
     expect(mockParse).toHaveBeenCalledTimes(1)
     expect(result).toEqual({
       success: true,
+      source: "en",
+      alternateSources: undefined,
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -136,6 +138,8 @@ describe("translate", () => {
 
     expect(result).toEqual({
       success: true,
+      source: "es",
+      alternateSources: undefined,
       translations: [
         {
           language: { code: "fr", name: "French" },
@@ -233,6 +237,8 @@ describe("translate", () => {
 
     expect(result).toEqual({
       success: true,
+      source: "en",
+      alternateSources: undefined,
       translations: [
         // Should be in settings order (es, fr), not API order (fr, es)
         {

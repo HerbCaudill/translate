@@ -7,6 +7,8 @@ export type TranslationStatus = "idle" | "translating" | "success" | "error"
 export const useTranslation = ({ apiKey, languages }: Props) => {
   const [status, setStatus] = useState<TranslationStatus>("idle")
   const [results, setResults] = useState<LanguageTranslation[]>([])
+  const [source, setSource] = useState<string | undefined>()
+  const [alternateSources, setAlternateSources] = useState<string[] | undefined>()
   const [error, setError] = useState<string | undefined>()
 
   const translateText = useCallback(
@@ -17,12 +19,16 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
 
       setStatus("translating")
       setResults([])
+      setSource(undefined)
+      setAlternateSources(undefined)
       setError(undefined)
 
       const result = await translate(apiKey, text, languages)
 
       if (result.success) {
         setResults(result.translations)
+        setSource(result.source)
+        setAlternateSources(result.alternateSources)
         setStatus("success")
       } else {
         setError(result.error)
@@ -35,12 +41,16 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
   const reset = useCallback(() => {
     setStatus("idle")
     setResults([])
+    setSource(undefined)
+    setAlternateSources(undefined)
     setError(undefined)
   }, [])
 
   return {
     status,
     results,
+    source,
+    alternateSources,
     error,
     translate: translateText,
     reset,

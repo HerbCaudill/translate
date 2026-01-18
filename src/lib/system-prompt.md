@@ -32,7 +32,6 @@ Target languages: English, Spanish, French
   "translations": [
     {
       "languageCode": "es",
-      "sourceLanguage": false,
       "meanings": [
         {
           "sense": "Institución financiera",
@@ -51,7 +50,6 @@ Target languages: English, Spanish, French
     },
     {
       "languageCode": "fr",
-      "sourceLanguage": false,
       "meanings": [
         {
           "sense": "Institution financière",
@@ -85,7 +83,6 @@ This word could be French ("cat") or English ("conversation"). Since French appe
   "translations": [
     {
       "languageCode": "en",
-      "sourceLanguage": false,
       "meanings": [
         {
           "sense": "Domestic feline animal",
@@ -98,7 +95,6 @@ This word could be French ("cat") or English ("conversation"). Since French appe
     },
     {
       "languageCode": "es",
-      "sourceLanguage": false,
       "meanings": [
         {
           "sense": "Animal felino doméstico",

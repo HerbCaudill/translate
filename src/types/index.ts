@@ -33,6 +33,10 @@ export type Translation = {
   input: string
   results: LanguageTranslation[]
   timestamp: number
+  /** The detected source language of the input */
+  source: string
+  /** Alternative possible source languages that could be selected */
+  alternateSources?: string[]
 }
 
 /** A saved translation in history */
@@ -44,7 +48,14 @@ export type HistoryEntry = {
 }
 
 export type TranslationResult =
-  | { success: true; translations: LanguageTranslation[] }
+  | {
+      success: true
+      translations: LanguageTranslation[]
+      /** The detected source language of the input */
+      source: string
+      /** Alternative possible source languages that could be selected */
+      alternateSources?: string[]
+    }
   | { success: false; error: string }
 
 export type ApiTranslationEntry = {

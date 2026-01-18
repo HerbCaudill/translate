@@ -28,6 +28,8 @@ export function App() {
   const {
     status: translationStatus,
     results,
+    source,
+    alternateSources,
     error: translationError,
     translate,
     reset: resetTranslation,
@@ -100,10 +102,12 @@ export function App() {
       addEntry({
         input: inputToSave,
         results,
+        source: source ?? "Unknown",
+        alternateSources,
         timestamp: Date.now(),
       })
     }
-  }, [translationStatus, results, addEntry])
+  }, [translationStatus, results, source, alternateSources, addEntry])
 
   // Show toast on translation error
   useEffect(() => {

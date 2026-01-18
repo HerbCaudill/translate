@@ -97,6 +97,7 @@ describe("App", () => {
 
     vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -133,6 +134,7 @@ describe("App", () => {
 
     vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -172,6 +174,7 @@ describe("App history saving", () => {
 
     vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },
@@ -409,6 +412,7 @@ describe("App translation caching", () => {
 
     vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
+      source: "en",
       translations: [
         {
           language: { code: "es", name: "Spanish" },

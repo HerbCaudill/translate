@@ -12,6 +12,7 @@ const createMockTranslation = (input: string): Translation => ({
     },
   ],
   timestamp: Date.now(),
+  source: "en",
 })
 
 const createMockEntry = (id: string, input: string, createdAt = Date.now()): HistoryEntry => ({
@@ -238,6 +239,7 @@ describe("useHistory", () => {
         },
       ],
       timestamp: Date.now(),
+      source: "en",
     }
 
     act(() => {
@@ -276,6 +278,7 @@ describe("useHistory", () => {
         },
       ],
       timestamp: Date.now(),
+      source: "en",
     }
 
     act(() => {

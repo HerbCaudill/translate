@@ -25,7 +25,7 @@ export const translate = async (
   }
 
   if (languages.length === 0) {
-    return { success: true, translations: [] }
+    return { success: true, translations: [], source: "Unknown" }
   }
 
   const client = createClient(apiKey)
@@ -76,7 +76,12 @@ export const translate = async (
         targetLanguages: languages.map(l => l.name),
         translationsCount: translations.length,
       })
-      return { success: true, translations }
+      return {
+        success: true,
+        translations,
+        source: parsed.source,
+        alternateSources: parsed.alternateSources,
+      }
     } catch (error) {
       lastError = error as Error
 

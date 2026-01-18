@@ -9,6 +9,7 @@ const createMockEntry = (id: string, input: string): HistoryEntry => ({
   input,
   translation: {
     input,
+    source: "en",
     results: [
       {
         language: { code: "es", name: "Spanish" },
