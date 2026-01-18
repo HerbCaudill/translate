@@ -3,7 +3,10 @@ import { renderHook, act } from "@testing-library/react"
 import { useHistory } from "./useHistory"
 import { HistoryEntry, Translation } from "@/types"
 
-const createMockTranslation = (input: string): Translation => ({
+const createMockTranslation = (
+  input: string,
+  options?: { source?: string; alternateSources?: string[] },
+): Translation => ({
   input,
   results: [
     {
@@ -12,7 +15,8 @@ const createMockTranslation = (input: string): Translation => ({
     },
   ],
   timestamp: Date.now(),
-  source: "en",
+  source: options?.source ?? "en",
+  alternateSources: options?.alternateSources,
 })
 
 const createMockEntry = (id: string, input: string, createdAt = Date.now()): HistoryEntry => ({
@@ -288,5 +292,37 @@ describe("useHistory", () => {
     // Should still have only 1 entry
     expect(result.current.history).toHaveLength(1)
     expect(result.current.history[0].translation.results[0].language.code).toBe("de")
+  })
+
+  it("preserves source and alternateSources in history entries", () => {
+    const { result } = renderHook(() => useHistory())
+    const translation = createMockTranslation("Hola", {
+      source: "es",
+      alternateSources: ["pt", "it"],
+    })
+
+    act(() => {
+      result.current.addEntry(translation)
+    })
+
+    const entry = result.current.history[0]
+    expect(entry.translation.source).toBe("es")
+    expect(entry.translation.alternateSources).toEqual(["pt", "it"])
+  })
+
+  it("persists source and alternateSources to localStorage", () => {
+    const { result } = renderHook(() => useHistory())
+    const translation = createMockTranslation("Bonjour", {
+      source: "fr",
+      alternateSources: ["en"],
+    })
+
+    act(() => {
+      result.current.addEntry(translation)
+    })
+
+    const stored = JSON.parse(localStorage.getItem("translate:history") || "[]")
+    expect(stored[0].translation.source).toBe("fr")
+    expect(stored[0].translation.alternateSources).toEqual(["en"])
   })
 })

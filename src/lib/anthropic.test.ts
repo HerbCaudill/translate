@@ -147,6 +147,39 @@ describe("translate", () => {
     })
   })
 
+  it("returns alternateSources when provided by API", async () => {
+    const parsedOutput = {
+      input: "Hola",
+      source: "es",
+      alternateSources: ["pt", "it"],
+      translations: [
+        {
+          languageCode: "fr",
+          meanings: [
+            { sense: "greeting", options: [{ text: "Bonjour", explanation: "French greeting" }] },
+          ],
+        },
+      ],
+    }
+    mockParse.mockResolvedValue({ parsed_output: parsedOutput })
+
+    const result = await translate("test-key", "Hola", languages)
+
+    expect(result).toEqual({
+      success: true,
+      source: "es",
+      alternateSources: ["pt", "it"],
+      translations: [
+        {
+          language: { code: "fr", name: "French" },
+          meanings: [
+            { sense: "greeting", options: [{ text: "Bonjour", explanation: "French greeting" }] },
+          ],
+        },
+      ],
+    })
+  })
+
   it("includes all languages in system prompt", async () => {
     mockParse.mockResolvedValue({
       parsed_output: { input: "Hello", source: "en", translations: [] },

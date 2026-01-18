@@ -115,5 +115,29 @@ describe("storage", () => {
 
       expect(result).toEqual(history)
     })
+
+    it("stores and retrieves history entries with alternateSources", () => {
+      const history: HistoryEntry[] = [
+        {
+          id: "1",
+          input: "Hola",
+          translation: {
+            input: "Hola",
+            results: [],
+            timestamp: 1000,
+            source: "es",
+            alternateSources: ["pt", "it"],
+          },
+          createdAt: 1000,
+        },
+      ]
+
+      setItem(STORAGE_KEYS.HISTORY, history)
+      const result = getItem<HistoryEntry[]>(STORAGE_KEYS.HISTORY)
+
+      expect(result).toEqual(history)
+      expect(result?.[0].translation.source).toBe("es")
+      expect(result?.[0].translation.alternateSources).toEqual(["pt", "it"])
+    })
   })
 })
