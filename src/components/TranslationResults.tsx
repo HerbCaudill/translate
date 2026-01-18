@@ -79,9 +79,9 @@ export function TranslationResults({
     <Tabs value={selectedTab} onValueChange={onTabChange} className="flex flex-1 flex-col">
       {/* Translated from banner and tabs - hidden while loading */}
       {!isLoading && sourceLanguageName && (
-        <div className="mb-2 flex items-center justify-between rounded-md bg-blue-50 px-3 py-1.5">
-          <p className="text-sm text-blue-700">
-            Translated from <span className="font-medium italic">{sourceLanguageName}</span>
+        <div className="-mx-4 -mt-4 mb-2 flex items-center justify-between bg-blue-50 px-4 py-1.5 sm:-mx-6 sm:-mt-6 sm:px-6">
+          <p className="text-sm text-black">
+            Translated from <span className="font-bold">{sourceLanguageName}</span>
           </p>
           {onRefresh && (
             <Button
@@ -90,7 +90,7 @@ export function TranslationResults({
               onClick={onRefresh}
               disabled={isRefreshing}
               aria-label="Refresh translation"
-              className="text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+              className="text-gray-500 hover:bg-blue-100 hover:text-gray-700"
             >
               <IconRefresh className={cx("mr-1 h-4 w-4", isRefreshing && "animate-spin")} />
               Retry
