@@ -12,7 +12,7 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
   const [error, setError] = useState<string | undefined>()
 
   const translateText = useCallback(
-    async (text: string) => {
+    async (text: string, sourceLanguageHint?: string) => {
       if (!text.trim()) {
         return
       }
@@ -23,7 +23,7 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
       setAlternateSources(undefined)
       setError(undefined)
 
-      const result = await translate({ apiKey, text, languages })
+      const result = await translate({ apiKey, text, languages, sourceLanguageHint })
 
       if (result.success) {
         setResults(result.translations)

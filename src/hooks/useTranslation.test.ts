@@ -30,6 +30,8 @@ describe("useTranslation", () => {
     expect(result.current.status).toBe("idle")
     expect(result.current.results).toEqual([])
     expect(result.current.error).toBeUndefined()
+    expect(result.current.source).toBeUndefined()
+    expect(result.current.alternateSources).toBeUndefined()
   })
 
   it("should translate when translate() is called", async () => {
@@ -65,8 +67,92 @@ describe("useTranslation", () => {
     })
 
     expect(result.current.results).toHaveLength(2)
+    expect(result.current.source).toBe("en")
     expect(mockTranslate).toHaveBeenCalledTimes(1)
-    expect(mockTranslate).toHaveBeenCalledWith({ apiKey, text: "Hello world", languages })
+    expect(mockTranslate).toHaveBeenCalledWith({
+      apiKey,
+      text: "Hello world",
+      languages,
+      sourceLanguageHint: undefined,
+    })
+  })
+
+  it("should expose source language after successful translation", async () => {
+    mockTranslate.mockResolvedValue({
+      success: true,
+      source: "German",
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Greeting" }] }],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("Hallo")
+    })
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(result.current.source).toBe("German")
+  })
+
+  it("should expose alternateSources when API returns them", async () => {
+    mockTranslate.mockResolvedValue({
+      success: true,
+      source: "Spanish",
+      alternateSources: ["Italian", "Portuguese"],
+      translations: [
+        {
+          language: { code: "fr", name: "French" },
+          meanings: [{ sense: "", options: [{ text: "Bonjour", explanation: "Greeting" }] }],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("hola")
+    })
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(result.current.source).toBe("Spanish")
+    expect(result.current.alternateSources).toEqual(["Italian", "Portuguese"])
+  })
+
+  it("should have undefined alternateSources when API does not return them", async () => {
+    mockTranslate.mockResolvedValue({
+      success: true,
+      source: "English",
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Greeting" }] }],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("Hello")
+    })
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(result.current.source).toBe("English")
+    expect(result.current.alternateSources).toBeUndefined()
   })
 
   it("should not translate empty text", () => {
@@ -139,6 +225,42 @@ describe("useTranslation", () => {
     expect(result.current.status).toBe("idle")
     expect(result.current.results).toEqual([])
     expect(result.current.error).toBeUndefined()
+    expect(result.current.source).toBeUndefined()
+    expect(result.current.alternateSources).toBeUndefined()
+  })
+
+  it("should reset source and alternateSources with reset()", async () => {
+    mockTranslate.mockResolvedValue({
+      success: true,
+      source: "Spanish",
+      alternateSources: ["Italian", "Portuguese"],
+      translations: [
+        {
+          language: { code: "fr", name: "French" },
+          meanings: [{ sense: "", options: [{ text: "Bonjour", explanation: "Greeting" }] }],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("hola")
+    })
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(result.current.source).toBe("Spanish")
+    expect(result.current.alternateSources).toEqual(["Italian", "Portuguese"])
+
+    act(() => {
+      result.current.reset()
+    })
+
+    expect(result.current.source).toBeUndefined()
+    expect(result.current.alternateSources).toBeUndefined()
   })
 
   it("should translate to all provided languages", async () => {
@@ -168,8 +290,44 @@ describe("useTranslation", () => {
     })
 
     expect(mockTranslate).toHaveBeenCalledTimes(1)
-    expect(mockTranslate).toHaveBeenCalledWith({ apiKey, text: "Hello", languages: threeLanguages })
+    expect(mockTranslate).toHaveBeenCalledWith({
+      apiKey,
+      text: "Hello",
+      languages: threeLanguages,
+      sourceLanguageHint: undefined,
+    })
     expect(result.current.results).toHaveLength(3)
+  })
+
+  it("should pass sourceLanguageHint when provided", async () => {
+    mockTranslate.mockResolvedValue({
+      success: true,
+      source: "Portuguese",
+      translations: [
+        {
+          language: { code: "es", name: "Spanish" },
+          meanings: [{ sense: "", options: [{ text: "Hola", explanation: "Greeting" }] }],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useTranslation({ apiKey, languages }))
+
+    act(() => {
+      result.current.translate("olá", "pt")
+    })
+
+    await waitFor(() => {
+      expect(result.current.status).toBe("success")
+    })
+
+    expect(mockTranslate).toHaveBeenCalledWith({
+      apiKey,
+      text: "olá",
+      languages,
+      sourceLanguageHint: "pt",
+    })
+    expect(result.current.source).toBe("Portuguese")
   })
 
   it("should include language info in results", async () => {
