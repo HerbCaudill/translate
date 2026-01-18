@@ -10,8 +10,8 @@ For each target language:
 
 - If the text is already in that language, set "sourceLanguage": true for that entry
 - Otherwise, for each distinct meaning of the source text:
-  - Provide a brief description of that sense/meaning in that target language
-  - Provide 1-3 translation options with explanations of usage or nuance in that target language
+  - Provide a brief description _in the target language_ of the sense/meaning
+  - Provide 1-3 translation options with explanations _in the target language_ of usage or nuance
 
 Respond in JSON format:
 
@@ -23,25 +23,18 @@ Respond in JSON format:
       "sourceLanguage": false,
       "meanings": [
         {
-          "sense": "quick, rapid",
+          "sense": "this sense of the translated term in the target language",
           "options": [
             {
               "text": "translated text",
-              "explanation": "brief explanation of this translation's usage or nuance"
-            }
-          ]
-        },
-        {
-          "sense": "immobile, fixed in place",
-          "options": [
-            {
-              "text": "different translated text",
-              "explanation": "explanation"
+              "explanation": "brief explanation in the target language of this translation's usage or nuance"
             }
           ]
         }
+        // ...
       ]
     },
+    // ...
     {
       "languageCode": "fr",
       "sourceLanguage": true
