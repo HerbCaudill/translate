@@ -23,7 +23,7 @@ Important:
 ### Example 1: Word with multiple meanings
 
 Input: "bank"
-Target languages: Spanish, French
+Target languages: English, Spanish, French
 
 ```json
 {
@@ -81,6 +81,7 @@ This word could be French ("cat") or English ("conversation"). Since French appe
 {
   "input": "chat",
   "source": "fr",
+  "alternateSources": ["en"],
   "translations": [
     {
       "languageCode": "en",
