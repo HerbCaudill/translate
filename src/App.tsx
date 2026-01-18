@@ -296,20 +296,18 @@ export function App() {
 
       {/* Content area - scrollable container for results */}
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
-        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col p-4 sm:p-6">
-          {(inputText.trim() || displayResults.length > 0) && (
-            <TranslationResults
-              results={displayResults}
-              languages={settings.languages}
-              sourceLanguage={sourceLanguage}
-              selectedTab={selectedTab}
-              onTabChange={handleTabChange}
-              isLoading={translationStatus === "translating"}
-              onRefresh={handleRefresh}
-              isRefreshing={translationStatus === "translating"}
-            />
-          )}
-        </div>
+        {(inputText.trim() || displayResults.length > 0) && (
+          <TranslationResults
+            results={displayResults}
+            languages={settings.languages}
+            sourceLanguage={sourceLanguage}
+            selectedTab={selectedTab}
+            onTabChange={handleTabChange}
+            isLoading={translationStatus === "translating"}
+            onRefresh={handleRefresh}
+            isRefreshing={translationStatus === "translating"}
+          />
+        )}
       </div>
     </div>
   )
