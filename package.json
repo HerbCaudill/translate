@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:all": "pnpm typecheck && pnpm test",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
