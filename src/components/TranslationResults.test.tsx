@@ -165,7 +165,7 @@ describe("TranslationResults", () => {
   describe("alternate source selection", () => {
     it("does not show alternate source buttons when alternateSources is not provided", () => {
       render(<TranslationResults {...defaultProps} />)
-      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+      expect(screen.queryByText("Interpret as")).not.toBeInTheDocument()
     })
 
     it("does not show alternate source buttons when alternateSources is empty", () => {
@@ -177,12 +177,12 @@ describe("TranslationResults", () => {
           onAlternateSourceSelect={onAlternateSourceSelect}
         />,
       )
-      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+      expect(screen.queryByText("Interpret as")).not.toBeInTheDocument()
     })
 
     it("does not show alternate source buttons when onAlternateSourceSelect is not provided", () => {
       render(<TranslationResults {...defaultProps} alternateSources={["es", "fr"]} />)
-      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+      expect(screen.queryByText("Interpret as")).not.toBeInTheDocument()
     })
 
     it("shows alternate source buttons when alternateSources and onAlternateSourceSelect are provided", () => {
@@ -194,7 +194,7 @@ describe("TranslationResults", () => {
           onAlternateSourceSelect={onAlternateSourceSelect}
         />,
       )
-      expect(screen.getByText("Not right?")).toBeInTheDocument()
+      expect(screen.getByText("Interpret as")).toBeInTheDocument()
       expect(screen.getByRole("button", { name: "Translate as Spanish" })).toBeInTheDocument()
       expect(screen.getByRole("button", { name: "Translate as French" })).toBeInTheDocument()
     })
@@ -237,7 +237,7 @@ describe("TranslationResults", () => {
           isLoading
         />,
       )
-      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+      expect(screen.queryByText("Interpret as")).not.toBeInTheDocument()
     })
 
     it("hides alternate source buttons when isTyping is true", () => {
@@ -250,7 +250,7 @@ describe("TranslationResults", () => {
           isTyping
         />,
       )
-      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+      expect(screen.queryByText("Interpret as")).not.toBeInTheDocument()
     })
   })
 })
