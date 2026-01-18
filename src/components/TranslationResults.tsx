@@ -105,8 +105,12 @@ export function TranslationResults({
           className="flex items-center justify-between gap-2 outline-none"
         >
           <TabsList className="flex-wrap">
-            {selectableLanguages.map(language => (
-              <TabsTrigger key={language.code} value={language.code}>
+            {languages.map(language => (
+              <TabsTrigger
+                key={language.code}
+                value={language.code}
+                disabled={language.code === sourceLanguage}
+              >
                 {language.name}
               </TabsTrigger>
             ))}

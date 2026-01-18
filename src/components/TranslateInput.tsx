@@ -96,8 +96,12 @@ export const TranslateInput = ({
     // Select all text when focusing, but delay slightly to prevent
     // macOS from showing the system context menu for selected text
     const input = e.target
+    const initialValue = input.value
     requestAnimationFrame(() => {
-      input.select()
+      // Only select if the value hasn't changed (user hasn't started typing)
+      if (input.value === initialValue) {
+        input.select()
+      }
     })
 
     // Prevent iOS from scrolling the page when virtual keyboard opens

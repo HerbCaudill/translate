@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -25,10 +26,12 @@ export const SettingsDialog = ({ languages, onLanguagesChange, children, classNa
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Languages</DialogTitle>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>Configure your translation preferences.</DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
+            <h3 className="text-sm font-medium">Target languages</h3>
             <LanguageList languages={languages} onChange={onLanguagesChange} />
           </div>
         </div>
