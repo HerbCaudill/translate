@@ -149,6 +149,26 @@ export function App() {
   // Show history results if selected, otherwise show translation results
   const displayResults = selectedHistoryEntry?.translation.results ?? results
 
+  // Show alternate sources from history entry or live translation state
+  const displayAlternateSources =
+    selectedHistoryEntry?.translation.alternateSources ?? alternateSources
+
+  // Handle alternate source language selection - re-translate with the selected language as a hint
+  const handleAlternateSourceSelect = useCallback(
+    (languageCode: string) => {
+      const text = inputText.trim()
+      if (text) {
+        // Clear the selected history entry since we're doing a fresh translation
+        setSelectedHistoryEntry(null)
+        // Reset saved ref so the new translation gets saved to history
+        savedTranslationRef.current = ""
+        // Translate with the selected language as a hint
+        translate(text, languageCode)
+      }
+    },
+    [inputText, translate],
+  )
+
   // Determine if user is typing (input differs from what's displayed)
   // This is true when user has typed something but hasn't submitted yet
   const isTyping = useMemo(() => {
@@ -321,12 +341,14 @@ export function App() {
             results={displayResults}
             languages={settings.languages}
             sourceLanguage={sourceLanguage}
+            alternateSources={displayAlternateSources}
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
             isLoading={translationStatus === "translating"}
             isTyping={isTyping}
             onRefresh={handleRefresh}
             isRefreshing={translationStatus === "translating"}
+            onAlternateSourceSelect={handleAlternateSourceSelect}
           />
         )}
       </div>

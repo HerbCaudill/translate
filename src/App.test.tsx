@@ -443,3 +443,195 @@ describe("App translation caching", () => {
     })
   })
 })
+
+describe("App alternate source selection", () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+  })
+
+  it("shows alternate source buttons when translation has alternateSources", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [
+          { code: "en", name: "English" },
+          { code: "es", name: "Spanish" },
+          { code: "fr", name: "French" },
+        ],
+      }),
+    )
+
+    vi.mocked(anthropic.translate).mockResolvedValue({
+      success: true,
+      source: "es",
+      alternateSources: ["fr"],
+      translations: [
+        {
+          language: { code: "en", name: "English" },
+          meanings: [{ sense: "greeting", options: [{ text: "hello", explanation: "greeting" }] }],
+        },
+        {
+          language: { code: "fr", name: "French" },
+          meanings: [{ sense: "greeting", options: [{ text: "salut", explanation: "greeting" }] }],
+        },
+      ],
+    })
+
+    const user = userEvent.setup()
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.type(input, "hola{Enter}")
+
+    // Wait for translation to complete
+    await waitFor(() => {
+      expect(screen.getByText("Translated from")).toBeInTheDocument()
+    })
+
+    // Should show "Not right?" with alternate source button
+    expect(screen.getByText("Not right?")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /translate as french/i })).toBeInTheDocument()
+  })
+
+  it("re-translates with sourceLanguageHint when alternate source is clicked", async () => {
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [
+          { code: "en", name: "English" },
+          { code: "es", name: "Spanish" },
+          { code: "fr", name: "French" },
+        ],
+      }),
+    )
+
+    // First translation - detected as Spanish with French as alternate
+    vi.mocked(anthropic.translate).mockResolvedValueOnce({
+      success: true,
+      source: "es",
+      alternateSources: ["fr"],
+      translations: [
+        {
+          language: { code: "en", name: "English" },
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "hello (from Spanish)", explanation: "greeting" }],
+            },
+          ],
+        },
+        {
+          language: { code: "fr", name: "French" },
+          meanings: [{ sense: "greeting", options: [{ text: "salut", explanation: "greeting" }] }],
+        },
+      ],
+    })
+
+    // Second translation - with French as source hint
+    vi.mocked(anthropic.translate).mockResolvedValueOnce({
+      success: true,
+      source: "fr",
+      translations: [
+        {
+          language: { code: "en", name: "English" },
+          meanings: [
+            {
+              sense: "greeting",
+              options: [{ text: "hello (from French)", explanation: "greeting" }],
+            },
+          ],
+        },
+        {
+          language: { code: "es", name: "Spanish" },
+          meanings: [{ sense: "greeting", options: [{ text: "hola", explanation: "greeting" }] }],
+        },
+      ],
+    })
+
+    const user = userEvent.setup()
+    render(<App />)
+
+    const input = screen.getByPlaceholderText(/enter text to translate/i)
+    await user.type(input, "salut{Enter}")
+
+    // Wait for first translation to complete
+    await waitFor(() => {
+      expect(screen.getByText("hello (from Spanish)")).toBeInTheDocument()
+    })
+
+    // Click the French alternate source button
+    const frenchButton = screen.getByRole("button", { name: /translate as french/i })
+    await user.click(frenchButton)
+
+    // Should call translate again with sourceLanguageHint
+    await waitFor(() => {
+      expect(anthropic.translate).toHaveBeenCalledTimes(2)
+      expect(anthropic.translate).toHaveBeenLastCalledWith({
+        apiKey: "sk-ant-test123",
+        text: "salut",
+        languages: [
+          { code: "en", name: "English" },
+          { code: "es", name: "Spanish" },
+          { code: "fr", name: "French" },
+        ],
+        sourceLanguageHint: "fr",
+      })
+    })
+
+    // Should show updated translation
+    await waitFor(() => {
+      expect(screen.getByText("hello (from French)")).toBeInTheDocument()
+    })
+  })
+
+  it("shows alternate sources from history entry", async () => {
+    // Set up history with alternateSources
+    localStorage.setItem(
+      STORAGE_KEYS.HISTORY,
+      JSON.stringify([
+        {
+          id: "history-1",
+          input: "ciao",
+          translation: {
+            input: "ciao",
+            source: "it",
+            alternateSources: ["es"],
+            results: [
+              {
+                language: { code: "en", name: "English" },
+                meanings: [
+                  { sense: "greeting", options: [{ text: "hello", explanation: "greeting" }] },
+                ],
+              },
+            ],
+            timestamp: Date.now(),
+          },
+          createdAt: Date.now(),
+        },
+      ]),
+    )
+
+    localStorage.setItem(
+      STORAGE_KEYS.SETTINGS,
+      JSON.stringify({
+        apiKey: "sk-ant-test123",
+        languages: [
+          { code: "en", name: "English" },
+          { code: "es", name: "Spanish" },
+          { code: "it", name: "Italian" },
+        ],
+      }),
+    )
+
+    render(<App />)
+
+    // Should show alternate source button from history entry
+    await waitFor(() => {
+      expect(screen.getByText("Not right?")).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: /translate as spanish/i })).toBeInTheDocument()
+    })
+  })
+})
