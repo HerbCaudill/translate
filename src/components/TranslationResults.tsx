@@ -117,9 +117,9 @@ export function TranslationResults({
                 onClick={onRefresh}
                 disabled={isRefreshing}
                 aria-label="Refresh translation"
-                className="text-gray-500 hover:bg-blue-100 hover:text-gray-700"
+                className="h-6 gap-1 px-1.5 text-xs text-gray-500 hover:bg-blue-100 hover:text-gray-700"
               >
-                <IconRefresh className={cx("mr-1 h-4 w-4", isRefreshing && "animate-spin")} />
+                <IconRefresh className={cx("h-2.5 w-2.5", isRefreshing && "animate-spin")} />
                 Retry
               </Button>
             )}
