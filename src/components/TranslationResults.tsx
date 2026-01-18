@@ -79,8 +79,8 @@ export function TranslationResults({
     <Tabs value={selectedTab} onValueChange={onTabChange} className="flex flex-1 flex-col">
       {/* Translated from banner - full width, hidden while loading */}
       {!isLoading && sourceLanguageName && (
-        <div className="mb-2 flex items-center justify-between bg-blue-50 px-4 py-1.5 sm:px-6">
-          <div className="mx-auto flex w-full max-w-2xl items-center justify-between">
+        <div className="mb-2 flex items-center justify-between bg-blue-50">
+          <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-1.5 sm:px-6">
             <p className="text-xs text-black">
               Translated from <span className="font-bold">{sourceLanguageName}</span>
             </p>
