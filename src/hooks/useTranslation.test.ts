@@ -4,10 +4,10 @@ import { useTranslation } from "./useTranslation"
 import * as anthropic from "@/lib/anthropic"
 
 vi.mock("@/lib/anthropic", () => ({
-  translateAll: vi.fn(),
+  translate: vi.fn(),
 }))
 
-const mockTranslateAll = vi.mocked(anthropic.translateAll)
+const mockTranslate = vi.mocked(anthropic.translate)
 
 describe("useTranslation", () => {
   const apiKey = "test-api-key"
@@ -33,7 +33,7 @@ describe("useTranslation", () => {
   })
 
   it("should translate when translate() is called", async () => {
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: [
         {
@@ -64,8 +64,8 @@ describe("useTranslation", () => {
     })
 
     expect(result.current.results).toHaveLength(2)
-    expect(mockTranslateAll).toHaveBeenCalledTimes(1)
-    expect(mockTranslateAll).toHaveBeenCalledWith(apiKey, "Hello world", languages)
+    expect(mockTranslate).toHaveBeenCalledTimes(1)
+    expect(mockTranslate).toHaveBeenCalledWith(apiKey, "Hello world", languages)
   })
 
   it("should not translate empty text", () => {
@@ -76,7 +76,7 @@ describe("useTranslation", () => {
     })
 
     expect(result.current.status).toBe("idle")
-    expect(mockTranslateAll).not.toHaveBeenCalled()
+    expect(mockTranslate).not.toHaveBeenCalled()
   })
 
   it("should not translate whitespace-only text", () => {
@@ -87,11 +87,11 @@ describe("useTranslation", () => {
     })
 
     expect(result.current.status).toBe("idle")
-    expect(mockTranslateAll).not.toHaveBeenCalled()
+    expect(mockTranslate).not.toHaveBeenCalled()
   })
 
   it("should handle translation errors", async () => {
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: false,
       error: "API error",
     })
@@ -110,7 +110,7 @@ describe("useTranslation", () => {
   })
 
   it("should reset state with reset()", async () => {
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: [
         {
@@ -146,7 +146,7 @@ describe("useTranslation", () => {
       { code: "de", name: "German" },
     ]
 
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: threeLanguages.map(lang => ({
         language: lang,
@@ -164,13 +164,13 @@ describe("useTranslation", () => {
       expect(result.current.status).toBe("success")
     })
 
-    expect(mockTranslateAll).toHaveBeenCalledTimes(1)
-    expect(mockTranslateAll).toHaveBeenCalledWith(apiKey, "Hello", threeLanguages)
+    expect(mockTranslate).toHaveBeenCalledTimes(1)
+    expect(mockTranslate).toHaveBeenCalledWith(apiKey, "Hello", threeLanguages)
     expect(result.current.results).toHaveLength(3)
   })
 
   it("should include language info in results", async () => {
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: [
         {
@@ -198,9 +198,9 @@ describe("useTranslation", () => {
     expect(result.current.results[1].language).toEqual(languages[1])
   })
 
-  it("should handle same-language results (filtered by translateAll)", async () => {
-    // translateAll already filters same-language results
-    mockTranslateAll.mockResolvedValue({
+  it("should handle same-language results (filtered by translate)", async () => {
+    // translate already filters same-language results
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: [
         {
@@ -220,14 +220,14 @@ describe("useTranslation", () => {
       expect(result.current.status).toBe("success")
     })
 
-    expect(mockTranslateAll).toHaveBeenCalledTimes(1)
-    // Results only include French (Spanish was same language and filtered by translateAll)
+    expect(mockTranslate).toHaveBeenCalledTimes(1)
+    // Results only include French (Spanish was same language and filtered by translate)
     expect(result.current.results).toHaveLength(1)
     expect(result.current.results[0].language.code).toBe("fr")
   })
 
   it("should return success with empty results when all languages are same language", async () => {
-    mockTranslateAll.mockResolvedValue({
+    mockTranslate.mockResolvedValue({
       success: true,
       translations: [],
     })
@@ -242,7 +242,7 @@ describe("useTranslation", () => {
       expect(result.current.status).toBe("success")
     })
 
-    expect(mockTranslateAll).toHaveBeenCalledTimes(1)
+    expect(mockTranslate).toHaveBeenCalledTimes(1)
     expect(result.current.results).toEqual([])
   })
 })

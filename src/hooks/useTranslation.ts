@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { translateAll } from "@/lib/anthropic"
+import { translate } from "@/lib/anthropic"
 import { Language, LanguageTranslation } from "@/types"
 
 export type TranslationStatus = "idle" | "translating" | "success" | "error"
@@ -19,7 +19,7 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
       setResults([])
       setError(undefined)
 
-      const result = await translateAll(apiKey, text, languages)
+      const result = await translate(apiKey, text, languages)
 
       if (result.success) {
         setResults(result.translations)

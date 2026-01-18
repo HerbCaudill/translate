@@ -38,7 +38,7 @@ pnpm icons        # Regenerate PNG icons from SVG
 ### Translation Pipeline
 
 - Input checked against cache via `findByInput()`
-- If not cached, calls `translateAll()` in `src/lib/anthropic.ts`
+- If not cached, calls `translate()` in `src/lib/anthropic.ts`
 - Retries with exponential backoff on rate limiting (max 3 retries)
 - Results structured with meanings and options per language
 - Stored in history on save

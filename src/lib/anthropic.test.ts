@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
-import { translate, translateAll } from "./anthropic"
+import { translate } from "./anthropic"
 import Anthropic from "@anthropic-ai/sdk"
 
 vi.mock("@anthropic-ai/sdk")
@@ -35,158 +35,19 @@ const flushRetries = async () => {
 }
 
 describe("translate", () => {
-  const language = { code: "es", name: "Spanish" }
-
-  it("returns error for empty text", async () => {
-    const result = await translate("test-key", "", language)
-    expect(result).toEqual({ success: false, error: "No text to translate" })
-    expect(mockCreate).not.toHaveBeenCalled()
-  })
-
-  it("returns translation meanings on success", async () => {
-    const meanings = [
-      {
-        sense: "greeting",
-        options: [
-          { text: "Hola mundo", explanation: "Standard greeting" },
-          { text: "Hola a todos", explanation: "More formal" },
-        ],
-      },
-    ]
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ meanings }) }],
-    })
-
-    const result = await translate("test-key", "Hello world", language)
-    expect(result).toEqual({ success: true, meanings })
-  })
-
-  it("handles JSON parse error", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "not valid json" }],
-    })
-
-    const result = await translate("test-key", "Hello", language)
-    expect(result).toEqual({ success: false, error: "Failed to parse translation response" })
-  })
-
-  it("handles invalid response format", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ wrong: "format" }) }],
-    })
-
-    const result = await translate("test-key", "Hello", language)
-    expect(result).toEqual({ success: false, error: "Invalid response format" })
-  })
-
-  it("handles API authentication error", async () => {
-    mockCreate.mockRejectedValue(
-      new Anthropic.AuthenticationError(
-        401,
-        { type: "error", error: { type: "authentication_error", message: "Invalid" } },
-        "Invalid",
-        {} as Headers,
-      ),
-    )
-
-    const result = await translate("bad-key", "Hello", language)
-    expect(result).toEqual({ success: false, error: "Invalid API key" })
-  })
-
-  it("retries on rate limit error and eventually fails after max retries", async () => {
-    mockCreate.mockRejectedValue(createRateLimitError())
-
-    const resultPromise = translate("test-key", "Hello", language)
-    await flushRetries()
-    const result = await resultPromise
-
-    // Should have tried 4 times (1 initial + 3 retries)
-    expect(mockCreate).toHaveBeenCalledTimes(4)
-    expect(result).toEqual({
-      success: false,
-      error: "Rate limit exceeded. Please try again later.",
-    })
-  })
-
-  it("succeeds after rate limit retry", async () => {
-    const meanings = [
-      { sense: "greeting", options: [{ text: "Hola", explanation: "Standard greeting" }] },
-    ]
-    mockCreate
-      .mockRejectedValueOnce(createRateLimitError())
-      .mockResolvedValueOnce({ content: [{ type: "text", text: JSON.stringify({ meanings }) }] })
-
-    const resultPromise = translate("test-key", "Hello", language)
-    await flushRetries()
-    const result = await resultPromise
-
-    expect(mockCreate).toHaveBeenCalledTimes(2)
-    expect(result).toEqual({ success: true, meanings })
-  })
-
-  it("replaces language placeholder in prompt", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
-    })
-
-    await translate("test-key", "Hello", language)
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        system: expect.stringContaining("Spanish (es)"),
-      }),
-    )
-  })
-
-  it("includes JSON format instructions in prompt", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
-    })
-
-    await translate("test-key", "Hello", language)
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        system: expect.stringContaining("Respond in JSON format"),
-      }),
-    )
-  })
-
-  it("includes SAME_LANGUAGE instruction in prompt", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify({ meanings: [] }) }],
-    })
-
-    await translate("test-key", "Hello", language)
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        system: expect.stringContaining("SAME_LANGUAGE"),
-      }),
-    )
-  })
-
-  it("returns sourceLanguage when response is SAME_LANGUAGE", async () => {
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "SAME_LANGUAGE" }],
-    })
-
-    const result = await translate("test-key", "Hola", language)
-    expect(result).toEqual({ success: true, sourceLanguage: true })
-  })
-})
-
-describe("translateAll", () => {
   const languages = [
     { code: "es", name: "Spanish" },
     { code: "fr", name: "French" },
   ]
 
   it("returns error for empty text", async () => {
-    const result = await translateAll("test-key", "", languages)
+    const result = await translate("test-key", "", languages)
     expect(result).toEqual({ success: false, error: "No text to translate" })
     expect(mockCreate).not.toHaveBeenCalled()
   })
 
   it("returns empty translations for empty languages array", async () => {
-    const result = await translateAll("test-key", "Hello", [])
+    const result = await translate("test-key", "Hello", [])
     expect(result).toEqual({ success: true, translations: [] })
     expect(mockCreate).not.toHaveBeenCalled()
   })
@@ -220,7 +81,7 @@ describe("translateAll", () => {
       content: [{ type: "text", text: JSON.stringify(apiResponse) }],
     })
 
-    const result = await translateAll("test-key", "Hello world", languages)
+    const result = await translate("test-key", "Hello world", languages)
 
     expect(mockCreate).toHaveBeenCalledTimes(1)
     expect(result).toEqual({
@@ -268,7 +129,7 @@ describe("translateAll", () => {
       content: [{ type: "text", text: JSON.stringify(apiResponse) }],
     })
 
-    const result = await translateAll("test-key", "Hola", languages)
+    const result = await translate("test-key", "Hola", languages)
 
     expect(result).toEqual({
       success: true,
@@ -288,7 +149,7 @@ describe("translateAll", () => {
       content: [{ type: "text", text: JSON.stringify({ translations: [] }) }],
     })
 
-    await translateAll("test-key", "Hello", languages)
+    await translate("test-key", "Hello", languages)
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         system: expect.stringContaining("Spanish (es)"),
@@ -304,7 +165,7 @@ describe("translateAll", () => {
   it("handles rate limit with retries", async () => {
     mockCreate.mockRejectedValue(createRateLimitError())
 
-    const resultPromise = translateAll("test-key", "Hello", languages)
+    const resultPromise = translate("test-key", "Hello", languages)
     await flushRetries()
     const result = await resultPromise
 
@@ -325,7 +186,7 @@ describe("translateAll", () => {
       ),
     )
 
-    const result = await translateAll("bad-key", "Hello", languages)
+    const result = await translate("bad-key", "Hello", languages)
     expect(result).toEqual({ success: false, error: "Invalid API key" })
   })
 
@@ -365,7 +226,7 @@ describe("translateAll", () => {
       { code: "fr", name: "French" },
     ]
 
-    const result = await translateAll("test-key", "Hello world", settingsLanguages)
+    const result = await translate("test-key", "Hello world", settingsLanguages)
 
     expect(result).toEqual({
       success: true,

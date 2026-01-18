@@ -16,7 +16,7 @@ vi.mock("@/lib/crypto", () => ({
 }))
 
 vi.mock("@/lib/anthropic", () => ({
-  translateAll: vi.fn(),
+  translate: vi.fn(),
 }))
 
 vi.mock("sonner", () => ({
@@ -95,7 +95,7 @@ describe("App", () => {
       }),
     )
 
-    vi.mocked(anthropic.translateAll).mockResolvedValue({
+    vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
       translations: [
         {
@@ -116,7 +116,7 @@ describe("App", () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
+      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
         { code: "es", name: "Spanish" },
       ])
     })
@@ -131,7 +131,7 @@ describe("App", () => {
       }),
     )
 
-    vi.mocked(anthropic.translateAll).mockResolvedValue({
+    vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
       translations: [
         {
@@ -148,7 +148,7 @@ describe("App", () => {
     await user.type(input, "hello{Enter}")
 
     await waitFor(() => {
-      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
+      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
         { code: "es", name: "Spanish" },
       ])
     })
@@ -170,7 +170,7 @@ describe("App history saving", () => {
       }),
     )
 
-    vi.mocked(anthropic.translateAll).mockResolvedValue({
+    vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
       translations: [
         {
@@ -187,7 +187,7 @@ describe("App history saving", () => {
     await user.type(input, "hello{Enter}")
 
     await waitFor(() => {
-      expect(anthropic.translateAll).toHaveBeenCalled()
+      expect(anthropic.translate).toHaveBeenCalled()
     })
 
     // Check history was saved
@@ -217,7 +217,7 @@ describe("App error toasts", () => {
       }),
     )
 
-    vi.mocked(anthropic.translateAll).mockResolvedValue({
+    vi.mocked(anthropic.translate).mockResolvedValue({
       success: false,
       error: "API rate limit exceeded",
     })
@@ -371,7 +371,7 @@ describe("App translation caching", () => {
     })
 
     // API should NOT have been called since we used cached result
-    expect(anthropic.translateAll).not.toHaveBeenCalled()
+    expect(anthropic.translate).not.toHaveBeenCalled()
   })
 
   it("calls API when input does not match any cached entry", async () => {
@@ -407,7 +407,7 @@ describe("App translation caching", () => {
       }),
     )
 
-    vi.mocked(anthropic.translateAll).mockResolvedValue({
+    vi.mocked(anthropic.translate).mockResolvedValue({
       success: true,
       translations: [
         {
@@ -427,7 +427,7 @@ describe("App translation caching", () => {
 
     // API should be called since "hello" is not in history
     await waitFor(() => {
-      expect(anthropic.translateAll).toHaveBeenCalledWith("sk-ant-test123", "hello", [
+      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
         { code: "es", name: "Spanish" },
       ])
     })

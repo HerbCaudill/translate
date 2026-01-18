@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { Language, LanguageTranslation, Meaning } from "../types"
-import { MULTI_LANGUAGE_SYSTEM_PROMPT, SYSTEM_PROMPT } from "./prompts"
+import { SYSTEM_PROMPT } from "./prompts"
 import { apiLogger } from "./logger"
 
 const TRANSLATION_MODEL = "claude-sonnet-4-20250514"
@@ -31,8 +31,7 @@ const getRetryAfterMs = (error: InstanceType<typeof Anthropic.APIError>): number
 }
 
 export type TranslationResult =
-  | { success: true; meanings: Meaning[] }
-  | { success: true; sourceLanguage: true }
+  | { success: true; translations: LanguageTranslation[] }
   | { success: false; error: string }
 
 const createClient = (apiKey: string): Anthropic => {
@@ -42,152 +41,17 @@ const createClient = (apiKey: string): Anthropic => {
   })
 }
 
-export const translate = async (
-  apiKey: string,
-  text: string,
-  language: Language,
-): Promise<TranslationResult> => {
-  if (!text.trim()) {
-    return { success: false, error: "No text to translate" }
-  }
-
-  const client = createClient(apiKey)
-  const systemPrompt = SYSTEM_PROMPT.replace(
-    /\{\{language\}\}/g,
-    `${language.name} (${language.code})`,
-  )
-
-  let lastError: Error | undefined
-
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      apiLogger.request("messages.create", {
-        model: TRANSLATION_MODEL,
-        targetLanguage: language.name,
-        textLength: text.length,
-        attempt: attempt + 1,
-      })
-
-      const response = await client.messages.create({
-        model: TRANSLATION_MODEL,
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: [{ role: "user", content: text }],
-      })
-
-      const content = response.content[0]
-      if (content.type !== "text") {
-        apiLogger.error("messages.create", "Unexpected response format", {
-          contentType: content.type,
-        })
-        return { success: false, error: "Unexpected response format" }
-      }
-
-      const responseText = content.text.trim()
-
-      // Check if the text is already in the target language
-      if (responseText === "SAME_LANGUAGE") {
-        apiLogger.response("messages.create", {
-          targetLanguage: language.name,
-          result: "sourceLanguage",
-        })
-        return { success: true, sourceLanguage: true }
-      }
-
-      // Extract JSON from potential markdown code blocks or surrounding text
-      let jsonText = responseText
-
-      // Try extracting from markdown code blocks first
-      const codeBlockMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/)
-      if (codeBlockMatch) {
-        jsonText = codeBlockMatch[1].trim()
-      }
-
-      // If still not valid JSON, try to find a JSON object in the text
-      if (!jsonText.startsWith("{")) {
-        const jsonObjectMatch = jsonText.match(/\{[\s\S]*\}/)
-        if (jsonObjectMatch) {
-          jsonText = jsonObjectMatch[0]
-        }
-      }
-
-      const parsed = JSON.parse(jsonText) as { meanings: Meaning[] }
-      if (!parsed.meanings || !Array.isArray(parsed.meanings)) {
-        apiLogger.error("messages.create", "Invalid response format", {
-          targetLanguage: language.name,
-          hasMeanings: "meanings" in parsed,
-        })
-        return { success: false, error: "Invalid response format" }
-      }
-
-      apiLogger.response("messages.create", {
-        targetLanguage: language.name,
-        meaningsCount: parsed.meanings.length,
-      })
-      return { success: true, meanings: parsed.meanings }
-    } catch (error) {
-      lastError = error as Error
-
-      if (error instanceof SyntaxError) {
-        apiLogger.error("messages.create", "Failed to parse translation response", {
-          targetLanguage: language.name,
-        })
-        return { success: false, error: "Failed to parse translation response" }
-      }
-
-      if (error instanceof Anthropic.AuthenticationError) {
-        apiLogger.error("messages.create", "Invalid API key")
-        return { success: false, error: "Invalid API key" }
-      }
-
-      if (error instanceof Anthropic.RateLimitError) {
-        if (attempt < MAX_RETRIES) {
-          const retryAfterMs = getRetryAfterMs(error)
-          const delayMs = retryAfterMs ?? INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt)
-          apiLogger.retry(
-            "messages.create",
-            attempt + 1,
-            MAX_RETRIES,
-            delayMs,
-            "Rate limit exceeded",
-          )
-          await sleep(delayMs)
-          continue
-        }
-        apiLogger.error("messages.create", "Rate limit exceeded - max retries reached", {
-          attempts: attempt + 1,
-        })
-        return { success: false, error: "Rate limit exceeded. Please try again later." }
-      }
-
-      if (error instanceof Anthropic.APIError) {
-        apiLogger.error("messages.create", error.message, {
-          status: error.status,
-        })
-        return { success: false, error: `API error: ${error.message}` }
-      }
-    }
-  }
-
-  apiLogger.error("messages.create", lastError?.message ?? "Failed to translate")
-  return { success: false, error: lastError?.message ?? "Failed to translate" }
-}
-
-export type MultiTranslationResult =
-  | { success: true; translations: LanguageTranslation[] }
-  | { success: false; error: string }
-
 type ApiTranslationEntry = {
   languageCode: string
   sourceLanguage?: boolean
   meanings?: Meaning[]
 }
 
-export const translateAll = async (
+export const translate = async (
   apiKey: string,
   text: string,
   languages: Language[],
-): Promise<MultiTranslationResult> => {
+): Promise<TranslationResult> => {
   if (!text.trim()) {
     return { success: false, error: "No text to translate" }
   }
@@ -198,7 +62,7 @@ export const translateAll = async (
 
   const client = createClient(apiKey)
   const languageList = languages.map(l => `${l.name} (${l.code})`).join(", ")
-  const systemPrompt = MULTI_LANGUAGE_SYSTEM_PROMPT.replace(/\{\{languages\}\}/g, languageList)
+  const systemPrompt = SYSTEM_PROMPT.replace(/\{\{languages\}\}/g, languageList)
 
   let lastError: Error | undefined
 
