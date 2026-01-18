@@ -23,7 +23,7 @@ export const useTranslation = ({ apiKey, languages }: Props) => {
       setAlternateSources(undefined)
       setError(undefined)
 
-      const result = await translate(apiKey, text, languages)
+      const result = await translate({ apiKey, text, languages })
 
       if (result.success) {
         setResults(result.translations)

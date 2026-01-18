@@ -43,13 +43,13 @@ describe("translate", () => {
   ]
 
   it("returns error for empty text", async () => {
-    const result = await translate("test-key", "", languages)
+    const result = await translate({ apiKey: "test-key", text: "", languages })
     expect(result).toEqual({ success: false, error: "No text to translate" })
     expect(mockParse).not.toHaveBeenCalled()
   })
 
   it("returns empty translations for empty languages array", async () => {
-    const result = await translate("test-key", "Hello", [])
+    const result = await translate({ apiKey: "test-key", text: "Hello", languages: [] })
     expect(result).toEqual({ success: true, translations: [], source: "Unknown" })
     expect(mockParse).not.toHaveBeenCalled()
   })
@@ -81,7 +81,7 @@ describe("translate", () => {
     }
     mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
-    const result = await translate("test-key", "Hello world", languages)
+    const result = await translate({ apiKey: "test-key", text: "Hello world", languages })
 
     expect(mockParse).toHaveBeenCalledTimes(1)
     expect(result).toEqual({
@@ -130,7 +130,7 @@ describe("translate", () => {
     }
     mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
-    const result = await translate("test-key", "Hola", languages)
+    const result = await translate({ apiKey: "test-key", text: "Hola", languages })
 
     expect(result).toEqual({
       success: true,
@@ -163,7 +163,7 @@ describe("translate", () => {
     }
     mockParse.mockResolvedValue({ parsed_output: parsedOutput })
 
-    const result = await translate("test-key", "Hola", languages)
+    const result = await translate({ apiKey: "test-key", text: "Hola", languages })
 
     expect(result).toEqual({
       success: true,
@@ -185,7 +185,7 @@ describe("translate", () => {
       parsed_output: { input: "Hello", source: "en", translations: [] },
     })
 
-    await translate("test-key", "Hello", languages)
+    await translate({ apiKey: "test-key", text: "Hello", languages })
     expect(mockParse).toHaveBeenCalledWith(
       expect.objectContaining({
         system: expect.stringContaining("Spanish (es)"),
@@ -198,10 +198,46 @@ describe("translate", () => {
     )
   })
 
+  it("includes sourceLanguageHint in system prompt when provided", async () => {
+    mockParse.mockResolvedValue({
+      parsed_output: { input: "chat", source: "fr", translations: [] },
+    })
+
+    await translate({
+      apiKey: "test-key",
+      text: "chat",
+      languages,
+      sourceLanguageHint: "fr",
+    })
+    expect(mockParse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining("Source language hint:"),
+      }),
+    )
+    expect(mockParse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining("French (fr)"),
+      }),
+    )
+  })
+
+  it("does not include sourceLanguageHint in system prompt when not provided", async () => {
+    mockParse.mockResolvedValue({
+      parsed_output: { input: "Hello", source: "en", translations: [] },
+    })
+
+    await translate({ apiKey: "test-key", text: "Hello", languages })
+    expect(mockParse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.not.stringContaining("Source language hint:"),
+      }),
+    )
+  })
+
   it("handles rate limit with retries", async () => {
     mockParse.mockRejectedValue(createRateLimitError())
 
-    const resultPromise = translate("test-key", "Hello", languages)
+    const resultPromise = translate({ apiKey: "test-key", text: "Hello", languages })
     await flushRetries()
     const result = await resultPromise
 
@@ -222,7 +258,7 @@ describe("translate", () => {
       ),
     )
 
-    const result = await translate("bad-key", "Hello", languages)
+    const result = await translate({ apiKey: "bad-key", text: "Hello", languages })
     expect(result).toEqual({ success: false, error: "Invalid API key" })
   })
 
@@ -260,7 +296,11 @@ describe("translate", () => {
       { code: "fr", name: "French" },
     ]
 
-    const result = await translate("test-key", "Hello world", settingsLanguages)
+    const result = await translate({
+      apiKey: "test-key",
+      text: "Hello world",
+      languages: settingsLanguages,
+    })
 
     expect(result).toEqual({
       success: true,

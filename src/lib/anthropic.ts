@@ -15,11 +15,17 @@ const createClient = (apiKey: string): Anthropic => {
   })
 }
 
-export const translate = async (
-  apiKey: string,
-  text: string,
-  languages: Language[],
-): Promise<TranslationResult> => {
+export type TranslateOptions = {
+  apiKey: string
+  text: string
+  languages: Language[]
+  /** Optional hint for which language to treat as the source */
+  sourceLanguageHint?: string
+}
+
+export const translate = async (options: TranslateOptions): Promise<TranslationResult> => {
+  const { apiKey, text, languages, sourceLanguageHint } = options
+
   if (!text.trim()) {
     return { success: false, error: "No text to translate" }
   }
@@ -30,7 +36,27 @@ export const translate = async (
 
   const client = createClient(apiKey)
   const languageList = languages.map(l => `${l.name} (${l.code})`).join(", ")
-  const systemPrompt = systemPromptRaw.replace(/\{\{languages\}\}/g, languageList)
+
+  // Build the system prompt with optional sourceLanguageHint
+  let systemPrompt = systemPromptRaw.replace(/\{\{languages\}\}/g, languageList)
+
+  // Handle the sourceLanguageHint template
+  if (sourceLanguageHint) {
+    // Find the language name for the hint
+    const hintLanguage = languages.find(l => l.code === sourceLanguageHint)
+    const hintText =
+      hintLanguage ? `${hintLanguage.name} (${hintLanguage.code})` : sourceLanguageHint
+    systemPrompt = systemPrompt
+      .replace(/\{\{#if sourceLanguageHint\}\}/g, "")
+      .replace(/\{\{\/if\}\}/g, "")
+      .replace(/\{\{sourceLanguageHint\}\}/g, hintText)
+  } else {
+    // Remove the conditional block when no hint is provided
+    systemPrompt = systemPrompt.replace(
+      /\{\{#if sourceLanguageHint\}\}[\s\S]*?\{\{\/if\}\}\n?/g,
+      "",
+    )
+  }
 
   let lastError: Error | undefined
 

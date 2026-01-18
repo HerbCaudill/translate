@@ -66,7 +66,7 @@ describe("useTranslation", () => {
 
     expect(result.current.results).toHaveLength(2)
     expect(mockTranslate).toHaveBeenCalledTimes(1)
-    expect(mockTranslate).toHaveBeenCalledWith(apiKey, "Hello world", languages)
+    expect(mockTranslate).toHaveBeenCalledWith({ apiKey, text: "Hello world", languages })
   })
 
   it("should not translate empty text", () => {
@@ -168,7 +168,7 @@ describe("useTranslation", () => {
     })
 
     expect(mockTranslate).toHaveBeenCalledTimes(1)
-    expect(mockTranslate).toHaveBeenCalledWith(apiKey, "Hello", threeLanguages)
+    expect(mockTranslate).toHaveBeenCalledWith({ apiKey, text: "Hello", languages: threeLanguages })
     expect(result.current.results).toHaveLength(3)
   })
 

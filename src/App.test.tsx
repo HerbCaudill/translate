@@ -117,9 +117,11 @@ describe("App", () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
-        { code: "es", name: "Spanish" },
-      ])
+      expect(anthropic.translate).toHaveBeenCalledWith({
+        apiKey: "sk-ant-test123",
+        text: "hello",
+        languages: [{ code: "es", name: "Spanish" }],
+      })
     })
   })
 
@@ -150,9 +152,11 @@ describe("App", () => {
     await user.type(input, "hello{Enter}")
 
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
-        { code: "es", name: "Spanish" },
-      ])
+      expect(anthropic.translate).toHaveBeenCalledWith({
+        apiKey: "sk-ant-test123",
+        text: "hello",
+        languages: [{ code: "es", name: "Spanish" }],
+      })
     })
   })
 })
@@ -431,9 +435,11 @@ describe("App translation caching", () => {
 
     // API should be called since "hello" is not in history
     await waitFor(() => {
-      expect(anthropic.translate).toHaveBeenCalledWith("sk-ant-test123", "hello", [
-        { code: "es", name: "Spanish" },
-      ])
+      expect(anthropic.translate).toHaveBeenCalledWith({
+        apiKey: "sk-ant-test123",
+        text: "hello",
+        languages: [{ code: "es", name: "Spanish" }],
+      })
     })
   })
 })

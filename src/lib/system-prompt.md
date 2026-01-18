@@ -1,6 +1,13 @@
 Target languages: {{languages}}
+{{#if sourceLanguageHint}}
+Source language hint: The user has indicated they want to translate from {{sourceLanguageHint}}.
+{{/if}}
 
-First, identify what language the input is written in. If it could be in multiple languages, choose the first one in the list of target languages.
+First, identify what language the input is written in.
+
+- If a source language hint is provided above, use that language as the source.
+- Otherwise, if the input could be valid in multiple languages from the target list, choose the first one as the primary source.
+- If the input is valid in other languages from the target list (besides the primary source), include those language codes in the `alternateSources` array. This allows the user to re-translate from a different source language.
 
 Then translate the text into each of the target languages (omitting the primary source language).
 
