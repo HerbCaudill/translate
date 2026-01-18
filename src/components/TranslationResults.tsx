@@ -28,8 +28,8 @@ export function TranslationResults({
     }
   }, [results.length > 0]) // Only trigger when we go from no results to having results
 
-  // Get selectable languages for swipe navigation (exclude source language)
-  const selectableLanguages = languages.filter(l => l.code !== sourceLanguage)
+  // Get languages that should be shown in tabs (exclude source language)
+  const displayLanguages = languages.filter(l => l.code !== sourceLanguage)
 
   // Get source language name for display
   const sourceLanguageName = languages.find(l => l.code === sourceLanguage)?.name
@@ -37,22 +37,22 @@ export function TranslationResults({
   // Navigate to next/previous tab (for swipe gestures)
   const navigateTab = useCallback(
     (direction: "next" | "prev") => {
-      const currentIndex = selectableLanguages.findIndex(l => l.code === selectedTab)
-      if (currentIndex === -1 && selectableLanguages.length > 0) {
-        onTabChange(selectableLanguages[0].code)
+      const currentIndex = displayLanguages.findIndex(l => l.code === selectedTab)
+      if (currentIndex === -1 && displayLanguages.length > 0) {
+        onTabChange(displayLanguages[0].code)
         return
       }
 
       let newIndex: number
       if (direction === "next") {
-        newIndex = (currentIndex + 1) % selectableLanguages.length
+        newIndex = (currentIndex + 1) % displayLanguages.length
       } else {
-        newIndex = (currentIndex - 1 + selectableLanguages.length) % selectableLanguages.length
+        newIndex = (currentIndex - 1 + displayLanguages.length) % displayLanguages.length
       }
 
-      onTabChange(selectableLanguages[newIndex].code)
+      onTabChange(displayLanguages[newIndex].code)
     },
-    [selectableLanguages, selectedTab, onTabChange],
+    [displayLanguages, selectedTab, onTabChange],
   )
 
   // Swipe gesture handler
@@ -110,12 +110,8 @@ export function TranslationResults({
             className="flex items-center justify-between gap-2 outline-none"
           >
             <TabsList className="flex-wrap">
-              {languages.map(language => (
-                <TabsTrigger
-                  key={language.code}
-                  value={language.code}
-                  disabled={language.code === sourceLanguage}
-                >
+              {displayLanguages.map(language => (
+                <TabsTrigger key={language.code} value={language.code}>
                   {language.name}
                 </TabsTrigger>
               ))}

@@ -50,17 +50,12 @@ describe("TranslationResults", () => {
     vi.clearAllMocks()
   })
 
-  it("renders all language tabs including source language", () => {
+  it("renders language tabs excluding the source language", () => {
     render(<TranslationResults {...defaultProps} />)
-    expect(screen.getByRole("tab", { name: "English" })).toBeInTheDocument()
+    expect(screen.queryByRole("tab", { name: "English" })).not.toBeInTheDocument()
     expect(screen.getByRole("tab", { name: "Spanish" })).toBeInTheDocument()
     expect(screen.getByRole("tab", { name: "French" })).toBeInTheDocument()
     expect(screen.getByRole("tab", { name: "German" })).toBeInTheDocument()
-  })
-
-  it("disables source language tab", () => {
-    render(<TranslationResults {...defaultProps} />)
-    expect(screen.getByRole("tab", { name: "English" })).toBeDisabled()
   })
 
   it("shows selected tab content", () => {
