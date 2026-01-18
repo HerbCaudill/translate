@@ -70,28 +70,41 @@ Target languages: Spanish, French
 }
 ```
 
-### Example 2: Source language is one of the target languages
+### Example 2: Word with multiple possible source languages
 
-Input: "gato"
-Target languages: Spanish, French
+Input: "chat"
+Target languages: French, English, Spanish
+
+This word could be French ("cat") or English ("conversation"). Since French appears first in the target languages, we interpret it as French.
 
 ```json
 {
-  "input": "gato",
-  "source": "es",
+  "input": "chat",
+  "source": "fr",
   "translations": [
     {
-      "languageCode": "es",
-      "sourceLanguage": true,
-      "meanings": []
-    },
-    {
-      "languageCode": "fr",
+      "languageCode": "en",
       "sourceLanguage": false,
       "meanings": [
         {
-          "sense": "Animal domestique félin",
-          "options": [{ "text": "chat", "explanation": "Terme standard" }]
+          "sense": "Domestic feline animal",
+          "options": [
+            { "text": "cat", "explanation": "Standard term" },
+            { "text": "kitty", "explanation": "Informal, affectionate" }
+          ]
+        }
+      ]
+    },
+    {
+      "languageCode": "es",
+      "sourceLanguage": false,
+      "meanings": [
+        {
+          "sense": "Animal felino doméstico",
+          "options": [
+            { "text": "gato", "explanation": "Término estándar" },
+            { "text": "minino", "explanation": "Informal, cariñoso" }
+          ]
         }
       ]
     }
