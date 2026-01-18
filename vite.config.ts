@@ -81,6 +81,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Workaround: SDK exports don't include nested helpers paths
+      "@anthropic-ai/sdk/helpers/beta/json-schema.mjs": path.resolve(
+        __dirname,
+        "./node_modules/@anthropic-ai/sdk/helpers/beta/json-schema.mjs",
+      ),
     },
   },
 })
