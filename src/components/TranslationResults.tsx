@@ -91,7 +91,7 @@ export function TranslationResults({
               {alternateSources && alternateSources.length > 0 && onAlternateSourceSelect && (
                 <>
                   <span className="text-xs text-gray-500">·</span>
-                  <span className="text-xs text-gray-500">Interpret as</span>
+                  <span className="text-xs text-gray-500">Could be</span>
                   {alternateSources.map(code => {
                     const langName = languages.find(l => l.code === code)?.name ?? code
                     return (

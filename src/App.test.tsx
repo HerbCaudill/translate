@@ -490,8 +490,8 @@ describe("App alternate source selection", () => {
       expect(screen.getByText("Translated from")).toBeInTheDocument()
     })
 
-    // Should show "Interpret as" with alternate source button
-    expect(screen.getByText("Interpret as")).toBeInTheDocument()
+    // Should show "Could be" with alternate source button
+    expect(screen.getByText("Could be")).toBeInTheDocument()
     expect(screen.getByRole("button", { name: /translate as french/i })).toBeInTheDocument()
   })
 
@@ -630,7 +630,7 @@ describe("App alternate source selection", () => {
 
     // Should show alternate source button from history entry
     await waitFor(() => {
-      expect(screen.getByText("Interpret as")).toBeInTheDocument()
+      expect(screen.getByText("Could be")).toBeInTheDocument()
       expect(screen.getByRole("button", { name: /translate as spanish/i })).toBeInTheDocument()
     })
   })
