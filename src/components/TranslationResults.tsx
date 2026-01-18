@@ -80,7 +80,7 @@ export function TranslationResults({
       {/* Translated from banner and tabs - hidden while loading */}
       {!isLoading && sourceLanguageName && (
         <div className="-mx-4 -mt-4 mb-2 flex items-center justify-between bg-blue-50 px-4 py-1.5 sm:-mx-6 sm:-mt-6 sm:px-6">
-          <p className="text-sm text-black">
+          <p className="text-xs text-black">
             Translated from <span className="font-bold">{sourceLanguageName}</span>
           </p>
           {onRefresh && (
