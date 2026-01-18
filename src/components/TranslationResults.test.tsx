@@ -161,4 +161,96 @@ describe("TranslationResults", () => {
     const swipeTarget = tabsContent?.querySelector(".touch-pan-y")
     expect(swipeTarget).toHaveClass("flex-1")
   })
+
+  describe("alternate source selection", () => {
+    it("does not show alternate source buttons when alternateSources is not provided", () => {
+      render(<TranslationResults {...defaultProps} />)
+      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+    })
+
+    it("does not show alternate source buttons when alternateSources is empty", () => {
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={[]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+        />,
+      )
+      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+    })
+
+    it("does not show alternate source buttons when onAlternateSourceSelect is not provided", () => {
+      render(<TranslationResults {...defaultProps} alternateSources={["es", "fr"]} />)
+      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+    })
+
+    it("shows alternate source buttons when alternateSources and onAlternateSourceSelect are provided", () => {
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={["es", "fr"]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+        />,
+      )
+      expect(screen.getByText("Not right?")).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: "Translate as Spanish" })).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: "Translate as French" })).toBeInTheDocument()
+    })
+
+    it("calls onAlternateSourceSelect with the language code when clicking an alternate source button", async () => {
+      const user = userEvent.setup()
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={["es", "fr"]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+        />,
+      )
+
+      await user.click(screen.getByRole("button", { name: "Translate as French" }))
+      expect(onAlternateSourceSelect).toHaveBeenCalledWith("fr")
+    })
+
+    it("displays language code when language name is not found in languages list", () => {
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={["it"]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+        />,
+      )
+      // Should fall back to displaying the code when name not found
+      expect(screen.getByRole("button", { name: "Translate as it" })).toBeInTheDocument()
+    })
+
+    it("hides alternate source buttons when isLoading is true", () => {
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={["es"]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+          isLoading
+        />,
+      )
+      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+    })
+
+    it("hides alternate source buttons when isTyping is true", () => {
+      const onAlternateSourceSelect = vi.fn()
+      render(
+        <TranslationResults
+          {...defaultProps}
+          alternateSources={["es"]}
+          onAlternateSourceSelect={onAlternateSourceSelect}
+          isTyping
+        />,
+      )
+      expect(screen.queryByText("Not right?")).not.toBeInTheDocument()
+    })
+  })
 })

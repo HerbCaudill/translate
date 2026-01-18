@@ -11,12 +11,14 @@ export function TranslationResults({
   results,
   languages,
   sourceLanguage,
+  alternateSources,
   selectedTab,
   onTabChange,
   isLoading = false,
   isTyping = false,
   onRefresh,
   isRefreshing = false,
+  onAlternateSourceSelect,
 }: Props) {
   const tabsContainerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -82,9 +84,32 @@ export function TranslationResults({
       {!isLoading && !isTyping && sourceLanguageName && (
         <div className="mb-2 flex items-center justify-between bg-blue-50">
           <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-1.5 sm:px-6">
-            <p className="text-xs text-black">
-              Translated from <span className="font-bold">{sourceLanguageName}</span>
-            </p>
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              <p className="text-xs text-black">
+                Translated from <span className="font-bold">{sourceLanguageName}</span>
+              </p>
+              {alternateSources && alternateSources.length > 0 && onAlternateSourceSelect && (
+                <>
+                  <span className="text-xs text-gray-500">·</span>
+                  <span className="text-xs text-gray-500">Not right?</span>
+                  {alternateSources.map(code => {
+                    const langName = languages.find(l => l.code === code)?.name ?? code
+                    return (
+                      <Button
+                        key={code}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onAlternateSourceSelect(code)}
+                        className="h-5 px-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-800"
+                        aria-label={`Translate as ${langName}`}
+                      >
+                        {langName}
+                      </Button>
+                    )
+                  })}
+                </>
+              )}
+            </div>
             {onRefresh && (
               <Button
                 variant="ghost"
@@ -174,10 +199,12 @@ type Props = {
   results: LanguageTranslation[]
   languages: Language[]
   sourceLanguage?: string
+  alternateSources?: string[]
   selectedTab: string
   onTabChange: (value: string) => void
   isLoading?: boolean
   isTyping?: boolean
   onRefresh?: () => void
   isRefreshing?: boolean
+  onAlternateSourceSelect?: (languageCode: string) => void
 }
