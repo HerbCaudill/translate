@@ -4,3 +4,9 @@ dist
 .env
 .env.local
 .vercel
+.DS_Store
+
+# Test artifacts
+playwright-report
+test-results
+.ralph/events.log
