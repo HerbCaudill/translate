@@ -95,17 +95,15 @@ export function TranslationResults({
                   {alternateSources.map((code, index) => {
                     const langName = languages.find(l => l.code === code)?.name ?? code
                     return (
-                      <span key={code}>
+                      <span key={code} className="text-xs text-gray-500">
                         <button
                           onClick={() => onAlternateSourceSelect(code)}
-                          className="text-xs font-medium text-blue-600 underline hover:text-blue-800"
+                          className="font-medium text-blue-600 underline hover:text-blue-800"
                           aria-label={`Translate as ${langName}`}
                         >
                           {langName}
                         </button>
-                        {index < alternateSources.length - 1 && (
-                          <span className="text-xs text-gray-500">, </span>
-                        )}
+                        {index < alternateSources.length - 1 && ", "}
                       </span>
                     )
                   })}
