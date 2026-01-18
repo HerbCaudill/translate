@@ -135,6 +135,22 @@ describe("TranslationResults", () => {
     expect(skeletons.length).toBe(6)
   })
 
+  it("hides tabs and shows skeleton when isTyping is true", () => {
+    const { container } = render(<TranslationResults {...defaultProps} isTyping />)
+    // Tabs should not be visible
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument()
+    // Skeleton should be visible instead of translation content
+    const skeletons = container.querySelectorAll('[data-slot="skeleton"]')
+    expect(skeletons.length).toBeGreaterThan(0)
+    // Translation content should not be visible
+    expect(screen.queryByText("Hola")).not.toBeInTheDocument()
+  })
+
+  it("hides 'Translated from' banner when isTyping is true", () => {
+    render(<TranslationResults {...defaultProps} isTyping />)
+    expect(screen.queryByText(/Translated from/)).not.toBeInTheDocument()
+  })
+
   it("uses flex layout to fill available vertical space for swipe target", () => {
     const { container } = render(<TranslationResults {...defaultProps} />)
 

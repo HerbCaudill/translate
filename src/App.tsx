@@ -145,6 +145,22 @@ export function App() {
   // Show history results if selected, otherwise show translation results
   const displayResults = selectedHistoryEntry?.translation.results ?? results
 
+  // Determine if user is typing (input differs from what's displayed)
+  // This is true when user has typed something but hasn't submitted yet
+  const isTyping = useMemo(() => {
+    const trimmedInput = inputText.trim()
+    if (!trimmedInput) return false
+    if (translationStatus === "translating") return false
+
+    // Check if input matches the source of displayed results
+    if (selectedHistoryEntry) {
+      return trimmedInput !== selectedHistoryEntry.input
+    }
+
+    // If no history entry selected, compare to what was last translated
+    return trimmedInput !== translatedTextRef.current
+  }, [inputText, translationStatus, selectedHistoryEntry])
+
   // Detect source language by finding which configured language is missing from results
   const sourceLanguage = useMemo(() => {
     if (displayResults.length === 0) return undefined
@@ -304,6 +320,7 @@ export function App() {
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
             isLoading={translationStatus === "translating"}
+            isTyping={isTyping}
             onRefresh={handleRefresh}
             isRefreshing={translationStatus === "translating"}
           />
