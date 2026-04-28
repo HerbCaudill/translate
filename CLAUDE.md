@@ -16,6 +16,7 @@ pnpm test:e2e     # Run Playwright end-to-end tests
 pnpm typecheck    # TypeScript type checking only
 pnpm format       # Format code with Prettier
 pnpm icons        # Regenerate PNG icons from SVG
+pnpm encrypt-key  # Generate src/encrypted-key.json from an API key + password
 ```
 
 ## Tech Stack
@@ -31,7 +32,7 @@ pnpm icons        # Regenerate PNG icons from SVG
 ### Data Flow
 
 1. **App.tsx** orchestrates all state via custom hooks
-2. **useSettings** manages API key and selected languages (localStorage)
+2. **useSettings** manages the resolved plaintext API key and selected languages in `translate:settings` (localStorage)
 3. **useHistory** manages translation cache and history (localStorage)
 4. **useTranslation** handles API calls to Claude
 
@@ -43,12 +44,23 @@ pnpm icons        # Regenerate PNG icons from SVG
 - Results structured with meanings and options per language
 - Stored in history on save
 
+### Encrypted API key flow
+
+- `pnpm encrypt-key` writes `src/encrypted-key.json` using an API key from `.env` or an interactive prompt plus a user-supplied password
+- The script uses PBKDF2 + AES-256-GCM to produce `{ salt, iv, ciphertext }`
+- `src/components/ApiKeyPrompt.tsx` lazy-loads `src/encrypted-key.json` if present
+- If the user enters text starting with `sk-ant-`, the app treats it as a raw Anthropic API key; otherwise, when `encrypted-key.json` exists, the app treats the input as the decryption password and decrypts client-side via `@herbcaudill/easy-api-key`
+- After decryption and validation, the plaintext API key is stored in localStorage through `useSettings`; the encrypted file is only a bootstrap mechanism, not the app's persisted storage format
+- `VITE_ANTHROPIC_API_KEY` still takes precedence over any stored key
+
 ### Key Files
 
 - [App.tsx](src/App.tsx) - Main orchestration
+- [ApiKeyPrompt.tsx](src/components/ApiKeyPrompt.tsx) - Raw-key entry or password-based client-side decryption
+- [useSettings.ts](src/hooks/useSettings.ts) - localStorage-backed settings with env var precedence
 - [anthropic.ts](src/lib/anthropic.ts) - Claude API integration with retries
-- [useTranslation.ts](src/hooks/useTranslation.ts) - Translation state management
 - [TranslateInput.tsx](src/components/TranslateInput.tsx) - Input with history suggestions
+- [scripts/encrypt-key.ts](scripts/encrypt-key.ts) - CLI helper for generating `src/encrypted-key.json`
 
 ## Code Conventions
 
@@ -69,7 +81,8 @@ pnpm icons        # Regenerate PNG icons from SVG
 - Path alias: `@/*` → `./src/*`
 - Prettier: 100 chars, 2 spaces, no semicolons, double quotes, trailing commas
 - PWA theme color: `#2563eb` (blue-600)
-- Environment: `VITE_ANTHROPIC_API_KEY` for Claude API
+- Environment: `VITE_ANTHROPIC_API_KEY` for Claude API; this overrides any API key saved in localStorage
+- Optional encrypted bootstrap file: `src/encrypted-key.json`
 
 ## Issue Tracking
 
