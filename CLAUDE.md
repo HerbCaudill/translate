@@ -52,6 +52,7 @@ pnpm encrypt-key  # Generate src/encrypted-key.json from an API key + password
 - If the user enters text starting with `sk-ant-`, the app treats it as a raw Anthropic API key; otherwise, when `encrypted-key.json` exists, the app treats the input as the decryption password and decrypts client-side via `@herbcaudill/easy-api-key`
 - After decryption and validation, the plaintext API key is stored in localStorage through `useSettings`; the encrypted file is only a bootstrap mechanism, not the app's persisted storage format
 - `VITE_ANTHROPIC_API_KEY` still takes precedence over any stored key
+- The current Anthropic API key source of truth is `~/.secrets` (`xx_ANTHROPIC_API_KEY`); when rotating the encrypted bootstrap key, ask the user which encryption password to use
 
 ### Key Files
 
@@ -61,6 +62,7 @@ pnpm encrypt-key  # Generate src/encrypted-key.json from an API key + password
 - [anthropic.ts](src/lib/anthropic.ts) - Claude API integration with retries
 - [TranslateInput.tsx](src/components/TranslateInput.tsx) - Input with history suggestions
 - [scripts/encrypt-key.ts](scripts/encrypt-key.ts) - CLI helper for generating `src/encrypted-key.json`
+- [.pi/skills/update-api-key/SKILL.md](.pi/skills/update-api-key/SKILL.md) - Local skill for rotating the Anthropic API key from `~/.secrets`
 
 ## Code Conventions
 
