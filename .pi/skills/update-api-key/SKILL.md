@@ -7,7 +7,7 @@ description: Use when the translate app's Anthropic API key has changed and the 
 
 Use this for the `translate` repo when the Anthropic API key changes.
 
-Read the current key from `~/.secrets`, not from chat. The expected variable is `xx_ANTHROPIC_API_KEY`.
+Read the current key from `~/.secrets`, not from chat. The expected variable is `ANTHROPIC_API_KEY` or `xx_ANTHROPIC_API_KEY`.
 
 Ask the user for the encryption password before regenerating `src/encrypted-key.json`.
 
