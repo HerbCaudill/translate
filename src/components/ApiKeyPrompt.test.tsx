@@ -7,18 +7,20 @@ vi.mock("@/lib/validateApiKey", () => ({
   validateApiKey: vi.fn(),
 }))
 
-vi.mock("@/lib/crypto", () => ({
-  decryptApiKey: vi.fn(),
-  hasEncryptedKey: vi.fn().mockResolvedValue(false),
+vi.mock("@herbcaudill/easy-api-key", () => ({
+  decryptSecret: vi.fn(),
 }))
 
+import { decryptSecret } from "@herbcaudill/easy-api-key"
 import { validateApiKey } from "@/lib/validateApiKey"
 
+const mockDecryptSecret = decryptSecret as ReturnType<typeof vi.fn>
 const mockValidateApiKey = validateApiKey as ReturnType<typeof vi.fn>
 
 describe("ApiKeyPrompt", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockDecryptSecret.mockResolvedValue("sk-ant-decrypted")
     mockValidateApiKey.mockResolvedValue({ valid: true })
   })
   it("renders the form with title and input", () => {
@@ -192,6 +194,43 @@ describe("ApiKeyPrompt", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Invalid API key")).toBeInTheDocument()
+    })
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it("shows a helpful error when password decryption fails", async () => {
+    const user = userEvent.setup()
+    mockDecryptSecret.mockRejectedValue(new Error("bad password"))
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    await user.type(screen.getByLabelText("API key"), "wrong-password")
+    await user.click(screen.getByRole("button", { name: /save api key/i }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "We couldn’t decrypt the saved API key. Check the password and try again.",
+        ),
+      ).toBeInTheDocument()
+    })
+    expect(mockValidateApiKey).not.toHaveBeenCalled()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it("shows a helpful error when validation cannot complete", async () => {
+    const user = userEvent.setup()
+    mockValidateApiKey.mockRejectedValue(new Error("network unavailable"))
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApiKeyPrompt onSubmit={onSubmit} />)
+
+    await user.type(screen.getByLabelText("API key"), "sk-ant-test123")
+    await user.click(screen.getByRole("button", { name: /save api key/i }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("We couldn’t validate the API key. Check your connection and try again."),
+      ).toBeInTheDocument()
     })
     expect(onSubmit).not.toHaveBeenCalled()
   })

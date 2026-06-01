@@ -13,6 +13,15 @@ import {
 import { validateApiKey } from "@/lib/validateApiKey"
 import { decryptSecret, type EncryptedData } from "@herbcaudill/easy-api-key"
 
+/** The message shown when the encrypted bootstrap key cannot be decrypted. */
+const DECRYPTION_ERROR_MESSAGE =
+  "We couldn’t decrypt the saved API key. Check the password and try again."
+
+/** The message shown when API key validation fails unexpectedly. */
+const VALIDATION_ERROR_MESSAGE =
+  "We couldn’t validate the API key. Check your connection and try again."
+
+/** Load the optional encrypted bootstrap API key bundle. */
 const loadEncryptedKey = async (): Promise<EncryptedData | null> => {
   try {
     return await import("@/encrypted-key.json")
@@ -21,7 +30,7 @@ const loadEncryptedKey = async (): Promise<EncryptedData | null> => {
   }
 }
 
-// Check if a string looks like an Anthropic API key format
+/** Check if a string looks like an Anthropic API key format. */
 const looksLikeApiKey = (text: string): boolean => {
   return text.trim().startsWith("sk-ant-")
 }
@@ -51,7 +60,7 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
       try {
         apiKey = await decryptSecret(value, encryptedKey)
       } catch {
-        setError("Invalid password")
+        setError(DECRYPTION_ERROR_MESSAGE)
         setIsSubmitting(false)
         return
       }
@@ -61,7 +70,15 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
       return
     }
 
-    const result = await validateApiKey(apiKey)
+    let result: Awaited<ReturnType<typeof validateApiKey>>
+
+    try {
+      result = await validateApiKey(apiKey)
+    } catch {
+      setError(VALIDATION_ERROR_MESSAGE)
+      setIsSubmitting(false)
+      return
+    }
 
     if (!result.valid) {
       setError(result.error)
@@ -98,7 +115,8 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
             API key required
           </CardTitle>
           <CardDescription>
-            Enter your Anthropic API key to use the translation service.
+            Enter your Anthropic API key, or the password for the saved key, to use the translation
+            service.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -127,7 +145,11 @@ export const ApiKeyPrompt = ({ onSubmit }: Props) => {
                   <IconExternalLink className="size-3" />
                 </a>
               </p>
-              {error && <p className="text-destructive text-sm">{error}</p>}
+              {error && (
+                <p className="text-destructive text-sm" role="alert">
+                  {error}
+                </p>
+              )}
             </div>
           </CardContent>
           <CardFooter>
