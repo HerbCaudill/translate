@@ -145,11 +145,11 @@ export function TranslationResults({
         )}
         <TabsContent value={selectedTab} className="flex flex-1 flex-col">
           <div ref={contentRef} {...bind()} className="flex-1 touch-pan-y">
-            {isLoading || isTyping ?
+            {isLoading || isTyping ? (
               <TranslationSkeleton />
-            : selectedResult ?
+            ) : selectedResult ? (
               <TranslationContent translation={selectedResult} />
-            : null}
+            ) : null}
           </div>
         </TabsContent>
       </div>

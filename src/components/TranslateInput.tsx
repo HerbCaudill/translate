@@ -181,9 +181,11 @@ export const TranslateInput = ({
           loading && "pointer-events-none",
         )}
       >
-        {loading ?
+        {loading ? (
           <IconLoader2 className="h-5 w-5 animate-spin" />
-        : <IconArrowRight className="h-5 w-5" />}
+        ) : (
+          <IconArrowRight className="h-5 w-5" />
+        )}
       </Button>
     </form>
   )

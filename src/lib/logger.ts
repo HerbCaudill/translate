@@ -34,10 +34,7 @@ const createLogEntry = (
 
 const logWithData = (entry: LogEntry): void => {
   const formatted = formatEntry(entry)
-  const consoleMethod =
-    entry.level === "error" ? "error"
-    : entry.level === "warn" ? "warn"
-    : "log"
+  const consoleMethod = entry.level === "error" ? "error" : entry.level === "warn" ? "warn" : "log"
 
   if (entry.data && Object.keys(entry.data).length > 0) {
     console[consoleMethod](formatted, entry.data)

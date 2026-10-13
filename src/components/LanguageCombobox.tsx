@@ -34,14 +34,16 @@ export const LanguageCombobox = ({
           aria-label="Select language"
           className="w-full justify-between"
         >
-          {value ?
+          {value ? (
             <span className="flex items-center gap-2">
               <span className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-xs font-medium">
                 {value.code}
               </span>
               <span>{value.name}</span>
             </span>
-          : <span className="text-muted-foreground">{placeholder}</span>}
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
           <IconSelector className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

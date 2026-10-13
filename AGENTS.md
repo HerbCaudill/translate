@@ -14,7 +14,7 @@ pnpm build        # TypeScript check + Vite production build
 pnpm test         # Run Vitest unit tests
 pnpm test:e2e     # Run Playwright end-to-end tests
 pnpm typecheck    # TypeScript type checking only
-pnpm format       # Format code with Prettier
+pnpm format       # Format code with oxfmt
 pnpm icons        # Regenerate PNG icons from SVG
 pnpm encrypt-key  # Generate src/encrypted-key.json from an API key + password
 ```
@@ -81,7 +81,7 @@ pnpm encrypt-key  # Generate src/encrypted-key.json from an API key + password
 ## Configuration
 
 - Path alias: `@/*` → `./src/*`
-- Prettier: 100 chars, 2 spaces, no semicolons, double quotes, trailing commas
+- oxfmt: 100 chars, 2 spaces, no semicolons, double quotes, trailing commas
 - PWA theme color: `#2563eb` (blue-600)
 - Environment: `VITE_ANTHROPIC_API_KEY` for Claude API; this overrides any API key saved in localStorage
 - Optional encrypted bootstrap file: `src/encrypted-key.json`

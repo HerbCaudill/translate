@@ -116,9 +116,10 @@ export const LanguageList = ({ languages, onChange }: Props) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {languages.length === 0 ?
+        {languages.length === 0 ? (
           <p className="text-muted-foreground py-4 text-center text-sm">No languages configured</p>
-        : <DndContext
+        ) : (
+          <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
@@ -136,7 +137,7 @@ export const LanguageList = ({ languages, onChange }: Props) => {
               ))}
             </SortableContext>
           </DndContext>
-        }
+        )}
       </div>
 
       <div className="space-y-2">

@@ -1,7 +1,7 @@
 {
   "name": "translate",
-  "private": true,
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "localhost-dev pnpm dev:app",
@@ -11,7 +11,7 @@
     "test:all": "pnpm typecheck && pnpm test",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "format": "prettier --write .",
+    "format": "oxfmt",
     "icons": "node scripts/generate-icons.mjs",
     "encrypt-key": "pnpm exec tsx scripts/encrypt-key.ts",
     "dev:app": "vite",
@@ -53,9 +53,8 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "jsdom": "^27.4.0",
+    "oxfmt": "^0.53.0",
     "postcss": "^8.4.49",
-    "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.21.0",

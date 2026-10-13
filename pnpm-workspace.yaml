@@ -1,2 +1,5 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
 overrides:
   "@herbcaudill/ralph": link:../ralph/packages/ralph-cli

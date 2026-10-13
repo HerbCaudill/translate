@@ -52,11 +52,12 @@ export const HistoryView = ({ history, onSelectEntry, onRemoveEntry }: Props) =>
         />
       </div>
 
-      {!hasResults ?
+      {!hasResults ? (
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <p className="text-muted-foreground">No matching entries</p>
         </div>
-      : <div className="max-h-80 overflow-y-auto">
+      ) : (
+        <div className="max-h-80 overflow-y-auto">
           <ul className="flex flex-col gap-2">
             {filteredHistory.map(entry => (
               <li key={entry.id} className="group relative">
@@ -85,7 +86,7 @@ export const HistoryView = ({ history, onSelectEntry, onRemoveEntry }: Props) =>
             ))}
           </ul>
         </div>
-      }
+      )}
     </div>
   )
 }

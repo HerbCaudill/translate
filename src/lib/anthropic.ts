@@ -44,8 +44,9 @@ export const translate = async (options: TranslateOptions): Promise<TranslationR
   if (sourceLanguageHint) {
     // Find the language name for the hint
     const hintLanguage = languages.find(l => l.code === sourceLanguageHint)
-    const hintText =
-      hintLanguage ? `${hintLanguage.name} (${hintLanguage.code})` : sourceLanguageHint
+    const hintText = hintLanguage
+      ? `${hintLanguage.name} (${hintLanguage.code})`
+      : sourceLanguageHint
     systemPrompt = systemPrompt
       .replace(/\{\{#if sourceLanguageHint\}\}/g, "")
       .replace(/\{\{\/if\}\}/g, "")
